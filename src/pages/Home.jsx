@@ -2,15 +2,18 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
-import { products, categories } from '../data/products';
+import useAuth from '../context/useAuth';
+import useCart from '../context/useCart';
+import useProducts from '../context/useProducts';
 
 const ALLOWED_SORTS = ['featured', 'price-asc', 'price-desc', 'name-asc'];
 
 /**
  * Reads and sanitizes list params from URL to keep UI shareable and stable.
  * @param {import('react-router-dom').URLSearchParamsInit} searchParams
+ * @param {Array<string>} categories
  */
-function parseListParams(searchParams) {
+function parseListParams(searchParams, categories) {
   const categoryParam = searchParams.get('categoria') || 'Todos';
   const category = categories.includes(categoryParam) ? categoryParam : 'Todos';
 
@@ -31,15 +34,41 @@ function parseListParams(searchParams) {
  * Filters are implemented client-side for performance.
  */
 export default function Home() {
+  const { user } = useAuth();
+  const { showToast } = useCart();
+  const {
+    products,
+    categories,
+    addProduct,
+    updateProduct,
+    deleteProduct,
+  } = useProducts();
+
+  const isAdmin = user?.role === 'admin';
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialParams = parseListParams(searchParams);
+  const initialParams = parseListParams(searchParams, categories);
 
   const [activeCategory, setActiveCategory] = useState(initialParams.category);
   const [search, setSearch] = useState(initialParams.search);
   const [debouncedSearch, setDebouncedSearch] = useState(initialParams.search);
   const [sortBy, setSortBy] = useState(initialParams.sortBy);
   const [currentPage, setCurrentPage] = useState(initialParams.currentPage);
+  const [editingProductId, setEditingProductId] = useState(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    price: '',
+    image: '',
+    category: '',
+    description: '',
+  });
   const pageSize = 8;
+
+  useEffect(() => {
+    if (!categories.includes(activeCategory)) {
+      setActiveCategory('Todos');
+      setCurrentPage(1);
+    }
+  }, [activeCategory, categories]);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -53,7 +82,7 @@ export default function Home() {
     () => (activeCategory === 'Todos'
       ? products
       : products.filter((p) => p.category === activeCategory)),
-    [activeCategory]
+    [activeCategory, products]
   );
 
   const filtered = useMemo(() => {
@@ -118,10 +147,162 @@ export default function Home() {
     setCurrentPage(1);
   };
 
+  /**
+   * Handles changes for add/edit product form.
+   * @param {React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>} event
+   */
+  const handleFormChange = (event) => {
+    const { name, value } = event.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  /** Starts editing with selected product values. */
+  const startEditing = (product) => {
+    setEditingProductId(product.id);
+    setFormData({
+      name: product.name,
+      price: String(product.price),
+      image: product.image,
+      category: product.category,
+      description: product.description,
+    });
+  };
+
+  /** Resets admin form to create mode. */
+  const resetAdminForm = () => {
+    setEditingProductId(null);
+    setFormData({ name: '', price: '', image: '', category: '', description: '' });
+  };
+
+  /**
+   * Submits admin form to create or update product.
+   * @param {React.FormEvent<HTMLFormElement>} event
+   */
+  const handleAdminSubmit = (event) => {
+    event.preventDefault();
+
+    const operation = editingProductId
+      ? updateProduct(editingProductId, formData)
+      : addProduct(formData);
+
+    if (!operation.ok) {
+      showToast(operation.error || 'No se pudo guardar el producto.', 'error');
+      return;
+    }
+
+    showToast(editingProductId ? 'Producto actualizado correctamente.' : 'Producto creado correctamente.', 'success');
+    resetAdminForm();
+  };
+
+  /** Deletes selected product after user confirmation. */
+  const handleDeleteProduct = (product) => {
+    const isConfirmed = window.confirm(`¿Seguro que quieres borrar "${product.name}"?`);
+    if (!isConfirmed) {
+      return;
+    }
+
+    const result = deleteProduct(product.id);
+    if (!result.ok) {
+      showToast(result.error || 'No se pudo borrar el producto.', 'error');
+      return;
+    }
+
+    showToast('Producto borrado correctamente.', 'info');
+    if (editingProductId === product.id) {
+      resetAdminForm();
+    }
+  };
+
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-gray-900 mb-2">Nuestros Productos</h1>
       <p className="text-gray-500 mb-6">Encuentra lo que buscas al mejor precio.</p>
+
+      {isAdmin && (
+        <section className="mb-8 rounded-2xl border border-indigo-200 bg-indigo-50/40 p-4" aria-label="Gestión de productos">
+          <h2 className="text-lg font-semibold text-indigo-900 mb-3">
+            {editingProductId ? 'Editar producto' : 'Añadir producto'}
+          </h2>
+
+          <form className="grid grid-cols-1 md:grid-cols-2 gap-3" onSubmit={handleAdminSubmit}>
+            <label className="text-sm text-gray-700">
+              Nombre
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleFormChange}
+                required
+                className="mt-1 w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </label>
+            <label className="text-sm text-gray-700">
+              Precio
+              <input
+                type="number"
+                name="price"
+                value={formData.price}
+                onChange={handleFormChange}
+                min="0"
+                step="0.01"
+                required
+                className="mt-1 w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </label>
+            <label className="text-sm text-gray-700">
+              Categoría
+              <input
+                type="text"
+                name="category"
+                value={formData.category}
+                onChange={handleFormChange}
+                required
+                className="mt-1 w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </label>
+            <label className="text-sm text-gray-700">
+              URL de imagen
+              <input
+                type="url"
+                name="image"
+                value={formData.image}
+                onChange={handleFormChange}
+                placeholder="https://..."
+                className="mt-1 w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </label>
+            <label className="md:col-span-2 text-sm text-gray-700">
+              Descripción
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleFormChange}
+                required
+                rows={3}
+                className="mt-1 w-full rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              />
+            </label>
+
+            <div className="md:col-span-2 flex gap-2">
+              <button
+                type="submit"
+                className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                {editingProductId ? 'Guardar cambios' : 'Crear producto'}
+              </button>
+              {editingProductId && (
+                <button
+                  type="button"
+                  onClick={resetAdminForm}
+                  className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                  Cancelar edición
+                </button>
+              )}
+            </div>
+          </form>
+        </section>
+      )}
 
       <section className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-3" aria-label="Controles de búsqueda y ordenado">
         <label className="md:col-span-2">
@@ -201,7 +382,12 @@ export default function Home() {
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
       >
         {paginatedProducts.map((product) => (
-          <ProductCard key={product.id} product={product} />
+          <ProductCard
+            key={product.id}
+            product={product}
+            onEditProduct={isAdmin ? startEditing : undefined}
+            onDeleteProduct={isAdmin ? handleDeleteProduct : undefined}
+          />
         ))}
       </section>
 

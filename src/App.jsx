@@ -2,6 +2,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
+import { ProductProvider } from './context/ProductContext';
 import useAuth from './context/useAuth';
 import Navbar from './components/Navbar';
 import Toast from './components/Toast';
@@ -62,9 +63,11 @@ export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <CartProvider>
-          <AppShell />
-        </CartProvider>
+        <ProductProvider>
+          <CartProvider>
+            <AppShell />
+          </CartProvider>
+        </ProductProvider>
       </AuthProvider>
     </BrowserRouter>
   );

@@ -3,7 +3,7 @@
  * Static product catalog for the store.
  * Each product has a unique id, name, price, image, category, and description.
  */
-export const products = [
+export const DEFAULT_PRODUCTS = [
   {
     id: 1,
     name: 'Auriculares Bluetooth',
@@ -166,4 +166,17 @@ export const products = [
   },
 ];
 
-export const categories = ['Todos', ...new Set(products.map((p) => p.category))];
+/**
+ * Builds categories from a product list and prepends the default option.
+ * @param {Array<{ category?: string }>} items
+ * @returns {Array<string>}
+ */
+export function buildCategories(items) {
+  const categorySet = new Set(
+    items
+      .map((item) => String(item?.category || '').trim())
+      .filter(Boolean)
+  );
+
+  return ['Todos', ...Array.from(categorySet)];
+}

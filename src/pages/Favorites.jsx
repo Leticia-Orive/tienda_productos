@@ -2,13 +2,14 @@
 import { Link } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import useCart from '../context/useCart';
-import { products } from '../data/products';
+import useProducts from '../context/useProducts';
 
 /**
  * Favorites page showing persisted favorite products.
  */
 export default function Favorites() {
   const { favorites, favoriteCount } = useCart();
+  const { products } = useProducts();
 
   const favoriteProducts = products.filter((product) => favorites.includes(product.id));
 
