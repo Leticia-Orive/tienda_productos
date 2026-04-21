@@ -6,6 +6,8 @@ import Toast from './components/Toast';
 import Home from './pages/Home';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
+import Orders from './pages/Orders';
+import Favorites from './pages/Favorites';
 import NotFound from './pages/NotFound';
 
 /**
@@ -16,13 +18,23 @@ export default function App() {
     <BrowserRouter>
       <CartProvider>
         <div className="min-h-screen bg-gray-50">
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[70] focus:rounded-lg focus:bg-indigo-600 focus:px-4 focus:py-2 focus:font-medium focus:text-white"
+          >
+            Saltar al contenido
+          </a>
           <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/carrito" element={<Cart />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <div id="main-content" tabIndex="-1" className="outline-none">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/carrito" element={<Cart />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/pedidos" element={<Orders />} />
+              <Route path="/favoritos" element={<Favorites />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </div>
           <Toast />
         </div>
       </CartProvider>
