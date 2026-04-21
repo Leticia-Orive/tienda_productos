@@ -10,6 +10,7 @@ import useAuth from '../context/useAuth';
 export default function Navbar() {
   const { totalItems, favoriteCount } = useCart();
   const { user, logout } = useAuth();
+  const isAdmin = user?.role === 'admin';
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -46,51 +47,57 @@ export default function Navbar() {
               Productos
             </Link>
           </li>
-          <li>
-            <Link to="/pedidos" className={linkClass('/pedidos')} aria-current={pathname === '/pedidos' ? 'page' : undefined}>
-              Pedidos
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/favoritos"
-              className={`relative flex items-center gap-1 font-medium transition-colors ${
-                pathname === '/favoritos' ? 'text-indigo-600' : 'text-gray-600 hover:text-indigo-600'
-              }`}
-              aria-current={pathname === '/favoritos' ? 'page' : undefined}
-              aria-label={`Favoritos, ${favoriteCount} producto${favoriteCount !== 1 ? 's' : ''}`}
-            >
-              ❤ Favoritos
-              {favoriteCount > 0 && (
-                <span
-                  className="absolute -top-2 -right-3 bg-rose-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
-                  aria-hidden="true"
-                >
-                  {favoriteCount}
-                </span>
-              )}
-            </Link>
-          </li>
-          <li>
-            <Link
-              to="/carrito"
-              className={`relative flex items-center gap-1 font-medium transition-colors ${
-                pathname === '/carrito' ? 'text-indigo-600' : 'text-gray-600 hover:text-indigo-600'
-              }`}
-              aria-current={pathname === '/carrito' ? 'page' : undefined}
-              aria-label={`Carrito, ${totalItems} producto${totalItems !== 1 ? 's' : ''}`}
-            >
-              🛒 Carrito
-              {totalItems > 0 && (
-                <span
-                  className="absolute -top-2 -right-3 bg-indigo-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
-                  aria-hidden="true"
-                >
-                  {totalItems}
-                </span>
-              )}
-            </Link>
-          </li>
+          {!isAdmin && (
+            <li>
+              <Link to="/pedidos" className={linkClass('/pedidos')} aria-current={pathname === '/pedidos' ? 'page' : undefined}>
+                Pedidos
+              </Link>
+            </li>
+          )}
+          {!isAdmin && (
+            <li>
+              <Link
+                to="/favoritos"
+                className={`relative flex items-center gap-1 font-medium transition-colors ${
+                  pathname === '/favoritos' ? 'text-indigo-600' : 'text-gray-600 hover:text-indigo-600'
+                }`}
+                aria-current={pathname === '/favoritos' ? 'page' : undefined}
+                aria-label={`Favoritos, ${favoriteCount} producto${favoriteCount !== 1 ? 's' : ''}`}
+              >
+                ❤ Favoritos
+                {favoriteCount > 0 && (
+                  <span
+                    className="absolute -top-2 -right-3 bg-rose-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
+                    aria-hidden="true"
+                  >
+                    {favoriteCount}
+                  </span>
+                )}
+              </Link>
+            </li>
+          )}
+          {!isAdmin && (
+            <li>
+              <Link
+                to="/carrito"
+                className={`relative flex items-center gap-1 font-medium transition-colors ${
+                  pathname === '/carrito' ? 'text-indigo-600' : 'text-gray-600 hover:text-indigo-600'
+                }`}
+                aria-current={pathname === '/carrito' ? 'page' : undefined}
+                aria-label={`Carrito, ${totalItems} producto${totalItems !== 1 ? 's' : ''}`}
+              >
+                🛒 Carrito
+                {totalItems > 0 && (
+                  <span
+                    className="absolute -top-2 -right-3 bg-indigo-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
+                    aria-hidden="true"
+                  >
+                    {totalItems}
+                  </span>
+                )}
+              </Link>
+            </li>
+          )}
           <li className="hidden sm:block text-xs text-gray-500" aria-label="Usuario autenticado">
             {user?.email}
           </li>

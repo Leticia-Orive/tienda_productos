@@ -202,8 +202,17 @@ export function CartProvider({ children }) {
     showToast(`Agregaste "${product.name}" a favoritos`, 'success');
   };
 
+  /**
+   * Removes all references to a product from cart and favorites.
+   * @param {number | string} productId
+   */
+  const removeProductReferences = (productId) => {
+    dispatch({ type: 'REMOVE_ITEM', payload: { id: productId } });
+    setFavorites((prev) => prev.filter((id) => id !== productId));
+  };
+
   return (
-    <CartContext.Provider value={{ cart, dispatch, totalItems, totalPrice, discountAmount, finalPrice, coupon: effectiveCoupon, applyCoupon, removeCoupon, favorites, favoriteCount, isFavorite, toggleFavorite, toast, showToast }}>
+    <CartContext.Provider value={{ cart, dispatch, totalItems, totalPrice, discountAmount, finalPrice, coupon: effectiveCoupon, applyCoupon, removeCoupon, favorites, favoriteCount, isFavorite, toggleFavorite, removeProductReferences, toast, showToast }}>
       {children}
     </CartContext.Provider>
   );

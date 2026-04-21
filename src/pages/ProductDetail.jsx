@@ -74,19 +74,21 @@ export default function ProductDetail() {
           <p className="text-gray-600 leading-relaxed">{product.description}</p>
           <p className="text-3xl font-extrabold text-gray-900">${product.price.toFixed(2)}</p>
 
-          <button
-            type="button"
-            onClick={() => toggleFavorite(product)}
-            className={`w-fit rounded-full px-3 py-1.5 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${
-              favorite
-                ? 'bg-rose-100 text-rose-700 hover:bg-rose-200'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-            aria-pressed={favorite}
-            aria-label={`${favorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}: ${product.name}`}
-          >
-            {favorite ? '❤ Favorito' : '♡ Favorito'}
-          </button>
+          {!isAdmin && (
+            <button
+              type="button"
+              onClick={() => toggleFavorite(product)}
+              className={`w-fit rounded-full px-3 py-1.5 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${
+                favorite
+                  ? 'bg-rose-100 text-rose-700 hover:bg-rose-200'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+              aria-pressed={favorite}
+              aria-label={`${favorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}: ${product.name}`}
+            >
+              {favorite ? '❤ Favorito' : '♡ Favorito'}
+            </button>
+          )}
 
           {!isAdmin && (
             <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -113,9 +115,11 @@ export default function ProductDetail() {
             </p>
           )}
 
-          <p className="text-xs text-gray-500">
-            {isInCart ? 'Este producto ya está en tu carrito.' : 'Aún no has añadido este producto al carrito.'}
-          </p>
+          {!isAdmin && (
+            <p className="text-xs text-gray-500">
+              {isInCart ? 'Este producto ya está en tu carrito.' : 'Aún no has añadido este producto al carrito.'}
+            </p>
+          )}
         </div>
       </section>
     </main>

@@ -48,19 +48,21 @@ export default function ProductCard({ product, onEditProduct, onDeleteProduct })
           <span className="text-xs font-medium text-indigo-500 uppercase tracking-wide">
             {product.category}
           </span>
-          <button
-            type="button"
-            onClick={() => toggleFavorite(product)}
-            className={`rounded-full px-2 py-1 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${
-              favorite
-                ? 'bg-rose-100 text-rose-700 hover:bg-rose-200'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-            }`}
-            aria-pressed={favorite}
-            aria-label={`${favorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}: ${product.name}`}
-          >
-            {favorite ? '❤ Favorito' : '♡ Favorito'}
-          </button>
+          {!isAdmin && (
+            <button
+              type="button"
+              onClick={() => toggleFavorite(product)}
+              className={`rounded-full px-2 py-1 text-xs font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${
+                favorite
+                  ? 'bg-rose-100 text-rose-700 hover:bg-rose-200'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+              aria-pressed={favorite}
+              aria-label={`${favorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}: ${product.name}`}
+            >
+              {favorite ? '❤ Favorito' : '♡ Favorito'}
+            </button>
+          )}
         </div>
         <h2 className="text-gray-800 font-semibold text-base leading-tight">{product.name}</h2>
         <p className="text-gray-500 text-sm flex-1">{product.description}</p>

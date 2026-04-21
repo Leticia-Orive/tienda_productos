@@ -35,7 +35,7 @@ function parseListParams(searchParams, categories) {
  */
 export default function Home() {
   const { user } = useAuth();
-  const { showToast } = useCart();
+  const { showToast, removeProductReferences } = useCart();
   const {
     products,
     categories,
@@ -207,6 +207,7 @@ export default function Home() {
       return;
     }
 
+    removeProductReferences(product.id);
     showToast('Producto borrado correctamente.', 'info');
     if (editingProductId === product.id) {
       resetAdminForm();
