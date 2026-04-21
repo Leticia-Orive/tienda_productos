@@ -9,6 +9,7 @@ import Checkout from './pages/Checkout';
 import Orders from './pages/Orders';
 import Favorites from './pages/Favorites';
 import NotFound from './pages/NotFound';
+import ProductDetail from './pages/ProductDetail';
 
 /**
  * App root: sets up routing and global CartProvider.
@@ -20,7 +21,7 @@ export default function App() {
         <div className="min-h-screen bg-gray-50">
           <a
             href="#main-content"
-            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[70] focus:rounded-lg focus:bg-indigo-600 focus:px-4 focus:py-2 focus:font-medium focus:text-white"
+            className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-70 focus:rounded-lg focus:bg-indigo-600 focus:px-4 focus:py-2 focus:font-medium focus:text-white"
           >
             Saltar al contenido
           </a>
@@ -29,9 +30,11 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/carrito" element={<Cart />} />
+              <Route path="/producto/:id" element={<ProductDetail />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/pedidos" element={<Orders />} />
               <Route path="/favoritos" element={<Favorites />} />
+              <Route path="/not-found" element={<NotFound />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
