@@ -1,3 +1,8 @@
+﻿/* Para que sirve: Estilos base, utilidades globales y animaciones compartidas.
+ * Entradas: Variables CSS, clases utilitarias y estilos compartidos.
+ * Flujo principal: Define apariencia base y comportamientos visuales reutilizables.
+ * Donde tocar cambios: Modifica este archivo para ajustar estilos globales/comunes.
+ */
 @import "tailwindcss";
 
 @keyframes fade-in-up {

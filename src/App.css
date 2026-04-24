@@ -1,3 +1,8 @@
+﻿/* Para que sirve: Estilos globales complementarios de la aplicacion.
+ * Entradas: Variables CSS, clases utilitarias y estilos compartidos.
+ * Flujo principal: Define apariencia base y comportamientos visuales reutilizables.
+ * Donde tocar cambios: Modifica este archivo para ajustar estilos globales/comunes.
+ */
 .counter {
   font-size: 16px;
   padding: 5px 10px;
