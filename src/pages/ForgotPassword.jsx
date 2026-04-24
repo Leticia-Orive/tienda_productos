@@ -19,14 +19,102 @@ export default function ForgotPassword() {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [touched, setTouched] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   if (isAuthenticated) {
     return <Navigate to="/" replace />;
   }
 
+  /**
+   * Calculates password strength on a 0-4 scale for the visual meter.
+   * @param {string} pwd
+   * @returns {{ score: number, label: string, color: string }}
+   */
+  const getPasswordStrength = (pwd) => {
+    if (!pwd) return { score: 0, label: '', color: '' };
+    let score = 0;
+    if (pwd.length >= 8) score += 1;
+    if (/[a-z]/.test(pwd)) score += 1;
+    if (/[A-Z]/.test(pwd)) score += 1;
+    if (/\d/.test(pwd)) score += 1;
+    const labels = ['', 'Débil', 'Regular', 'Buena', 'Fuerte'];
+    const colors = ['', 'bg-red-400', 'bg-orange-400', 'bg-yellow-400', 'bg-green-500'];
+    return { score, label: labels[score], color: colors[score] };
+  };
+
+  const passwordStrength = getPasswordStrength(form.password);
+
+  /** Returns an inline validation error message for one recovery field. */
+  const validateField = (name, value, nextForm = form) => {
+    if (name === 'email') {
+      const safeEmail = value.trim();
+      if (!safeEmail) return 'El correo es obligatorio.';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(safeEmail)) return 'Ingresa un correo válido.';
+      return undefined;
+    }
+
+    if (name === 'password') {
+      if (!value) return 'La nueva contraseña es obligatoria.';
+      if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(value)) {
+        return 'Usa 8+ caracteres, mayúscula, minúscula y número.';
+      }
+      return undefined;
+    }
+
+    if (name === 'confirmPassword') {
+      if (!value) return 'Debes confirmar la contraseña.';
+      if (value !== nextForm.password) return 'Las contraseñas no coinciden.';
+      return undefined;
+    }
+
+    return undefined;
+  };
+
+  /** Updates one input and validates it in real time once touched. */
+  const handleInputChange = (name, value) => {
+    const nextForm = { ...form, [name]: value };
+    setForm(nextForm);
+
+    if (touched[name] || (name === 'password' && touched.confirmPassword)) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        [name]: validateField(name, value, nextForm),
+        ...(name === 'password' && touched.confirmPassword
+          ? { confirmPassword: validateField('confirmPassword', nextForm.confirmPassword, nextForm) }
+          : {}),
+      }));
+    }
+
+    if (error) setError('');
+    if (success) setSuccess('');
+  };
+
+  /** Marks one input as touched and validates it. */
+  const handleBlur = (name) => {
+    setTouched((prev) => ({ ...prev, [name]: true }));
+    setFieldErrors((prev) => ({ ...prev, [name]: validateField(name, form[name], form) }));
+  };
+
   /** Handles password reset and returns user to login on success. */
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const nextErrors = {
+      email: validateField('email', form.email, form),
+      password: validateField('password', form.password, form),
+      confirmPassword: validateField('confirmPassword', form.confirmPassword, form),
+    };
+
+    setTouched({ email: true, password: true, confirmPassword: true });
+    setFieldErrors(nextErrors);
+
+    if (Object.values(nextErrors).some(Boolean)) {
+      return;
+    }
+
     const result = resetPassword(form);
 
     if (!result.ok) {
@@ -58,49 +146,99 @@ export default function ForgotPassword() {
               name="email"
               autoComplete="email"
               value={form.email}
-              onChange={(e) => {
-                setForm((prev) => ({ ...prev, email: e.target.value }));
-                if (error) setError('');
-              }}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              onChange={(e) => handleInputChange('email', e.target.value)}
+              onBlur={() => handleBlur('email')}
+              className={`rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                touched.email && fieldErrors.email ? 'border-red-400' : 'border-gray-300'
+              }`}
+              aria-invalid={Boolean(touched.email && fieldErrors.email)}
+              aria-describedby={touched.email && fieldErrors.email ? 'forgot-email-error' : undefined}
               required
             />
+            {touched.email && fieldErrors.email && (
+              <p id="forgot-email-error" className="text-xs text-red-600" role="alert">{fieldErrors.email}</p>
+            )}
           </div>
 
           <div className="flex flex-col gap-1">
             <label htmlFor="password" className="text-sm font-medium text-gray-700">Nueva contraseña</label>
             <input
               id="password"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               name="password"
               autoComplete="new-password"
               value={form.password}
-              onChange={(e) => {
-                setForm((prev) => ({ ...prev, password: e.target.value }));
-                if (error) setError('');
-              }}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              minLength={6}
+              onChange={(e) => handleInputChange('password', e.target.value)}
+              onBlur={() => handleBlur('password')}
+              className={`rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                touched.password && fieldErrors.password ? 'border-red-400' : 'border-gray-300'
+              }`}
+              minLength={8}
+              pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
+              title="Mínimo 8 caracteres, incluyendo mayúscula, minúscula y número."
+              aria-invalid={Boolean(touched.password && fieldErrors.password)}
+              aria-describedby={touched.password && fieldErrors.password ? 'forgot-password-error' : undefined}
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="mt-1 text-xs text-indigo-600 hover:text-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-fit"
+              aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+            >
+              {showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+            </button>
+            {form.password && (
+              <div className="mt-1" aria-label={`Fortaleza de contraseña: ${passwordStrength.label}`}>
+                <div className="flex gap-1 mb-1" aria-hidden="true">
+                  {[1, 2, 3, 4].map((step) => (
+                    <div
+                      key={step}
+                      className={`h-1.5 flex-1 rounded-full transition-colors ${
+                        step <= passwordStrength.score ? passwordStrength.color : 'bg-gray-200'
+                      }`}
+                    />
+                  ))}
+                </div>
+                <p className="text-xs text-gray-500">
+                  Fortaleza: <span className="font-medium">{passwordStrength.label}</span>
+                </p>
+              </div>
+            )}
+            {touched.password && fieldErrors.password && (
+              <p id="forgot-password-error" className="text-xs text-red-600" role="alert">{fieldErrors.password}</p>
+            )}
           </div>
 
           <div className="flex flex-col gap-1">
             <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">Confirmar contraseña</label>
             <input
               id="confirmPassword"
-              type="password"
+              type={showConfirmPassword ? 'text' : 'password'}
               name="confirmPassword"
               autoComplete="new-password"
               value={form.confirmPassword}
-              onChange={(e) => {
-                setForm((prev) => ({ ...prev, confirmPassword: e.target.value }));
-                if (error) setError('');
-              }}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              minLength={6}
+              onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+              onBlur={() => handleBlur('confirmPassword')}
+              className={`rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                touched.confirmPassword && fieldErrors.confirmPassword ? 'border-red-400' : 'border-gray-300'
+              }`}
+              minLength={8}
+              aria-invalid={Boolean(touched.confirmPassword && fieldErrors.confirmPassword)}
+              aria-describedby={touched.confirmPassword && fieldErrors.confirmPassword ? 'forgot-confirm-password-error' : undefined}
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+              className="mt-1 text-xs text-indigo-600 hover:text-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-fit"
+              aria-label={showConfirmPassword ? 'Ocultar confirmación' : 'Mostrar confirmación'}
+            >
+              {showConfirmPassword ? 'Ocultar confirmación' : 'Mostrar confirmación'}
+            </button>
+            {touched.confirmPassword && fieldErrors.confirmPassword && (
+              <p id="forgot-confirm-password-error" className="text-xs text-red-600" role="alert">{fieldErrors.confirmPassword}</p>
+            )}
           </div>
 
           {error && <p className="text-sm text-red-600" role="alert">{error}</p>}

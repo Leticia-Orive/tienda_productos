@@ -10,7 +10,13 @@
 export const COUPONS = {
   DESCUENTO10: { code: 'DESCUENTO10', label: '10 % de descuento', type: 'percent', value: 10 },
   OFERTA20: { code: 'OFERTA20', label: '20 % de descuento', type: 'percent', value: 20 },
+  REBAJAS30: { code: 'REBAJAS30', label: '30 % de descuento', type: 'percent', value: 30 },
+  VERANO15: { code: 'VERANO15', label: '15 % de descuento', type: 'percent', value: 15 },
   PROMO5: { code: 'PROMO5', label: '$5 de descuento', type: 'fixed', value: 5 },
+  AHORRA10: { code: 'AHORRA10', label: '$10 de descuento', type: 'fixed', value: 10 },
+  AHORRA15: { code: 'AHORRA15', label: '$15 de descuento', type: 'fixed', value: 15 },
+  BIENVENIDA: { code: 'BIENVENIDA', label: '25 % de descuento por primera compra', type: 'percent', value: 25 },
+  SUPERAHORRO: { code: 'SUPERAHORRO', label: '40 % de descuento', type: 'percent', value: 40 },
 };
 
 /**

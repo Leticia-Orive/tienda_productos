@@ -6,12 +6,16 @@ import { ProductProvider } from './context/ProductContext';
 import useAuth from './context/useAuth';
 import Navbar from './components/Navbar';
 import Toast from './components/Toast';
+import Footer from './components/Footer';
 import RequireAuth from './components/RequireAuth';
+import RequireRole from './components/RequireRole';
+import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import Orders from './pages/Orders';
 import Favorites from './pages/Favorites';
+import AdminProducts from './pages/AdminProducts';
 import NotFound from './pages/NotFound';
 import ProductDetail from './pages/ProductDetail';
 import Login from './pages/Login';
@@ -41,16 +45,20 @@ function AppShell() {
           <Route path="/registro" element={<Register />} />
           <Route path="/recuperar" element={<ForgotPassword />} />
           <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
-          <Route path="/carrito" element={<RequireAuth><Cart /></RequireAuth>} />
+          <Route path="/admin/productos" element={<RequireRole allowedRoles={['admin']}><AdminProducts /></RequireRole>} />
+          <Route path="/carrito" element={<RequireRole allowedRoles={['cliente']}><Cart /></RequireRole>} />
           <Route path="/producto/:id" element={<RequireAuth><ProductDetail /></RequireAuth>} />
-          <Route path="/checkout" element={<RequireAuth><Checkout /></RequireAuth>} />
-          <Route path="/pedidos" element={<RequireAuth><Orders /></RequireAuth>} />
-          <Route path="/favoritos" element={<RequireAuth><Favorites /></RequireAuth>} />
+          <Route path="/checkout" element={<RequireRole allowedRoles={['cliente']}><Checkout /></RequireRole>} />
+          <Route path="/pedidos" element={<RequireRole allowedRoles={['cliente']}><Orders /></RequireRole>} />
+          <Route path="/favoritos" element={<RequireRole allowedRoles={['cliente']}><Favorites /></RequireRole>} />
           <Route path="/not-found" element={<NotFound />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
 
+      {isAuthenticated && <Footer />}
+
+      <ScrollToTop />
       <Toast />
     </div>
   );

@@ -146,6 +146,10 @@ export function CartProvider({ children }) {
     setToast({ message, type });
   };
 
+  const dismissToast = () => {
+    setToast({ message: '', type: 'info' });
+  };
+
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const favoriteCount = favorites.length;
@@ -202,6 +206,30 @@ export function CartProvider({ children }) {
     showToast(`Agregaste "${product.name}" a favoritos`, 'success');
   };
 
+  /** Clears all favorites in one action with a single feedback toast. */
+  const clearFavorites = () => {
+    if (favorites.length === 0) {
+      showToast('No hay favoritos para quitar', 'info');
+      return;
+    }
+
+    const removedCount = favorites.length;
+    setFavorites([]);
+    showToast(`Quitaste ${removedCount} favorito${removedCount !== 1 ? 's' : ''}`, 'info');
+  };
+
+  /** Restores favorites from a previous snapshot for undo operations. */
+  const restoreFavorites = (snapshotIds) => {
+    if (!Array.isArray(snapshotIds) || snapshotIds.length === 0) {
+      showToast('No hay favoritos para restaurar', 'info');
+      return;
+    }
+
+    const restored = Array.from(new Set(snapshotIds));
+    setFavorites(restored);
+    showToast(`Favoritos restaurados (${restored.length})`, 'success');
+  };
+
   /**
    * Removes all references to a product from cart and favorites.
    * @param {number | string} productId
@@ -212,7 +240,7 @@ export function CartProvider({ children }) {
   };
 
   return (
-    <CartContext.Provider value={{ cart, dispatch, totalItems, totalPrice, discountAmount, finalPrice, coupon: effectiveCoupon, applyCoupon, removeCoupon, favorites, favoriteCount, isFavorite, toggleFavorite, removeProductReferences, toast, showToast }}>
+    <CartContext.Provider value={{ cart, dispatch, totalItems, totalPrice, discountAmount, finalPrice, coupon: effectiveCoupon, applyCoupon, removeCoupon, favorites, favoriteCount, isFavorite, toggleFavorite, clearFavorites, restoreFavorites, removeProductReferences, toast, showToast }}>
       {children}
     </CartContext.Provider>
   );

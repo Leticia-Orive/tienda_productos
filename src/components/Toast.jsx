@@ -6,7 +6,7 @@ import useCart from '../context/useCart';
  * Announces changes with aria-live for accessibility.
  */
 export default function Toast() {
-  const { toast } = useCart();
+  const { toast, dismissToast } = useCart();
 
   if (!toast.message) {
     return null;
@@ -22,10 +22,18 @@ export default function Toast() {
     <div
       role="status"
       aria-live="polite"
-      className="fixed bottom-4 right-4 z-[60]"
+      className="fixed bottom-4 right-4 z-60 animate-fade-in-up"
     >
-      <div className={`rounded-xl px-4 py-3 text-sm shadow-lg ${toneClass}`}>
-        {toast.message}
+      <div className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm shadow-lg ${toneClass}`}>
+        <span>{toast.message}</span>
+        <button
+          type="button"
+          onClick={dismissToast}
+          className="ml-1 rounded p-0.5 opacity-70 hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-white transition"
+          aria-label="Cerrar notificación"
+        >
+          ✕
+        </button>
       </div>
     </div>
   );

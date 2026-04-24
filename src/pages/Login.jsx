@@ -4,6 +4,16 @@ import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../context/useAuth';
 import useCart from '../context/useCart';
 
+const REMEMBERED_EMAIL_KEY = 'tienda_react_remembered_email';
+
+function getSavedEmail() {
+  try {
+    return localStorage.getItem(REMEMBERED_EMAIL_KEY) || '';
+  } catch {
+    return '';
+  }
+}
+
 /**
  * Login page for client-side authenticated access.
  * Accessibility: fields are labeled and errors are announced.
@@ -14,18 +24,52 @@ export default function Login() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [form, setForm] = useState({ email: getSavedEmail(), password: '' });
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [touched, setTouched] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberEmail, setRememberEmail] = useState(() => Boolean(getSavedEmail()));
 
-  const redirectTo = location.state?.from?.pathname || '/';
+  const redirectTo = location.state?.from?.pathname || null;
 
   if (isAuthenticated) {
     return <Navigate to={redirectTo} replace />;
   }
 
+  /** Validates one login field and returns an inline-friendly message. */
+  const validateField = (name, value) => {
+    if (name === 'email') {
+      const safeValue = value.trim();
+      if (!safeValue) return 'El correo es obligatorio.';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(safeValue)) return 'Ingresa un correo válido.';
+      return undefined;
+    }
+
+    if (name === 'password') {
+      if (!value) return 'La contraseña es obligatoria.';
+      if (value.length < 8) return 'Debe tener al menos 8 caracteres.';
+      return undefined;
+    }
+
+    return undefined;
+  };
+
   /** Handles login form submission and redirects to previous route. */
   const handleSubmit = (e) => {
     e.preventDefault();
+    const nextErrors = {
+      email: validateField('email', form.email),
+      password: validateField('password', form.password),
+    };
+
+    setTouched({ email: true, password: true });
+    setFieldErrors(nextErrors);
+
+    if (nextErrors.email || nextErrors.password) {
+      return;
+    }
+
     const result = login(form);
 
     if (!result.ok) {
@@ -36,8 +80,17 @@ export default function Login() {
     }
 
     setError('');
-    showToast('Sesión iniciada correctamente', 'success');
-    navigate(redirectTo, { replace: true });
+    const roleLabel = result.role === 'admin' ? 'administrador' : 'cliente';
+    showToast(`Sesión iniciada como ${roleLabel}`, 'success');
+    try {
+      if (rememberEmail) {
+        localStorage.setItem(REMEMBERED_EMAIL_KEY, form.email.trim());
+      } else {
+        localStorage.removeItem(REMEMBERED_EMAIL_KEY);
+      }
+    } catch { /* ignore */ }
+    const targetPath = redirectTo || (result.role === 'admin' ? '/admin/productos' : '/');
+    navigate(targetPath, { replace: true });
   };
 
   return (
@@ -56,35 +109,85 @@ export default function Login() {
               autoComplete="email"
               value={form.email}
               onChange={(e) => {
-                setForm((prev) => ({ ...prev, email: e.target.value }));
+                const nextValue = e.target.value;
+                setForm((prev) => ({ ...prev, email: nextValue }));
+                if (touched.email) {
+                  setFieldErrors((prev) => ({ ...prev, email: validateField('email', nextValue) }));
+                }
                 if (error) setError('');
               }}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              onBlur={(e) => {
+                const nextValue = e.target.value;
+                setTouched((prev) => ({ ...prev, email: true }));
+                setFieldErrors((prev) => ({ ...prev, email: validateField('email', nextValue) }));
+              }}
+              className={`rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                touched.email && fieldErrors.email ? 'border-red-400' : 'border-gray-300'
+              }`}
+              aria-invalid={Boolean(touched.email && fieldErrors.email)}
+              aria-describedby={touched.email && fieldErrors.email ? 'email-error' : undefined}
               required
             />
+            {touched.email && fieldErrors.email && (
+              <p id="email-error" className="text-xs text-red-600" role="alert">{fieldErrors.email}</p>
+            )}
           </div>
 
           <div className="flex flex-col gap-1">
             <label htmlFor="password" className="text-sm font-medium text-gray-700">Contraseña</label>
             <input
               id="password"
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               name="password"
               autoComplete="current-password"
               value={form.password}
               onChange={(e) => {
-                setForm((prev) => ({ ...prev, password: e.target.value }));
+                const nextValue = e.target.value;
+                setForm((prev) => ({ ...prev, password: nextValue }));
+                if (touched.password) {
+                  setFieldErrors((prev) => ({ ...prev, password: validateField('password', nextValue) }));
+                }
                 if (error) setError('');
               }}
-              className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              minLength={6}
+              onBlur={(e) => {
+                const nextValue = e.target.value;
+                setTouched((prev) => ({ ...prev, password: true }));
+                setFieldErrors((prev) => ({ ...prev, password: validateField('password', nextValue) }));
+              }}
+              className={`rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                touched.password && fieldErrors.password ? 'border-red-400' : 'border-gray-300'
+              }`}
+              minLength={8}
+              aria-invalid={Boolean(touched.password && fieldErrors.password)}
+              aria-describedby={touched.password && fieldErrors.password ? 'password-error' : undefined}
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="mt-1 text-xs text-indigo-600 hover:text-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-fit"
+              aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+            >
+              {showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+            </button>
+            {touched.password && fieldErrors.password && (
+              <p id="password-error" className="text-xs text-red-600" role="alert">{fieldErrors.password}</p>
+            )}
           </div>
 
           {error && (
             <p className="text-sm text-red-600" role="alert">{error}</p>
           )}
+
+          <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={rememberEmail}
+              onChange={(e) => setRememberEmail(e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+            />
+            Recordar mi correo
+          </label>
 
           <button
             type="submit"
