@@ -6,6 +6,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useCart from '../context/useCart';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 /* Maintenance guide:
  * - Field validation lives in validateField; update rules there first.
@@ -16,6 +17,12 @@ import useCart from '../context/useCart';
 
 const CHECKOUT_STORAGE_KEY = 'tienda_react_checkout_form';
 const ORDERS_STORAGE_KEY = 'tienda_react_orders';
+
+/**
+ * Maximum order history entries kept in localStorage.
+ * Prevents unbounded growth of the stored payload over many purchases.
+ */
+const MAX_ORDERS = 50;
 
 /**
  * Reads persisted checkout form values safely.
@@ -46,6 +53,31 @@ function getInitialCheckoutForm() {
     };
   } catch {
     return fallback;
+  }
+}
+
+/** Reads persisted shipping method safely from checkout draft. */
+function getInitialShippingMethod() {
+  try {
+    const rawForm = localStorage.getItem(CHECKOUT_STORAGE_KEY);
+    const parsed = rawForm ? JSON.parse(rawForm) : {};
+    return parsed?.shippingMethod === 'express' ? 'express' : 'standard';
+  } catch {
+    return 'standard';
+  }
+}
+
+/**
+ * Writes JSON data to localStorage safely.
+ * Keeps checkout usable when storage is unavailable or full.
+ * @param {string} key
+ * @param {unknown} value
+ */
+function safeWriteStorage(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Best-effort persistence only.
   }
 }
 
@@ -84,6 +116,16 @@ function formatCardNumber(value) {
   return digits.replace(/(\d{4})(?=\d)/g, '$1 ');
 }
 
+/** Generates a stable order id with UUID when available. */
+function buildOrderId() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+
+  const randomSuffix = Math.random().toString(36).slice(2, 8);
+  return `${Date.now()}-${randomSuffix}`;
+}
+
 /**
  * Saves a completed order to local history.
  * @param {{ name: string }} formData
@@ -92,7 +134,7 @@ function formatCardNumber(value) {
  */
 function persistOrder(formData, items, subtotal, discountAmount, finalPrice, coupon) {
   const newOrder = {
-    id: `${Date.now()}`,
+    id: buildOrderId(),
     createdAt: new Date().toISOString(),
     customerName: formData.name.trim(),
     totalItems: items.reduce((sum, item) => sum + item.quantity, 0),
@@ -113,9 +155,11 @@ function persistOrder(formData, items, subtotal, discountAmount, finalPrice, cou
     const rawOrders = localStorage.getItem(ORDERS_STORAGE_KEY);
     const currentOrders = rawOrders ? JSON.parse(rawOrders) : [];
     const safeOrders = Array.isArray(currentOrders) ? currentOrders : [];
-    localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify([newOrder, ...safeOrders]));
+    // Cap history at MAX_ORDERS to avoid unbounded localStorage growth.
+    const trimmedOrders = [newOrder, ...safeOrders].slice(0, MAX_ORDERS);
+    safeWriteStorage(ORDERS_STORAGE_KEY, trimmedOrders);
   } catch {
-    localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify([newOrder]));
+    safeWriteStorage(ORDERS_STORAGE_KEY, [newOrder]);
   }
 }
 
@@ -174,6 +218,8 @@ function CheckoutField({
  * Input validation happens on the client boundary.
  */
 export default function Checkout() {
+  // WCAG 2.4.2: descriptive page title announced by screen readers on navigation.
+  useDocumentTitle('Checkout');
   const { cart, totalPrice, discountAmount, finalPrice, coupon, dispatch, showToast } = useCart();
   const navigate = useNavigate();
 
@@ -181,7 +227,8 @@ export default function Checkout() {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [submitted, setSubmitted] = useState(false);
-  const [shippingMethod, setShippingMethod] = useState('standard');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [shippingMethod, setShippingMethod] = useState(getInitialShippingMethod);
 
   const shippingFee = shippingMethod === 'express' ? 4.99 : 0;
   const payableTotal = finalPrice + shippingFee;
@@ -197,7 +244,6 @@ export default function Checkout() {
       !validateField('card', form.card),
     ];
     return checks.filter(Boolean).length;
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form]);
 
   const progressPercent = Math.round((filledFields / 6) * 100);
@@ -216,13 +262,14 @@ export default function Checkout() {
   useEffect(() => {
     const persistedForm = {
       ...form,
+      shippingMethod,
       card: '',
     };
-    localStorage.setItem(CHECKOUT_STORAGE_KEY, JSON.stringify(persistedForm));
-  }, [form]);
+    safeWriteStorage(CHECKOUT_STORAGE_KEY, persistedForm);
+  }, [form, shippingMethod]);
 
   /** Validates one checkout field and returns an inline-friendly message. */
-  const validateField = (name, value) => {
+  function validateField(name, value) {
     if (name === 'name') {
       if (!value.trim()) return 'El nombre es obligatorio.';
       return undefined;
@@ -261,7 +308,7 @@ export default function Checkout() {
     }
 
     return undefined;
-  };
+  }
 
   const validate = () => ({
     name: validateField('name', form.name),
@@ -290,6 +337,10 @@ export default function Checkout() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Guard: prevent double-submission when the user clicks confirm twice quickly.
+    if (isSubmitting) {
+      return;
+    }
     const validationErrors = validate();
     setTouched({
       name: true,
@@ -306,6 +357,7 @@ export default function Checkout() {
       return;
     }
 
+    setIsSubmitting(true);
     persistOrder(form, cart, totalPrice, discountAmount, payableTotal, coupon);
     setSubmitted(true);
     dispatch({ type: 'CLEAR_CART' });
@@ -437,9 +489,10 @@ export default function Checkout() {
 
             <button
               type="submit"
-              className="mt-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-semibold px-4 py-3 rounded-xl transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              disabled={isSubmitting}
+              className="mt-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-semibold px-4 py-3 rounded-xl transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Confirmar pedido â€” ${payableTotal.toFixed(2)}
+              {isSubmitting ? 'Procesando...' : `Confirmar pedido — $${payableTotal.toFixed(2)}`}
             </button>
           </form>
         </section>

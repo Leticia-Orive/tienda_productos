@@ -7,11 +7,14 @@ import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import useAuth from '../context/useAuth';
 import useCart from '../context/useCart';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 /**
  * Simulated password recovery page using local user storage.
  */
 export default function ForgotPassword() {
+  // WCAG 2.4.2: descriptive page title announced by screen readers on navigation.
+  useDocumentTitle('Recuperar contraseña');
   const { isAuthenticated, resetPassword } = useAuth();
   const { showToast } = useCart();
   const navigate = useNavigate();
@@ -27,6 +30,7 @@ export default function ForgotPassword() {
   const [touched, setTouched] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (isAuthenticated) {
     return <Navigate to="/" replace />;
@@ -103,8 +107,11 @@ export default function ForgotPassword() {
   };
 
   /** Handles password reset and returns user to login on success. */
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) {
+      return;
+    }
 
     const nextErrors = {
       email: validateField('email', form.email, form),
@@ -119,13 +126,15 @@ export default function ForgotPassword() {
       return;
     }
 
-    const result = resetPassword(form);
+    setIsSubmitting(true);
+    const result = await resetPassword(form);
 
     if (!result.ok) {
       const message = result.error || 'No se pudo restablecer la contraseÃ±a.';
       setSuccess('');
       setError(message);
       showToast(message, 'error');
+      setIsSubmitting(false);
       return;
     }
 
@@ -155,6 +164,7 @@ export default function ForgotPassword() {
               className={`rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
                 touched.email && fieldErrors.email ? 'border-red-400' : 'border-gray-300'
               }`}
+              disabled={isSubmitting}
               aria-invalid={Boolean(touched.email && fieldErrors.email)}
               aria-describedby={touched.email && fieldErrors.email ? 'forgot-email-error' : undefined}
               required
@@ -177,6 +187,7 @@ export default function ForgotPassword() {
               className={`rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
                 touched.password && fieldErrors.password ? 'border-red-400' : 'border-gray-300'
               }`}
+              disabled={isSubmitting}
               minLength={8}
               pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
               title="MÃ­nimo 8 caracteres, incluyendo mayÃºscula, minÃºscula y nÃºmero."
@@ -227,6 +238,7 @@ export default function ForgotPassword() {
               className={`rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
                 touched.confirmPassword && fieldErrors.confirmPassword ? 'border-red-400' : 'border-gray-300'
               }`}
+              disabled={isSubmitting}
               minLength={8}
               aria-invalid={Boolean(touched.confirmPassword && fieldErrors.confirmPassword)}
               aria-describedby={touched.confirmPassword && fieldErrors.confirmPassword ? 'forgot-confirm-password-error' : undefined}
@@ -250,9 +262,10 @@ export default function ForgotPassword() {
 
           <button
             type="submit"
+            disabled={isSubmitting}
             className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            Actualizar contraseÃ±a
+            {isSubmitting ? 'Actualizando...' : 'Actualizar contraseÃ±a'}
           </button>
         </form>
 

@@ -3,10 +3,11 @@
 // Entradas: Props, hooks de contexto y/o estado local segun el archivo.
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import useCart from '../context/useCart';
 import useProducts from '../context/useProducts';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 /* Maintenance guide:
  * - filteredOrders centralizes date/search/sort behavior for the whole page.
@@ -16,6 +17,7 @@ import useProducts from '../context/useProducts';
  */
 
 const ORDERS_STORAGE_KEY = 'tienda_react_orders';
+const MAX_ORDERS = 50;
 
 /**
  * Escapes CSV field values and wraps them in quotes when needed.
@@ -94,9 +96,26 @@ function getInitialOrders() {
   try {
     const rawOrders = localStorage.getItem(ORDERS_STORAGE_KEY);
     const parsed = rawOrders ? JSON.parse(rawOrders) : [];
-    return Array.isArray(parsed) ? parsed : [];
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+    return parsed.slice(0, MAX_ORDERS);
   } catch {
     return [];
+  }
+}
+
+/**
+ * Writes JSON data to localStorage safely.
+ * Prevents UI crashes when persistence fails.
+ * @param {string} key
+ * @param {unknown} value
+ */
+function safeWriteStorage(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Best-effort persistence only.
   }
 }
 
@@ -128,18 +147,31 @@ function normalizeSearchText(value) {
  * Orders page with local persistent history.
  */
 export default function Orders() {
+  // WCAG 2.4.2: descriptive page title announced by screen readers on navigation.
+  useDocumentTitle('Mis Pedidos');
   const { dispatch, showToast } = useCart();
   const { products } = useProducts();
   const [orders, setOrders] = useState(getInitialOrders);
   const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [dateFilter, setDateFilter] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
   const [expandedOrderIds, setExpandedOrderIds] = useState([]);
+  const [referenceNowMs] = useState(() => Date.now());
   const searchInputRef = useRef(null);
 
   useEffect(() => {
-    localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
+    safeWriteStorage(ORDERS_STORAGE_KEY, orders.slice(0, MAX_ORDERS));
   }, [orders]);
+
+  useEffect(() => {
+    // Debounce keeps filtering responsive on large order histories.
+    const timeoutId = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 220);
+
+    return () => clearTimeout(timeoutId);
+  }, [search]);
 
   useEffect(() => {
     /** Shortcut: press / to focus orders search when not typing in a field. */
@@ -156,43 +188,44 @@ export default function Orders() {
     return () => window.removeEventListener('keydown', handleKeydown);
   }, []);
 
-  const clearOrders = () => {
+  const clearOrders = useCallback(() => {
     const shouldClear = window.confirm('Esta accion eliminara todo tu historial de pedidos. Deseas continuar?');
     if (!shouldClear) {
       return;
     }
     setOrders([]);
+    setExpandedOrderIds([]);
     showToast('Historial de pedidos eliminado', 'info');
-  };
+  }, [showToast]);
 
-  const clearFilters = () => {
+  const clearFilters = useCallback(() => {
     setSearch('');
     setDateFilter('all');
     setSortBy('newest');
-  };
+  }, []);
 
   /**
    * Toggles expanded details for a single order card.
    * @param {string} orderId
    */
-  const toggleOrderExpanded = (orderId) => {
+  const toggleOrderExpanded = useCallback((orderId) => {
     setExpandedOrderIds((prev) => (
       prev.includes(orderId)
         ? prev.filter((id) => id !== orderId)
         : [...prev, orderId]
     ));
-  };
+  }, []);
 
   const productById = useMemo(() => new Map(products.map((product) => [product.id, product])), [products]);
 
   const filteredOrders = useMemo(() => {
-    const searchValue = normalizeSearchText(search.trim());
+    const searchValue = normalizeSearchText(debouncedSearch.trim());
 
     const filtered = orders.filter((order) => {
       if (dateFilter !== 'all') {
         const days = Number.parseInt(dateFilter, 10);
         const createdAtMs = new Date(order.createdAt).getTime();
-        if (Number.isNaN(createdAtMs) || Date.now() - createdAtMs > days * 24 * 60 * 60 * 1000) {
+        if (Number.isNaN(createdAtMs) || referenceNowMs - createdAtMs > days * 24 * 60 * 60 * 1000) {
           return false;
         }
       }
@@ -223,7 +256,7 @@ export default function Orders() {
       }
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
-  }, [dateFilter, orders, search, sortBy]);
+  }, [dateFilter, debouncedSearch, orders, referenceNowMs, sortBy]);
 
   const stats = useMemo(() => {
     const totalOrders = filteredOrders.length;
@@ -232,7 +265,7 @@ export default function Orders() {
     return { totalOrders, totalSpent, totalSaved };
   }, [filteredOrders]);
 
-  const handleReorder = (order) => {
+  const handleReorder = useCallback((order) => {
     const items = order.items.map((item) => {
       const product = productById.get(item.id);
       return {
@@ -248,25 +281,25 @@ export default function Orders() {
 
     dispatch({ type: 'ADD_ORDER_ITEMS', payload: { items } });
     showToast(`Pedido #${order.id} agregado nuevamente al carrito`, 'success');
-  };
+  }, [dispatch, productById, showToast]);
 
   /**
    * Copies order id to clipboard for quick support sharing.
    * @param {string} orderId
    */
-  const handleCopyOrderId = async (orderId) => {
+  const handleCopyOrderId = useCallback(async (orderId) => {
     try {
       await navigator.clipboard.writeText(String(orderId));
       showToast(`ID de pedido #${orderId} copiado`, 'success');
     } catch {
       showToast('No se pudo copiar el ID del pedido', 'error');
     }
-  };
+  }, [showToast]);
 
   /**
    * Exports currently visible orders to a UTF-8 CSV file.
    */
-  const handleExportVisibleOrders = () => {
+  const handleExportVisibleOrders = useCallback(() => {
     if (filteredOrders.length === 0) {
       showToast('No hay pedidos visibles para exportar', 'info');
       return;
@@ -278,12 +311,12 @@ export default function Orders() {
     downloadTextFile(csvWithBom, `pedidos-${date}.csv`, 'text/csv;charset=utf-8;');
 
     showToast(`CSV exportado con ${filteredOrders.length} pedido${filteredOrders.length !== 1 ? 's' : ''}`, 'success');
-  };
+  }, [filteredOrders, showToast]);
 
   /**
    * Exports currently visible orders as pretty JSON.
    */
-  const handleExportVisibleOrdersJson = () => {
+  const handleExportVisibleOrdersJson = useCallback(() => {
     if (filteredOrders.length === 0) {
       showToast('No hay pedidos visibles para exportar', 'info');
       return;
@@ -293,7 +326,7 @@ export default function Orders() {
     const jsonContent = `${JSON.stringify(filteredOrders, null, 2)}\n`;
     downloadTextFile(jsonContent, `pedidos-${date}.json`, 'application/json;charset=utf-8;');
     showToast(`JSON exportado con ${filteredOrders.length} pedido${filteredOrders.length !== 1 ? 's' : ''}`, 'success');
-  };
+  }, [filteredOrders, showToast]);
 
   if (orders.length === 0) {
     return (

@@ -4,6 +4,7 @@
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
 import { Link, useNavigate } from 'react-router-dom';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const QUICK_CATEGORIES = [
   { label: 'ElectrÃ³nica', query: 'ElectrÃ³nica' },
@@ -18,6 +19,8 @@ const QUICK_CATEGORIES = [
  * Fallback page for unknown routes with illustrated header.
  */
 export default function NotFound() {
+  // WCAG 2.4.2: descriptive page title announced by screen readers on navigation.
+  useDocumentTitle('Página no encontrada');
   const navigate = useNavigate();
 
   return (

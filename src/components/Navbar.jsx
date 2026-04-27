@@ -22,7 +22,13 @@ export default function Navbar() {
 
   /** Ends session and routes user to login view. */
   const handleLogout = () => {
-    logout();
+    logout({
+      broadcastNotice: {
+        message: 'Tu sesion se cerro manualmente desde otra pestana.',
+        type: 'info',
+        code: 'manual_logout',
+      },
+    });
     navigate('/login', { replace: true });
   };
 

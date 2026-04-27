@@ -3,7 +3,7 @@
 // Entradas: Props, hooks de contexto y/o estado local segun el archivo.
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
-import { memo } from 'react';
+import { memo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useCart from '../context/useCart';
 import useAuth from '../context/useAuth';
@@ -31,22 +31,26 @@ function ProductCard({
   const cartItem = cart.find((item) => item.id === product.id);
   const cartQuantity = cartItem ? cartItem.quantity : 0;
 
-  const handleAdd = () => {
+  /**
+   * Adds the product to the cart. Wrapped in useCallback so memo(ProductCard)
+   * skips re-renders when the parent re-renders without changing product data.
+   */
+  const handleAdd = useCallback(() => {
     dispatch({ type: 'ADD_ITEM', payload: product });
     showToast(`Agregaste "${product.name}" al carrito`, 'success');
-  };
+  }, [dispatch, product, showToast]);
 
   /** Muestra un resumen rapido del producto al usuario. */
-  const handleView = () => {
+  const handleView = useCallback(() => {
     navigate(`/producto/${product.id}`);
-  };
+  }, [navigate, product.id]);
 
   /** Agrega el producto y envia al checkout para compra rapida. */
-  const handleBuy = () => {
+  const handleBuy = useCallback(() => {
     dispatch({ type: 'ADD_ITEM', payload: product });
     showToast(`"${product.name}" listo para comprar`, 'success');
     navigate('/checkout');
-  };
+  }, [dispatch, navigate, product, showToast]);
 
   return (
     <article

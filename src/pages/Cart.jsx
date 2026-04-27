@@ -6,8 +6,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ConfirmDialog from '../components/ConfirmDialog';
+import { MAX_ITEM_QUANTITY } from '../context/CartContext';
 import { COUPONS } from '../data/coupons';
 import useCart from '../context/useCart';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 /* Maintenance guide:
  * - Quantity changes and remove actions dispatch directly to CartContext reducer.
@@ -21,6 +23,8 @@ import useCart from '../context/useCart';
  * Allows removing items and navigating to checkout.
  */
 export default function Cart() {
+  // WCAG 2.4.2: descriptive page title announced by screen readers on navigation.
+  useDocumentTitle('Carrito');
   const navigate = useNavigate();
   const {
     cart,
@@ -165,7 +169,9 @@ export default function Cart() {
                   <button
                     type="button"
                     onClick={() => handleQuantity(item.id, item.quantity + 1)}
-                    className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold transition focus-visible:outline-2 focus-visible:outline-indigo-600"
+                    // Disabled when the cap is reached to prevent silent no-ops that confuse users.
+                    disabled={item.quantity >= MAX_ITEM_QUANTITY}
+                    className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold transition focus-visible:outline-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
                     aria-label={`Aumentar cantidad de ${item.name}`}
                   >
                     +

@@ -3,11 +3,13 @@
 // Entradas: Props, hooks de contexto y/o estado local segun el archivo.
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ConfirmDialog from '../components/ConfirmDialog';
 import ProductCard from '../components/ProductCard';
+import useAuth from '../context/useAuth';
 import useCart from '../context/useCart';
 import useProducts from '../context/useProducts';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 /* Maintenance guide:
  * - List behavior is driven by searchedProducts -> filteredProducts -> paginatedProducts.
@@ -18,6 +20,7 @@ import useProducts from '../context/useProducts';
 
 const ADMIN_SELECTION_STORAGE_KEY = 'tienda_react_admin_selected_products';
 const ADMIN_LIST_SETTINGS_STORAGE_KEY = 'tienda_react_admin_list_settings';
+const AUTH_AUDIT_STORAGE_KEY = 'tienda_react_auth_audit';
 const ALLOWED_PAGE_SIZES = [12, 24, 48];
 
 /** Reads persisted selected product ids safely. */
@@ -124,11 +127,42 @@ function downloadTextFile(content, fileName, mimeType) {
   URL.revokeObjectURL(url);
 }
 
+/** Formats auth audit timestamps in a locale-friendly way. */
+function formatAuditTimestamp(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return 'Fecha no disponible';
+  }
+
+  return new Intl.DateTimeFormat('es-ES', {
+    dateStyle: 'short',
+    timeStyle: 'medium',
+  }).format(date);
+}
+
+/** Builds CSV content for auth activity audit entries. */
+function buildAuthAuditCsv(entries) {
+  const headers = ['id', 'timestamp_iso', 'codigo', 'tipo', 'origen', 'mensaje'];
+  const rows = entries.map((entry) => [
+    escapeCsvCell(entry.id),
+    escapeCsvCell(entry.at),
+    escapeCsvCell(entry.code),
+    escapeCsvCell(entry.type),
+    escapeCsvCell(entry.source),
+    escapeCsvCell(entry.message),
+  ].join(','));
+
+  return [headers.join(','), ...rows].join('\n');
+}
+
 /**
  * Product administration page for admin users.
  */
 export default function AdminProducts() {
+  // WCAG 2.4.2: descriptive page title announced by screen readers on navigation.
+  useDocumentTitle('Admin — Productos');
   const { showToast, removeProductReferences } = useCart();
+  const { getAuthAuditTrail, clearAuthAuditTrail } = useAuth();
   const { products, categories, addProduct, updateProduct, deleteProduct } = useProducts();
   const initialListSettings = getInitialAdminListSettings();
 
@@ -162,6 +196,8 @@ export default function AdminProducts() {
   const [touched, setTouched] = useState({});
   const [formError, setFormError] = useState('');
   const [imagePreviewBrokenUrl, setImagePreviewBrokenUrl] = useState('');
+  const [authAuditEntries, setAuthAuditEntries] = useState(() => getAuthAuditTrail());
+  const [showFullAudit, setShowFullAudit] = useState(false);
   const searchInputRef = useRef(null);
   const activeCategorySafe = categories.includes(activeCategory) ? activeCategory : 'Todos';
   const previewImageUrl = getPreviewImageUrl(formData.image);
@@ -268,6 +304,69 @@ export default function AdminProducts() {
     () => buildPaginationItems(totalPages, safeCurrentPage),
     [safeCurrentPage, totalPages]
   );
+
+  const visibleAuditEntries = useMemo(
+    () => authAuditEntries.slice(0, showFullAudit ? 24 : 8),
+    [authAuditEntries, showFullAudit]
+  );
+
+  const refreshAuthAudit = useCallback(() => {
+    setAuthAuditEntries(getAuthAuditTrail());
+  }, [getAuthAuditTrail]);
+
+  useEffect(() => {
+    const handleStorage = (event) => {
+      if (event.key === AUTH_AUDIT_STORAGE_KEY) {
+        refreshAuthAudit();
+      }
+    };
+
+    const handleFocus = () => {
+      refreshAuthAudit();
+    };
+
+    window.addEventListener('storage', handleStorage);
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [refreshAuthAudit]);
+
+  /** Clears all persisted auth audit entries from local storage. */
+  const handleClearAuthAudit = () => {
+    clearAuthAuditTrail();
+    setAuthAuditEntries([]);
+    showToast('Historial de actividad de sesion limpiado.', 'info');
+  };
+
+  /** Exports auth activity audit entries as a CSV file. */
+  const handleExportAuthAuditCsv = () => {
+    if (authAuditEntries.length === 0) {
+      showToast('No hay actividad de sesion para exportar.', 'info');
+      return;
+    }
+
+    const csv = buildAuthAuditCsv(authAuditEntries);
+    const csvWithBom = `\uFEFF${csv}`;
+    const date = new Date().toISOString().slice(0, 10);
+    downloadTextFile(csvWithBom, `actividad-sesion-${date}.csv`, 'text/csv;charset=utf-8;');
+    showToast(`CSV de actividad exportado (${authAuditEntries.length} eventos).`, 'success');
+  };
+
+  /** Exports auth activity audit entries as a JSON file. */
+  const handleExportAuthAuditJson = () => {
+    if (authAuditEntries.length === 0) {
+      showToast('No hay actividad de sesion para exportar.', 'info');
+      return;
+    }
+
+    const date = new Date().toISOString().slice(0, 10);
+    const json = `${JSON.stringify(authAuditEntries, null, 2)}\n`;
+    downloadTextFile(json, `actividad-sesion-${date}.json`, 'application/json;charset=utf-8;');
+    showToast(`JSON de actividad exportado (${authAuditEntries.length} eventos).`, 'success');
+  };
 
   /**
    * Validates one form field and returns an error message if needed.
@@ -827,6 +926,88 @@ export default function AdminProducts() {
           <p className="text-xs uppercase tracking-wide text-amber-600 mb-1">Seleccionados</p>
           <p className="text-2xl font-bold text-amber-700">{validSelectedProductIds.length}</p>
         </div>
+      </section>
+
+      <section className="mb-6 rounded-2xl border border-slate-200 bg-white p-4" aria-label="Actividad de sesiÃ³n">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900">Actividad de sesiÃ³n</h2>
+            <p className="text-xs text-slate-500">Eventos recientes de autenticaciÃ³n y cierre de sesiÃ³n.</p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={refreshAuthAudit}
+              className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-50"
+            >
+              Actualizar
+            </button>
+            <button
+              type="button"
+              onClick={handleExportAuthAuditCsv}
+              disabled={authAuditEntries.length === 0}
+              className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Exportar CSV
+            </button>
+            <button
+              type="button"
+              onClick={handleExportAuthAuditJson}
+              disabled={authAuditEntries.length === 0}
+              className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Exportar JSON
+            </button>
+            <button
+              type="button"
+              onClick={handleClearAuthAudit}
+              className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 transition hover:bg-red-100"
+            >
+              Limpiar
+            </button>
+          </div>
+        </div>
+
+        {visibleAuditEntries.length === 0 ? (
+          <p className="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-3 py-3 text-sm text-slate-600">
+            No hay eventos registrados por ahora.
+          </p>
+        ) : (
+          <>
+            <ul className="space-y-2" role="list">
+              {visibleAuditEntries.map((entry) => {
+                const badgeClass = entry.type === 'error'
+                  ? 'bg-red-100 text-red-700 border-red-200'
+                  : entry.type === 'success'
+                    ? 'bg-emerald-100 text-emerald-700 border-emerald-200'
+                    : 'bg-slate-100 text-slate-700 border-slate-200';
+
+                return (
+                  <li key={entry.id} className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className={`rounded-full border px-2 py-0.5 text-xs font-semibold ${badgeClass}`}>
+                        {entry.code}
+                      </span>
+                      <span className="text-xs text-slate-500">{formatAuditTimestamp(entry.at)}</span>
+                      <span className="ml-auto text-[11px] uppercase tracking-wide text-slate-400">{entry.source}</span>
+                    </div>
+                    <p className="mt-1 text-sm text-slate-700">{entry.message}</p>
+                  </li>
+                );
+              })}
+            </ul>
+
+            {authAuditEntries.length > 8 && (
+              <button
+                type="button"
+                onClick={() => setShowFullAudit((prev) => !prev)}
+                className="mt-3 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+              >
+                {showFullAudit ? 'Ver menos' : `Ver mÃ¡s (${Math.min(24, authAuditEntries.length)})`}
+              </button>
+            )}
+          </>
+        )}
       </section>
 
       <section className="mb-8 rounded-2xl border border-indigo-200 bg-indigo-50/40 p-4" aria-label="GestiÃ³n de productos">

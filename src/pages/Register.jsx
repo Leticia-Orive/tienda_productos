@@ -7,12 +7,15 @@ import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import useAuth from '../context/useAuth';
 import useCart from '../context/useCart';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 /**
  * Registration page to create a new local account.
  * Accessibility: labels and alerts are provided for all fields and errors.
  */
 export default function Register() {
+  // WCAG 2.4.2: descriptive page title announced by screen readers on navigation.
+  useDocumentTitle('Registro');
   const { isAuthenticated, register } = useAuth();
   const { showToast } = useCart();
   const navigate = useNavigate();
@@ -28,6 +31,7 @@ export default function Register() {
   const [touched, setTouched] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (isAuthenticated) {
     return <Navigate to="/" replace />;
@@ -109,8 +113,11 @@ export default function Register() {
   };
 
   /** Handles user registration and redirects to home on success. */
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) {
+      return;
+    }
 
     const nextErrors = {
       name: validateField('name', form.name, form),
@@ -126,12 +133,14 @@ export default function Register() {
       return;
     }
 
-    const result = register(form);
+    setIsSubmitting(true);
+    const result = await register(form);
 
     if (!result.ok) {
       const message = result.error || 'No se pudo completar el registro.';
       setError(message);
       showToast(message, 'error');
+      setIsSubmitting(false);
       return;
     }
 
@@ -160,6 +169,7 @@ export default function Register() {
               className={`rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
                 touched.name && fieldErrors.name ? 'border-red-400' : 'border-gray-300'
               }`}
+              disabled={isSubmitting}
               minLength={2}
               aria-invalid={Boolean(touched.name && fieldErrors.name)}
               aria-describedby={touched.name && fieldErrors.name ? 'name-error' : undefined}
@@ -183,6 +193,7 @@ export default function Register() {
               className={`rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
                 touched.email && fieldErrors.email ? 'border-red-400' : 'border-gray-300'
               }`}
+              disabled={isSubmitting}
               aria-invalid={Boolean(touched.email && fieldErrors.email)}
               aria-describedby={touched.email && fieldErrors.email ? 'register-email-error' : undefined}
               required
@@ -198,10 +209,13 @@ export default function Register() {
               id="password"
               type={showPassword ? 'text' : 'password'}
               name="password"
+              value={form.password}
+              onChange={(e) => handleInputChange('password', e.target.value)}
               onBlur={() => handleBlur('password')}
               className={`rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
                 touched.password && fieldErrors.password ? 'border-red-400' : 'border-gray-300'
               }`}
+              disabled={isSubmitting}
               minLength={8}
               pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
               title="MÃ­nimo 8 caracteres, incluyendo mayÃºscula, minÃºscula y nÃºmero."
@@ -252,6 +266,7 @@ export default function Register() {
               className={`rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
                 touched.confirmPassword && fieldErrors.confirmPassword ? 'border-red-400' : 'border-gray-300'
               }`}
+              disabled={isSubmitting}
               minLength={8}
               aria-invalid={Boolean(touched.confirmPassword && fieldErrors.confirmPassword)}
               aria-describedby={touched.confirmPassword && fieldErrors.confirmPassword ? 'register-confirm-password-error' : undefined}
@@ -276,9 +291,10 @@ export default function Register() {
 
           <button
             type="submit"
+            disabled={isSubmitting}
             className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            Registrarme
+            {isSubmitting ? 'Creando cuenta...' : 'Registrarme'}
           </button>
         </form>
 

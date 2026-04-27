@@ -3,7 +3,7 @@
 // Entradas: Props, hooks de contexto y/o estado local segun el archivo.
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
-import { useMemo, useEffect, useReducer, useState } from 'react';
+import { useMemo, useCallback, useEffect, useReducer, useState } from 'react';
 import { CartContext } from './CartStateContext';
 import { findCoupon, calcDiscount } from '../data/coupons';
 
@@ -13,6 +13,13 @@ import { findCoupon, calcDiscount } from '../data/coupons';
  */
 const CART_STORAGE_KEY = 'tienda_react_cart';
 const FAVORITES_STORAGE_KEY = 'tienda_react_favorites';
+
+/**
+ * Maximum quantity allowed per cart line item.
+ * Prevents runaway quantities caused by rapid clicks or re-order abuse.
+ * Exported so UI components can reflect the same limit (e.g., disable the + button).
+ */
+export const MAX_ITEM_QUANTITY = 99;
 
 /**
  * Reads persisted cart from localStorage safely.
@@ -42,6 +49,20 @@ function getInitialFavorites() {
 }
 
 /**
+ * Writes JSON data to localStorage safely.
+ * Prevents runtime crashes in restricted storage environments.
+ * @param {string} key
+ * @param {unknown} value
+ */
+function safeWriteStorage(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Best-effort persistence only.
+  }
+}
+
+/**
  * Reducer that handles all cart actions.
  * @param {Array} state - Current cart items array.
  * @param {{ type: string, payload: object }} action - Dispatched action.
@@ -52,9 +73,10 @@ function cartReducer(state, action) {
     case 'ADD_ITEM': {
       const existing = state.find((item) => item.id === action.payload.id);
       if (existing) {
+        // Cap at MAX_ITEM_QUANTITY to prevent quantity overflow from rapid clicks.
         return state.map((item) =>
           item.id === action.payload.id
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: Math.min(item.quantity + 1, MAX_ITEM_QUANTITY) }
             : item
         );
       }
@@ -66,9 +88,11 @@ function cartReducer(state, action) {
       if (action.payload.quantity <= 0) {
         return state.filter((item) => item.id !== action.payload.id);
       }
+      // Clamp between 1 and MAX_ITEM_QUANTITY so external dispatches can't exceed the cap.
+      const clampedQty = Math.min(Math.max(1, action.payload.quantity), MAX_ITEM_QUANTITY);
       return state.map((item) =>
         item.id === action.payload.id
-          ? { ...item, quantity: action.payload.quantity }
+          ? { ...item, quantity: clampedQty }
           : item
       );
     }
@@ -91,7 +115,8 @@ function cartReducer(state, action) {
         const existing = byId.get(item.id);
 
         if (existing) {
-          byId.set(item.id, { ...existing, quantity: existing.quantity + quantity });
+          // Also cap re-ordered quantities to prevent overflow.
+          byId.set(item.id, { ...existing, quantity: Math.min(existing.quantity + quantity, MAX_ITEM_QUANTITY) });
           return;
         }
 
@@ -116,11 +141,11 @@ export function CartProvider({ children }) {
   const [favorites, setFavorites] = useState(getInitialFavorites);
 
   useEffect(() => {
-    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
+    safeWriteStorage(CART_STORAGE_KEY, cart);
   }, [cart]);
 
   useEffect(() => {
-    localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify(favorites));
+    safeWriteStorage(FAVORITES_STORAGE_KEY, favorites);
   }, [favorites]);
 
   // Derive effective coupon: auto-invalidate when cart empties.
@@ -143,16 +168,19 @@ export function CartProvider({ children }) {
 
   /**
    * Shows a toast message for user feedback.
+   * Wrapped in useCallback so memo'd children (e.g. ProductCard) never re-render
+   * just because CartProvider re-rendered for an unrelated state change.
    * @param {string} message
    * @param {'info' | 'success' | 'error'} type
    */
-  const showToast = (message, type = 'info') => {
+  const showToast = useCallback((message, type = 'info') => {
     setToast({ message, type });
-  };
+  }, []);
 
-  const dismissToast = () => {
+  /** Clears the current toast. Stable reference — safe to use in dependency arrays. */
+  const dismissToast = useCallback(() => {
     setToast({ message: '', type: 'info' });
-  };
+  }, []);
 
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -165,7 +193,8 @@ export function CartProvider({ children }) {
    * @param {string} rawCode
    * @returns {boolean} Whether the code was valid.
    */
-  const applyCoupon = (rawCode) => {
+  // useCallback: only changes when coupon or showToast changes, preventing spurious re-renders.
+  const applyCoupon = useCallback((rawCode) => {
     const found = findCoupon(rawCode);
     if (!found) {
       showToast('CupÃ³n invÃ¡lido o no existe', 'error');
@@ -178,26 +207,29 @@ export function CartProvider({ children }) {
     setCoupon(found);
     showToast(`CupÃ³n "${found.code}" aplicado â€” ${found.label}`, 'success');
     return true;
-  };
+  }, [coupon, showToast]);
 
   /** Removes the active coupon. */
-  const removeCoupon = () => {
+  const removeCoupon = useCallback(() => {
     setCoupon(null);
-    showToast('CupÃ³n eliminado', 'info');
-  };
+    showToast('Cupón eliminado', 'info');
+  }, [showToast]);
 
   /**
    * Returns whether a product id is currently in favorites.
    * @param {number | string} productId
    * @returns {boolean}
    */
-  const isFavorite = (productId) => favorites.includes(productId);
+  // useCallback: stable as long as the favorites array reference doesn't change.
+  const isFavorite = useCallback((productId) => favorites.includes(productId), [favorites]);
 
   /**
    * Toggles a product id in favorites and notifies the user.
+   * Depends on favorites (to detect whether the product already exists) and
+   * showToast (stable — useCallback with empty deps).
    * @param {{ id: number | string, name: string }} product
    */
-  const toggleFavorite = (product) => {
+  const toggleFavorite = useCallback((product) => {
     const exists = favorites.includes(product.id);
 
     if (exists) {
@@ -208,10 +240,10 @@ export function CartProvider({ children }) {
 
     setFavorites((prev) => [...prev, product.id]);
     showToast(`Agregaste "${product.name}" a favoritos`, 'success');
-  };
+  }, [favorites, showToast]);
 
   /** Clears all favorites in one action with a single feedback toast. */
-  const clearFavorites = () => {
+  const clearFavorites = useCallback(() => {
     if (favorites.length === 0) {
       showToast('No hay favoritos para quitar', 'info');
       return;
@@ -220,10 +252,10 @@ export function CartProvider({ children }) {
     const removedCount = favorites.length;
     setFavorites([]);
     showToast(`Quitaste ${removedCount} favorito${removedCount !== 1 ? 's' : ''}`, 'info');
-  };
+  }, [favorites, showToast]);
 
   /** Restores favorites from a previous snapshot for undo operations. */
-  const restoreFavorites = (snapshotIds) => {
+  const restoreFavorites = useCallback((snapshotIds) => {
     if (!Array.isArray(snapshotIds) || snapshotIds.length === 0) {
       showToast('No hay favoritos para restaurar', 'info');
       return;
@@ -233,19 +265,64 @@ export function CartProvider({ children }) {
     const restored = Array.from(new Set(snapshotIds));
     setFavorites(restored);
     showToast(`Favoritos restaurados (${restored.length})`, 'success');
-  };
+  }, [showToast]);
 
   /**
    * Removes all references to a product from cart and favorites.
    * @param {number | string} productId
    */
-  const removeProductReferences = (productId) => {
+  // useCallback with empty deps: dispatch is stable (from useReducer), setFavorites too.
+  const removeProductReferences = useCallback((productId) => {
     dispatch({ type: 'REMOVE_ITEM', payload: { id: productId } });
     setFavorites((prev) => prev.filter((id) => id !== productId));
-  };
+  }, []);
+
+  // Generated by GitHub Copilot
+  // Memoize provider value so consumers only re-render when relevant data changes.
+  const contextValue = useMemo(() => ({
+    cart,
+    dispatch,
+    totalItems,
+    totalPrice,
+    discountAmount,
+    finalPrice,
+    coupon: effectiveCoupon,
+    applyCoupon,
+    removeCoupon,
+    favorites,
+    favoriteCount,
+    isFavorite,
+    toggleFavorite,
+    clearFavorites,
+    restoreFavorites,
+    removeProductReferences,
+    toast,
+    showToast,
+    dismissToast,
+  }), [
+    applyCoupon,
+    cart,
+    clearFavorites,
+    discountAmount,
+    dismissToast,
+    dispatch,
+    effectiveCoupon,
+    favoriteCount,
+    favorites,
+    finalPrice,
+    isFavorite,
+    removeCoupon,
+    removeProductReferences,
+    restoreFavorites,
+    showToast,
+    toast,
+    toggleFavorite,
+    totalItems,
+    totalPrice,
+  ]);
 
   return (
-    <CartContext.Provider value={{ cart, dispatch, totalItems, totalPrice, discountAmount, finalPrice, coupon: effectiveCoupon, applyCoupon, removeCoupon, favorites, favoriteCount, isFavorite, toggleFavorite, clearFavorites, restoreFavorites, removeProductReferences, toast, showToast }}>
+    <CartContext.Provider value={contextValue}>
       {children}
     </CartContext.Provider>
   );

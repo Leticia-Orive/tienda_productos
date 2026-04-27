@@ -3,12 +3,48 @@
 // Entradas: Props, hooks de contexto y/o estado local segun el archivo.
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../context/useAuth';
 import useCart from '../context/useCart';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const REMEMBERED_EMAIL_KEY = 'tienda_react_remembered_email';
+const SESSION_EXPIRED_STORAGE_KEY = 'tienda_react_auth_session_expired';
+const SESSION_EXPIRED_REDIRECT_STORAGE_KEY = 'tienda_react_auth_session_expired_redirect';
+
+/**
+ * Ensures redirect path stays inside app routes.
+ * @param {string} value
+ * @returns {string}
+ */
+function sanitizeRedirectPath(value) {
+  const raw = String(value || '').trim();
+  if (!raw.startsWith('/') || raw.startsWith('//') || /[\r\n\t]/.test(raw)) {
+    return '/';
+  }
+  return raw;
+}
+
+/**
+ * Reads and clears expired-session metadata in one pass.
+ * @returns {{ expired: boolean, redirectPath: string }}
+ */
+function consumeExpiredSessionContext() {
+  try {
+    const expired = localStorage.getItem(SESSION_EXPIRED_STORAGE_KEY) === '1';
+    const redirectPath = expired
+      ? sanitizeRedirectPath(localStorage.getItem(SESSION_EXPIRED_REDIRECT_STORAGE_KEY))
+      : '/';
+
+    localStorage.removeItem(SESSION_EXPIRED_STORAGE_KEY);
+    localStorage.removeItem(SESSION_EXPIRED_REDIRECT_STORAGE_KEY);
+
+    return { expired, redirectPath };
+  } catch {
+    return { expired: false, redirectPath: '/' };
+  }
+}
 
 function getSavedEmail() {
   try {
@@ -23,6 +59,8 @@ function getSavedEmail() {
  * Accessibility: fields are labeled and errors are announced.
  */
 export default function Login() {
+  // WCAG 2.4.2: descriptive page title announced by screen readers on navigation.
+  useDocumentTitle('Iniciar sesión');
   const { isAuthenticated, login } = useAuth();
   const { showToast } = useCart();
   const location = useLocation();
@@ -34,8 +72,16 @@ export default function Login() {
   const [touched, setTouched] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [rememberEmail, setRememberEmail] = useState(() => Boolean(getSavedEmail()));
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [expiredSessionContext] = useState(consumeExpiredSessionContext);
 
-  const redirectTo = location.state?.from?.pathname || null;
+  useEffect(() => {
+    if (expiredSessionContext.expired) {
+      showToast('Sesion cerrada por inactividad. Inicia sesion nuevamente.', 'info');
+    }
+  }, [expiredSessionContext.expired, showToast]);
+
+  const redirectTo = location.state?.from?.pathname || expiredSessionContext.redirectPath || '/';
 
   if (isAuthenticated) {
     return <Navigate to={redirectTo} replace />;
@@ -60,8 +106,12 @@ export default function Login() {
   };
 
   /** Handles login form submission and redirects to previous route. */
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isSubmitting) {
+      return;
+    }
+
     const nextErrors = {
       email: validateField('email', form.email),
       password: validateField('password', form.password),
@@ -74,12 +124,14 @@ export default function Login() {
       return;
     }
 
-    const result = login(form);
+    setIsSubmitting(true);
+    const result = await login(form);
 
     if (!result.ok) {
       const message = result.error || 'No se pudo iniciar sesiÃ³n.';
       setError(message);
       showToast(message, 'error');
+      setIsSubmitting(false);
       return;
     }
 
@@ -128,6 +180,7 @@ export default function Login() {
               className={`rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
                 touched.email && fieldErrors.email ? 'border-red-400' : 'border-gray-300'
               }`}
+              disabled={isSubmitting}
               aria-invalid={Boolean(touched.email && fieldErrors.email)}
               aria-describedby={touched.email && fieldErrors.email ? 'email-error' : undefined}
               required
@@ -161,6 +214,7 @@ export default function Login() {
               className={`rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
                 touched.password && fieldErrors.password ? 'border-red-400' : 'border-gray-300'
               }`}
+              disabled={isSubmitting}
               minLength={8}
               aria-invalid={Boolean(touched.password && fieldErrors.password)}
               aria-describedby={touched.password && fieldErrors.password ? 'password-error' : undefined}
@@ -188,6 +242,7 @@ export default function Login() {
               type="checkbox"
               checked={rememberEmail}
               onChange={(e) => setRememberEmail(e.target.checked)}
+              disabled={isSubmitting}
               className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
             />
             Recordar mi correo
@@ -195,9 +250,10 @@ export default function Login() {
 
           <button
             type="submit"
+            disabled={isSubmitting}
             className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            Entrar
+            {isSubmitting ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
 

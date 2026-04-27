@@ -8,6 +8,7 @@ import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import useCart from '../context/useCart';
 import useAuth from '../context/useAuth';
 import useProducts from '../context/useProducts';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 /**
  * Copies text to clipboard with a fallback for browsers without clipboard API.
@@ -62,11 +63,15 @@ export default function ProductDetail() {
   const [shareState, setShareState] = useState('idle');
 
   const productId = parseProductId(id);
+  // Resolve product early so the dynamic title can be set before any early returns.
+  const product = products.find((item) => item.id === productId);
+  // WCAG 2.4.2: title updates reactively as soon as the product is resolved.
+  useDocumentTitle(product ? product.name : 'Producto');
+
   if (!productId) {
     return <Navigate to="/not-found" replace />;
   }
 
-  const product = products.find((item) => item.id === productId);
   if (!product) {
     return <Navigate to="/not-found" replace />;
   }
@@ -75,7 +80,6 @@ export default function ProductDetail() {
     .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, 3);
 
-  const isInCart = cart.some((item) => item.id === product.id);
   const cartItem = cart.find((item) => item.id === product.id);
   const favorite = isFavorite(product.id);
 
