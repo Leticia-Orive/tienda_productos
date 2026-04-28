@@ -128,7 +128,7 @@ export default function Login() {
     const result = await login(form);
 
     if (!result.ok) {
-      const message = result.error || 'No se pudo iniciar sesiÃ³n.';
+      const message = result.error || 'No se pudo iniciar sesión.';
       setError(message);
       showToast(message, 'error');
       setIsSubmitting(false);
@@ -137,7 +137,7 @@ export default function Login() {
 
     setError('');
     const roleLabel = result.role === 'admin' ? 'administrador' : 'cliente';
-    showToast(`SesiÃ³n iniciada como ${roleLabel}`, 'success');
+    showToast(`Sesión iniciada como ${roleLabel}`, 'success');
     try {
       if (rememberEmail) {
         localStorage.setItem(REMEMBERED_EMAIL_KEY, form.email.trim());
@@ -191,7 +191,7 @@ export default function Login() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="password" className="text-sm font-medium text-gray-700">ContraseÃ±a</label>
+            <label htmlFor="password" className="text-sm font-medium text-gray-700">Contraseña</label>
             <input
               id="password"
               type={showPassword ? 'text' : 'password'}
@@ -224,9 +224,9 @@ export default function Login() {
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
               className="mt-1 text-xs text-indigo-600 hover:text-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-fit"
-              aria-label={showPassword ? 'Ocultar contraseÃ±a' : 'Mostrar contraseÃ±a'}
+              aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
             >
-              {showPassword ? 'Ocultar contraseÃ±a' : 'Mostrar contraseÃ±a'}
+              {showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
             </button>
             {touched.password && fieldErrors.password && (
               <p id="password-error" className="text-xs text-red-600" role="alert">{fieldErrors.password}</p>
@@ -262,17 +262,17 @@ export default function Login() {
             to="/recuperar"
             className="font-medium text-indigo-600 underline underline-offset-2 hover:text-indigo-700"
           >
-            Â¿Olvidaste tu contraseÃ±a?
+            ¿Olvidaste tu contraseña?
           </Link>
         </p>
 
         <p className="mt-5 text-sm text-gray-600">
-          Â¿No tienes cuenta?{' '}
+          ¿No tienes cuenta?{' '}
           <Link
             to="/registro"
             className="font-medium text-indigo-600 underline underline-offset-2 hover:text-indigo-700"
           >
-            RegÃ­strate
+            Regístrate
           </Link>
         </p>
       </section>

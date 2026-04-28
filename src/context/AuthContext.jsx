@@ -639,12 +639,13 @@ export function AuthProvider({ children }) {
 
   /**
    * Registers a new user and starts authenticated session.
-   * @param {{ name: string, email: string, password: string, confirmPassword: string }} payload
+   * @param {{ name: string, email: string, password: string, confirmPassword: string, role?: string }} payload
    * @returns {{ ok: boolean, error?: string }}
    */
-  const register = useCallback(async ({ name, email, password, confirmPassword }) => {
+  const register = useCallback(async ({ name, email, password, confirmPassword, role }) => {
     const safeName = name.trim();
     const safeEmail = email.trim().toLowerCase();
+    const safeRole = String(role || 'cliente').toLowerCase();
 
     if (safeName.length < 2) {
       return { ok: false, error: 'El nombre debe tener al menos 2 caracteres.' };
@@ -666,8 +667,12 @@ export function AuthProvider({ children }) {
       return { ok: false, error: 'Ese correo ya estÃ¡ registrado.' };
     }
 
+    if (safeRole !== 'admin' && safeRole !== 'cliente') {
+      return { ok: false, error: 'Selecciona un rol vÃ¡lido.' };
+    }
+
     const passwordHash = await hashPassword(password);
-    const createdUser = { name: safeName, email: safeEmail, passwordHash, role: 'cliente' };
+    const createdUser = { name: safeName, email: safeEmail, passwordHash, role: safeRole };
     setUsers((prev) => [...prev, createdUser]);
     setUser({ email: createdUser.email, name: createdUser.name, role: createdUser.role });
     appendAuthAuditEvent({

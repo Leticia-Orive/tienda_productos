@@ -23,6 +23,7 @@ export default function Register() {
   const [form, setForm] = useState({
     name: '',
     email: '',
+    role: 'cliente',
     password: '',
     confirmPassword: '',
   });
@@ -68,6 +69,11 @@ export default function Register() {
       const safeEmail = value.trim();
       if (!safeEmail) return 'El correo es obligatorio.';
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(safeEmail)) return 'Ingresa un correo vÃ¡lido.';
+      return undefined;
+    }
+
+    if (name === 'role') {
+      if (value !== 'admin' && value !== 'cliente') return 'Selecciona un rol vÃ¡lido.';
       return undefined;
     }
 
@@ -122,11 +128,12 @@ export default function Register() {
     const nextErrors = {
       name: validateField('name', form.name, form),
       email: validateField('email', form.email, form),
+      role: validateField('role', form.role, form),
       password: validateField('password', form.password, form),
       confirmPassword: validateField('confirmPassword', form.confirmPassword, form),
     };
 
-    setTouched({ name: true, email: true, password: true, confirmPassword: true });
+    setTouched({ name: true, email: true, role: true, password: true, confirmPassword: true });
     setFieldErrors(nextErrors);
 
     if (Object.values(nextErrors).some(Boolean)) {
@@ -153,7 +160,7 @@ export default function Register() {
     <main className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-10 bg-gray-50">
       <section className="w-full max-w-md rounded-2xl bg-white p-6 shadow" aria-label="Formulario de registro">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Crear cuenta</h1>
-        <p className="text-sm text-gray-500 mb-6">RegÃ­strate para comprar y gestionar tus pedidos.</p>
+        <p className="text-sm text-gray-500 mb-6">Regi­strate para comprar y gestionar tus pedidos.</p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
           <div className="flex flex-col gap-1">
@@ -204,7 +211,31 @@ export default function Register() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="password" className="text-sm font-medium text-gray-700">ContraseÃ±a</label>
+            <label htmlFor="role" className="text-sm font-medium text-gray-700">Rol</label>
+            <select
+              id="role"
+              name="role"
+              value={form.role}
+              onChange={(e) => handleInputChange('role', e.target.value)}
+              onBlur={() => handleBlur('role')}
+              className={`rounded-lg border px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
+                touched.role && fieldErrors.role ? 'border-red-400' : 'border-gray-300'
+              }`}
+              disabled={isSubmitting}
+              aria-invalid={Boolean(touched.role && fieldErrors.role)}
+              aria-describedby={touched.role && fieldErrors.role ? 'register-role-error' : undefined}
+              required
+            >
+              <option value="cliente">Cliente</option>
+              <option value="admin">Administrador</option>
+            </select>
+            {touched.role && fieldErrors.role && (
+              <p id="register-role-error" className="text-xs text-red-600" role="alert">{fieldErrors.role}</p>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="password" className="text-sm font-medium text-gray-700">Contraseña</label>
             <input
               id="password"
               type={showPassword ? 'text' : 'password'}
@@ -218,7 +249,7 @@ export default function Register() {
               disabled={isSubmitting}
               minLength={8}
               pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
-              title="MÃ­nimo 8 caracteres, incluyendo mayÃºscula, minÃºscula y nÃºmero."
+              title="Mínimo 8 caracteres, incluyendo mayúscula, minúscula y número."
               aria-invalid={Boolean(touched.password && fieldErrors.password)}
               aria-describedby={touched.password && fieldErrors.password ? 'register-password-error' : undefined}
               required
@@ -227,12 +258,12 @@ export default function Register() {
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
               className="mt-1 text-xs text-indigo-600 hover:text-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-fit"
-              aria-label={showPassword ? 'Ocultar contraseÃ±a' : 'Mostrar contraseÃ±a'}
+              aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
             >
-              {showPassword ? 'Ocultar contraseÃ±a' : 'Mostrar contraseÃ±a'}
+              {showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
             </button>
             {form.password && (
-              <div className="mt-1" aria-label={`Fortaleza de contraseÃ±a: ${passwordStrength.label}`}>
+              <div className="mt-1" aria-label={`Fortaleza de contraseña: ${passwordStrength.label}`}>
                 <div className="flex gap-1 mb-1" aria-hidden="true">
                   {[1, 2, 3, 4].map((step) => (
                     <div
@@ -254,7 +285,7 @@ export default function Register() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">Confirmar contraseÃ±a</label>
+            <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">Confirmar contraseña</label>
             <input
               id="confirmPassword"
               type={showConfirmPassword ? 'text' : 'password'}
@@ -276,9 +307,9 @@ export default function Register() {
               type="button"
               onClick={() => setShowConfirmPassword((prev) => !prev)}
               className="mt-1 text-xs text-indigo-600 hover:text-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-fit"
-              aria-label={showConfirmPassword ? 'Ocultar confirmaciÃ³n' : 'Mostrar confirmaciÃ³n'}
+              aria-label={showConfirmPassword ? 'Ocultar confirmación' : 'Mostrar confirmación'}
             >
-              {showConfirmPassword ? 'Ocultar confirmaciÃ³n' : 'Mostrar confirmaciÃ³n'}
+              {showConfirmPassword ? 'Ocultar confirmación' : 'Mostrar confirmación'}
             </button>
             {touched.confirmPassword && fieldErrors.confirmPassword && (
               <p id="register-confirm-password-error" className="text-xs text-red-600" role="alert">{fieldErrors.confirmPassword}</p>
@@ -299,12 +330,12 @@ export default function Register() {
         </form>
 
         <p className="mt-5 text-sm text-gray-600">
-          Â¿Ya tienes cuenta?{' '}
+          ¿Ya tienes cuenta?{' '}
           <Link
             to="/login"
             className="font-medium text-indigo-600 underline underline-offset-2 hover:text-indigo-700"
           >
-            Inicia sesiÃ³n
+            Inicia sesión
           </Link>
         </p>
       </section>
