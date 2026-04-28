@@ -2066,7 +2066,7 @@ export const DEFAULT_PRODUCTS = [
     price: 39.99,
     image: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=400',
     category: 'Moda',
-    description: 'PantalÃ³n vaquero elÃ¡stico de tiro medio con acabado lavado azul oscuro.',
+    description: 'Pantalón vaquero elástico de tiro medio con acabado lavado azul oscuro.',
   },
   {
     id: 240,
@@ -2074,7 +2074,7 @@ export const DEFAULT_PRODUCTS = [
     price: 34.99,
     image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400',
     category: 'Moda',
-    description: 'Sudadera de algodÃ³n perchado con capucha ajustable y bolsillo canguro.',
+    description: 'Sudadera de algodón perchado con capucha ajustable y bolsillo canguro.',
   },
   {
     id: 241,
@@ -2082,7 +2082,7 @@ export const DEFAULT_PRODUCTS = [
     price: 44.99,
     image: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=400',
     category: 'Moda',
-    description: 'Vestido midi de viscosa con estampado floral y cintura elÃ¡stica.',
+    description: 'Vestido midi de viscosa con estampado floral y cintura elástica.',
   },
   {
     id: 242,
@@ -2090,7 +2090,7 @@ export const DEFAULT_PRODUCTS = [
     price: 36.99,
     image: 'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=400',
     category: 'Moda',
-    description: 'Camisa de lino transpirable de manga larga con botones de nÃ¡car.',
+    description: 'Camisa de lino transpirable de manga larga con botones de nácar.',
   },
   {
     id: 243,
