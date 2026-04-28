@@ -13,8 +13,8 @@ export const DEFAULT_PRODUCTS = [
     name: 'Auriculares Bluetooth',
     price: 59.99,
     image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'Auriculares inalÃ¡mbricos con cancelaciÃ³n de ruido y 30h de baterÃ­a.',
+    category: 'Electronica',
+    description: 'Auriculares inalambricos con cancelación de ruido y 30h de bateria.',
   },
   {
     id: 2,
@@ -37,8 +37,8 @@ export const DEFAULT_PRODUCTS = [
     name: 'Reloj Inteligente',
     price: 129.99,
     image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'Smartwatch con monitor de frecuencia cardÃ­aca y GPS integrado.',
+    category: 'Electrónica',
+    description: 'Smartwatch con monitor de frecuencia cardíaca y GPS integrado.',
   },
   {
     id: 5,
@@ -54,19 +54,19 @@ export const DEFAULT_PRODUCTS = [
     price: 34.99,
     image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400',
     category: 'Hogar',
-    description: 'LÃ¡mpara LED con temperatura de color ajustable y puerto USB.',
+    description: 'Lampara LED con temperatura de color ajustable y puerto USB.',
   },
   {
     id: 7,
-    name: 'Teclado MecÃ¡nico',
+    name: 'Teclado Mecánico',
     price: 79.99,
     image: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'Teclado mecÃ¡nico compacto con retroiluminaciÃ³n RGB y switches tactiles.',
+    category: 'Electronica',
+    description: 'Teclado mecánico compacto con retroiluminación RGB y switches táctiles.',
   },
   {
     id: 8,
-    name: 'Botella TÃ©rmica',
+    name: 'Botella Térmica',
     price: 19.99,
     image: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=400',
     category: 'Deportes',
@@ -85,16 +85,16 @@ export const DEFAULT_PRODUCTS = [
     name: 'Monitor 27"',
     price: 299.99,
     image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'Monitor Full HD IPS de 27 pulgadas con tecnologÃ­a antirreflejos.',
+    category: 'Electronica',
+    description: 'Monitor Full HD IPS de 27 pulgadas con tecnologia antirreflejos.',
   },
   {
     id: 11,
-    name: 'CÃ¡mara InstantÃ¡nea',
+    name: 'CCamara Instantanea',
     price: 74.99,
     image: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'CÃ¡mara de fotos instantÃ¡nea compacta, perfecta para recuerdos Ãºnicos.',
+    category: 'Electronica',
+    description: 'Camara de fotos instantanea compacta, perfecta para recuerdos unicos.',
   },
   {
     id: 12,
@@ -109,16 +109,16 @@ export const DEFAULT_PRODUCTS = [
     name: 'Altavoz PortÃ¡til',
     price: 49.99,
     image: 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'Altavoz Bluetooth resistente al agua con 12h de autonomÃ­a.',
+    category: 'Electronica',
+    description: 'Altavoz Bluetooth resistente al agua con 12h de autonomia.',
   },
   {
     id: 14,
-    name: 'CojÃ­n Decorativo',
+    name: 'Cojin Decorativo',
     price: 14.99,
     image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400',
     category: 'Hogar',
-    description: 'CojÃ­n de algodÃ³n con diseÃ±o moderno, disponible en varios colores.',
+    description: 'Cojin de algodon con diseno moderno, disponible en varios colores.',
   },
   {
     id: 15,
@@ -130,11 +130,11 @@ export const DEFAULT_PRODUCTS = [
   },
   {
     id: 16,
-    name: 'RatÃ³n InalÃ¡mbrico',
+    name: 'Ratón Inalámbrico',
     price: 29.99,
     image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'RatÃ³n ergonÃ³mico inalÃ¡mbrico con hasta 18 meses de baterÃ­a.',
+    category: 'Electronica',
+    description: 'Ratón ergonómico inalámbrico con hasta 18 meses de batería.',
   },
   {
     id: 17,
@@ -142,15 +142,15 @@ export const DEFAULT_PRODUCTS = [
     price: 12.99,
     image: 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400',
     category: 'Hogar',
-    description: 'Suculenta en maceta de cerÃ¡mica, ideal para decorar tu espacio.',
+    description: 'Suculenta en maceta de cerámica, ideal para decorar tu espacio.',
   },
   {
     id: 18,
-    name: 'RiÃ±onera Deportiva',
+    name: 'Riñonera Deportiva',
     price: 22.99,
     image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400',
     category: 'Accesorios',
-    description: 'RiÃ±onera impermeable con compartimentos organizados para el deporte.',
+    description: 'Riñonera impermeable con compartimentos organizados para el deporte.',
   },
   {
     id: 19,
@@ -166,7 +166,7 @@ export const DEFAULT_PRODUCTS = [
     price: 9.99,
     image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400',
     category: 'Accesorios',
-    description: 'Cuaderno de tapa dura con papel de 100g/mÂ² y cierre elÃ¡stico.',
+    description: 'Cuaderno de tapa dura con papel de 100g/m² y cierre elástico.',
   },
 
   // Libros
@@ -176,7 +176,7 @@ export const DEFAULT_PRODUCTS = [
     price: 11.99,
     image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400',
     category: 'Libros',
-    description: 'ClÃ¡sico de estrategia y liderazgo de Sun Tzu, ediciÃ³n de bolsillo.',
+    description: 'Clásico de estrategia y liderazgo de Sun Tzu, edición de bolsillo.',
   },
   {
     id: 22,
@@ -184,11 +184,11 @@ export const DEFAULT_PRODUCTS = [
     price: 16.99,
     image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400',
     category: 'Libros',
-    description: 'GuÃ­a prÃ¡ctica para construir buenos hÃ¡bitos y romper los malos.',
+    description: 'Guía práctica para construir buenos hábitos y romper los malos.',
   },
   {
     id: 23,
-    name: 'DiseÃ±o para todos',
+    name: 'Diseño para todos',
     price: 22.99,
     image: 'https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400',
     category: 'Libros',
@@ -206,11 +206,11 @@ export const DEFAULT_PRODUCTS = [
   // Cocina
   {
     id: 25,
-    name: 'SartÃ©n Antiadherente',
+    name: 'Sartén Antiadherente',
     price: 32.99,
     image: 'https://images.unsplash.com/photo-1585515320310-259814833e62?w=400',
     category: 'Cocina',
-    description: 'SartÃ©n de aluminio con recubrimiento cerÃ¡mico apto para vitrocerÃ¡mica.',
+    description: 'Sartén de aluminio con recubrimiento cerámico apto para vitrocerámica.',
   },
   {
     id: 26,
@@ -226,41 +226,41 @@ export const DEFAULT_PRODUCTS = [
     price: 44.99,
     image: 'https://images.unsplash.com/photo-1593618998160-e34014e67546?w=400',
     category: 'Cocina',
-    description: 'Juego de 6 cuchillos de acero inoxidable con bloque de bambÃº.',
+    description: 'Juego de 6 cuchillos de acero inoxidable con bloque de bambú.',
   },
   {
     id: 28,
-    name: 'Cafetera de Ã‰mbolo',
+    name: 'Cafetera de Émbolo',
     price: 27.99,
     image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=400',
     category: 'Cocina',
-    description: 'Prensa francesa de vidrio borosilicato para cafÃ© artesanal perfecto.',
+    description: 'Prensa francesa de vidrio borosilicato para café artesanal perfecto.',
   },
   {
     id: 29,
-    name: 'Tabla de Cortar BambÃº',
+    name: 'Tabla de Cortar Bambú',
     price: 17.99,
     image: 'https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?w=400',
     category: 'Cocina',
-    description: 'Tabla de bambÃº sostenible con ranuras para jugos y asa integrada.',
+    description: 'Tabla de bambú sostenible con ranuras para jugos y asa integrada.',
   },
 
   // Belleza
   {
     id: 30,
-    name: 'SÃ©rum Vitamina C',
+    name: 'Sérum Vitamina C',
     price: 28.99,
     image: 'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=400',
     category: 'Belleza',
-    description: 'SÃ©rum iluminador con vitamina C estabilizada y Ã¡cido hialurÃ³nico.',
+    description: 'Sérum iluminador con vitamina C estabilizada y ácido hialurónico.',
   },
   {
     id: 31,
-    name: 'Cepillo ElÃ©ctrico',
+    name: 'Cepillo Eléctrico',
     price: 39.99,
     image: 'https://images.unsplash.com/photo-1559589672-7ef9ebb21c7e?w=400',
     category: 'Belleza',
-    description: 'Cepillo de dientes elÃ©ctrico con 5 modos de limpieza y temporizador.',
+    description: 'Cepillo de dientes eléctrico con 5 modos de limpieza y temporizador.',
   },
   {
     id: 32,
@@ -268,25 +268,25 @@ export const DEFAULT_PRODUCTS = [
     price: 12.99,
     image: 'https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=400',
     category: 'Belleza',
-    description: 'Mascarilla facial de arcilla blanca con aloe vera y aceite de argÃ¡n.',
+    description: 'Mascarilla facial de arcilla blanca con aloe vera y aceite de argán.',
   },
   {
     id: 33,
-    name: 'Secador de Pelo IÃ³nico',
+    name: 'Secador de Pelo Iónico',
     price: 49.99,
     image: 'https://images.unsplash.com/photo-1522338242992-e1a54906a8da?w=400',
     category: 'Belleza',
-    description: 'Secador profesional 2200W con tecnologÃ­a iÃ³nica para cabello brillante.',
+    description: 'Secador profesional 2200W con tecnología iónica para cabello brillante.',
   },
 
-  // MÃ¡s ElectrÃ³nica, Deportes y Hogar
+  // Más Electrónica, Deportes y Hogar
   {
     id: 34,
     name: 'Webcam Full HD',
     price: 64.99,
     image: 'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'Webcam 1080p con micrÃ³fono integrado y correcciÃ³n automÃ¡tica de luz.',
+    category: 'Electrónica',
+    description: 'Webcam 1080p con micrófono integrado y corrección automática de luz.',
   },
   {
     id: 35,
@@ -294,7 +294,7 @@ export const DEFAULT_PRODUCTS = [
     price: 29.99,
     image: 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=400',
     category: 'Deportes',
-    description: 'Esterilla autoinflable ultraligera con aislamiento tÃ©rmico doble capa.',
+    description: 'Esterilla autoinflable ultraligera con aislamiento térmico doble capa.',
   },
   {
     id: 36,
@@ -302,16 +302,16 @@ export const DEFAULT_PRODUCTS = [
     price: 21.99,
     image: 'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=400',
     category: 'Hogar',
-    description: 'Set de organizadores de bambÃº para mantener el escritorio ordenado.',
+    description: 'Set de organizadores de bambú para mantener el escritorio ordenado.',
   },
 
-  // ElectrÃ³nica
+  // Electrónica
   {
     id: 37,
     name: 'Tablet 10"',
     price: 189.99,
     image: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400',
-    category: 'ElectrÃ³nica',
+    category: 'Electrónica',
     description: 'Tablet Android de 10 pulgadas con 64GB de almacenamiento y pantalla IPS.',
   },
   {
@@ -319,24 +319,24 @@ export const DEFAULT_PRODUCTS = [
     name: 'Auriculares Gaming',
     price: 69.99,
     image: 'https://images.unsplash.com/photo-1599669454699-248893623440?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'Auriculares con sonido surround 7.1 y micrÃ³fono retrÃ¡ctil con cancelaciÃ³n.',
+    category: 'Electrónica',
+    description: 'Auriculares con sonido surround 7.1 y micrófono retráctil con cancelación.',
   },
   {
     id: 39,
     name: 'Cable USB-C Trenzado',
     price: 12.99,
     image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'Cable de carga rÃ¡pida 100W trenzado de nylon, 2 metros de largo.',
+    category: 'Electrónica',
+    description: 'Cable de carga rápida 100W trenzado de nylon, 2 metros de largo.',
   },
   {
     id: 40,
     name: 'Hub USB 7 puertos',
     price: 34.99,
     image: 'https://images.unsplash.com/photo-1625895197185-efcec01cffe0?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'Hub USB 3.0 con 7 puertos, carga rÃ¡pida y soporte plug & play.',
+    category: 'Electrónica',
+    description: 'Hub USB 3.0 con 7 puertos, carga rápida y soporte plug & play.',
   },
 
   // Deportes
@@ -346,7 +346,7 @@ export const DEFAULT_PRODUCTS = [
     price: 9.99,
     image: 'https://images.unsplash.com/photo-1598971861713-54ad16a7e72e?w=400',
     category: 'Deportes',
-    description: 'Cuerda de velocidad con rodamientos de precisiÃ³n y mangos ergonÃ³micos.',
+    description: 'Cuerda de velocidad con rodamientos de precisión y mangos ergonómicos.',
   },
   {
     id: 42,
@@ -354,7 +354,7 @@ export const DEFAULT_PRODUCTS = [
     price: 38.99,
     image: 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?w=400',
     category: 'Deportes',
-    description: 'Guantes de cuero sintÃ©tico de 12oz con forro de gel para mayor protecciÃ³n.',
+    description: 'Guantes de cuero sintético de 12oz con forro de gel para mayor protección.',
   },
   {
     id: 43,
@@ -372,7 +372,7 @@ export const DEFAULT_PRODUCTS = [
     price: 26.99,
     image: 'https://images.unsplash.com/photo-1602928309083-7d9c4e7f1f47?w=400',
     category: 'Hogar',
-    description: 'Difusor ultrasÃ³nico con 7 colores LED y apagado automÃ¡tico.',
+    description: 'Difusor ultrasónico con 7 colores LED y apagado automático.',
   },
   {
     id: 45,
@@ -380,7 +380,7 @@ export const DEFAULT_PRODUCTS = [
     price: 29.99,
     image: 'https://images.unsplash.com/photo-1607006344380-b6775a0824a7?w=400',
     category: 'Hogar',
-    description: 'Set de 4 toallas de algodÃ³n egipcio 700g/mÂ², suaves y absorbentes.',
+    description: 'Set de 4 toallas de algodón egipcio 700g/m², suaves y absorbentes.',
   },
   {
     id: 46,
@@ -388,7 +388,7 @@ export const DEFAULT_PRODUCTS = [
     price: 18.99,
     image: 'https://images.unsplash.com/photo-1563861826100-9cb868fdbe1c?w=400',
     category: 'Hogar',
-    description: 'Reloj nÃ³rdico silencioso de madera natural con esfera de cristal.',
+    description: 'Reloj nórdico silencioso de madera natural con esfera de cristal.',
   },
 
   // Accesorios
@@ -406,7 +406,7 @@ export const DEFAULT_PRODUCTS = [
     price: 24.99,
     image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a45?w=400',
     category: 'Accesorios',
-    description: 'CinturÃ³n de cuero genuino con hebilla clÃ¡sica, talla ajustable.',
+    description: 'Cinturón de cuero genuino con hebilla clásica, talla ajustable.',
   },
 
   // Libros
@@ -416,7 +416,7 @@ export const DEFAULT_PRODUCTS = [
     price: 19.99,
     image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
     category: 'Libros',
-    description: 'GuÃ­a concisa de las mejores prÃ¡cticas del lenguaje JavaScript.',
+    description: 'Guía concisa de las mejores prácticas del lenguaje JavaScript.',
   },
   {
     id: 50,
@@ -424,25 +424,25 @@ export const DEFAULT_PRODUCTS = [
     price: 15.99,
     image: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=400',
     category: 'Libros',
-    description: 'Estrategias para alcanzar concentraciÃ³n profunda en la era de las distracciones.',
+    description: 'Estrategias para alcanzar concentración profunda en la era de las distracciones.',
   },
 
   // Cocina
   {
     id: 51,
-    name: 'BÃ¡scula de Cocina Digital',
+    name: 'Báscula de Cocina Digital',
     price: 14.99,
     image: 'https://images.unsplash.com/photo-1583779457094-ab6f77f7bf57?w=400',
     category: 'Cocina',
-    description: 'BÃ¡scula de precisiÃ³n con pantalla tÃ¡ctil y funciÃ³n tara hasta 5 kg.',
+    description: 'Báscula de precisión con pantalla táctil y función tara hasta 5 kg.',
   },
   {
     id: 52,
-    name: 'Especiero de BambÃº',
+    name: 'Especiero de Bambú',
     price: 23.99,
     image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400',
     category: 'Cocina',
-    description: 'Estante giratoria para 12 especieros, fabricado en bambÃº sostenible.',
+    description: 'Estante giratoria para 12 especieros, fabricado en bambú sostenible.',
   },
 
   // Belleza
@@ -452,7 +452,7 @@ export const DEFAULT_PRODUCTS = [
     price: 21.99,
     image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400',
     category: 'Belleza',
-    description: 'Juego de 10 brochas profesionales de fibra sintÃ©tica con estuche.',
+    description: 'Juego de 10 brochas profesionales de fibra sintética con estuche.',
   },
   {
     id: 54,
@@ -460,16 +460,16 @@ export const DEFAULT_PRODUCTS = [
     price: 18.99,
     image: 'https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400',
     category: 'Belleza',
-    description: 'Crema facial hidratante con protecciÃ³n solar SPF50 y vitamina E.',
+    description: 'Crema facial hidratante con protección solar SPF50 y vitamina E.',
   },
 
-  // ElectrÃ³nica
+  // Electrónica
   {
     id: 55,
     name: 'LÃ¡mpara LED Inteligente',
     price: 24.99,
     image: 'https://images.unsplash.com/photo-1558002038-1055907df827?w=400',
-    category: 'ElectrÃ³nica',
+    category: 'Electrónica',
     description: 'Bombilla Wi-Fi de 16 millones de colores, compatible con Alexa y Google.',
   },
   {
@@ -477,7 +477,7 @@ export const DEFAULT_PRODUCTS = [
     name: 'Soporte para Monitor',
     price: 42.99,
     image: 'https://images.unsplash.com/photo-1547949003-9792a18a2601?w=400',
-    category: 'ElectrÃ³nica',
+    category: 'Electrónica',
     description: 'Soporte articulado de doble brazo para monitores de 17 a 32 pulgadas.',
   },
   {
@@ -485,15 +485,15 @@ export const DEFAULT_PRODUCTS = [
     name: 'Disco SSD Externo 1TB',
     price: 89.99,
     image: 'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'SSD portÃ¡til de 1TB con velocidad de lectura de 1050 MB/s y USB-C.',
+    category: 'Electrónica',
+    description: 'SSD portátil de 1TB con velocidad de lectura de 1050 MB/s y USB-C.',
   },
   {
     id: 58,
-    name: 'Cargador InalÃ¡mbrico 15W',
+    name: 'Cargador Inalámbrico 15W',
     price: 19.99,
     image: 'https://images.unsplash.com/photo-1609081219090-a6d81d3085bf?w=400',
-    category: 'ElectrÃ³nica',
+    category: 'Electrónica',
     description: 'Cargador Qi de 15W con indicador LED y compatible con cualquier smartphone.',
   },
 
@@ -512,7 +512,7 @@ export const DEFAULT_PRODUCTS = [
     price: 29.99,
     image: 'https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=400',
     category: 'Deportes',
-    description: 'BalÃ³n oficial talla 5 con costura reforzada y cÃ¡mara de butilo.',
+    description: 'Balón oficial talla 5 con costura reforzada y cámara de butilo.',
   },
   {
     id: 61,
@@ -520,17 +520,17 @@ export const DEFAULT_PRODUCTS = [
     price: 17.99,
     image: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400',
     category: 'Deportes',
-    description: 'Par de rodilleras compresivas con soporte de silicona para articulaciÃ³n.',
+    description: 'Par de rodilleras compresivas con soporte de silicona para articulación.',
   },
 
   // Hogar
   {
     id: 62,
-    name: 'Espejo de BaÃ±o LED',
+    name: 'Espejo de Baño LED',
     price: 64.99,
     image: 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=400',
     category: 'Hogar',
-    description: 'Espejo con retroiluminaciÃ³n LED regulable y funciÃ³n antivaho integrada.',
+    description: 'Espejo con retroiluminación LED regulable y función antivaho integrada.',
   },
   {
     id: 63,
@@ -538,7 +538,7 @@ export const DEFAULT_PRODUCTS = [
     price: 22.99,
     image: 'https://images.unsplash.com/photo-1513519245088-0e12902e35a6?w=400',
     category: 'Hogar',
-    description: 'LÃ¡mina decorativa de 40x60 cm con marco de madera natural oscuro.',
+    description: 'Lámina decorativa de 40x60 cm con marco de madera natural oscuro.',
   },
   {
     id: 64,
@@ -590,7 +590,7 @@ export const DEFAULT_PRODUCTS = [
     price: 8.99,
     image: 'https://images.unsplash.com/photo-1474932430478-367dbb6832c1?w=400',
     category: 'Libros',
-    description: 'EdiciÃ³n ilustrada en tapa dura del clÃ¡sico de Antoine de Saint-ExupÃ©ry.',
+    description: 'Edición ilustrada en tapa dura del clásico de Antoine de Saint-Exupéry.',
   },
   {
     id: 70,
@@ -598,17 +598,17 @@ export const DEFAULT_PRODUCTS = [
     price: 34.99,
     image: 'https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=400',
     category: 'Libros',
-    description: 'MÃ¡s de 500 recetas internacionales con tÃ©cnicas y fotografÃ­as paso a paso.',
+    description: 'Más de 500 recetas internacionales con técnicas y fotografías paso a paso.',
   },
 
   // Cocina
   {
     id: 71,
-    name: 'Olla a PresiÃ³n 6L',
+    name: 'Olla a Presión 6L',
     price: 59.99,
     image: 'https://images.unsplash.com/photo-1585515320310-259814833e62?w=400',
     category: 'Cocina',
-    description: 'Olla a presiÃ³n de acero inoxidable con vÃ¡lvula de seguridad mÃºltiple.',
+    description: 'Olla a presión de acero inoxidable con válvula de seguridad múltiple.',
   },
   {
     id: 72,
@@ -693,15 +693,15 @@ export const DEFAULT_PRODUCTS = [
     name: 'Regadera MetÃ¡lica',
     price: 18.99,
     image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400',
-    category: 'JardÃ­n',
-    description: 'Regadera de acero con capacidad de 2 litros y pitÃ³n largo de precisiÃ³n.',
+    category: 'Jardín',
+    description: 'Regadera de acero con capacidad de 2 litros y pitón largo de precisión.',
   },
   {
     id: 82,
-    name: 'Set de Herramientas de JardÃ­n',
+    name: 'Set de Herramientas de Jardín',
     price: 27.99,
     image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400',
-    category: 'JardÃ­n',
+    category: 'Jardín',
     description: 'Kit de 5 herramientas: pala, rastrillo, trasplantador, azada y horquilla.',
   },
   {
@@ -709,68 +709,68 @@ export const DEFAULT_PRODUCTS = [
     name: 'Maceteros de Terracota',
     price: 15.99,
     image: 'https://images.unsplash.com/photo-1485955900006-10f4d324d411?w=400',
-    category: 'JardÃ­n',
+    category: 'Jardín',
     description: 'Set de 3 maceteros artesanales de terracota con platillos incluidos.',
   },
   {
     id: 84,
-    name: 'Semillas de Hierbas AromÃ¡ticas',
+    name: 'Semillas de Hierbas Aromáticas',
     price: 9.99,
     image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400',
-    category: 'JardÃ­n',
+    category: 'Jardín',
     description: 'Pack de 6 variedades: albahaca, menta, cilantro, perejil, tomillo y romero.',
   },
   {
     id: 85,
-    name: 'Guantes de JardinerÃ­a',
+    name: 'Guantes de Jardinería',
     price: 7.99,
     image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400',
-    category: 'JardÃ­n',
+    category: 'Jardín',
     description: 'Guantes de microfibra con puntas de nitrilo, talla universal ajustable.',
   },
 
-  // MÃ¡s ElectrÃ³nica
+  // Más Electrónica
   {
     id: 86,
-    name: 'MicrÃ³fono de Condensador',
+    name: 'Micrófono de Condensador',
     price: 54.99,
     image: 'https://images.unsplash.com/photo-1598550476439-6847785fcea6?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'MicrÃ³fono USB cardioide para streaming, podcast y grabaciÃ³n de voz profesional.',
+    category: 'Electrónica',
+    description: 'Micrófono USB cardioide para streaming, podcast y grabación de voz profesional.',
   },
   {
     id: 87,
     name: 'Auriculares True Wireless',
     price: 49.99,
     image: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'Earbuds con Bluetooth 5.3, cancelaciÃ³n activa de ruido y 30h de autonomÃ­a.',
+    category: 'Electrónica',
+    description: 'Earbuds con Bluetooth 5.3, cancelación activa de ruido y 30h de autonomía.',
   },
   {
     id: 88,
-    name: 'TrÃ­pode Flexible',
+    name: 'Trípode Flexible',
     price: 21.99,
     image: 'https://images.unsplash.com/photo-1606986628253-e3d1e7e6a18c?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'TrÃ­pode gorilla de 30 cm con montura universal para smartphone y cÃ¡maras.',
+    category: 'Electrónica',
+    description: 'Trípode gorilla de 30 cm con montura universal para smartphone y cámaras.',
   },
   {
     id: 89,
     name: 'Smart TV Stick',
     price: 38.99,
     image: 'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=400',
-    category: 'ElectrÃ³nica',
+    category: 'Electrónica',
     description: 'Convierte cualquier TV en smart TV con Android, WiFi 6 y mando por voz.',
   },
 
-  // MÃ¡s Deportes
+  // Más Deportes
   {
     id: 90,
-    name: 'CronÃ³metro Deportivo',
+    name: 'Cronómetro Deportivo',
     price: 15.99,
     image: 'https://images.unsplash.com/photo-1508615039623-a25605d2b022?w=400',
     category: 'Deportes',
-    description: 'CronÃ³metro digital de muÃ±eca con vuelta, alarma y resistencia al agua.',
+    description: 'Cronómetro digital de muñeca con vuelta, alarma y resistencia al agua.',
   },
   {
     id: 91,
@@ -778,7 +778,7 @@ export const DEFAULT_PRODUCTS = [
     price: 19.99,
     image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400',
     category: 'Deportes',
-    description: 'Rodillo de espuma de alta densidad para recuperaciÃ³n muscular y masaje profundo.',
+    description: 'Rodillo de espuma de alta densidad para recuperación muscular y masaje profundo.',
   },
   {
     id: 92,
@@ -786,10 +786,10 @@ export const DEFAULT_PRODUCTS = [
     price: 18.99,
     image: 'https://images.unsplash.com/photo-1521369909029-2afed882baee?w=400',
     category: 'Deportes',
-    description: 'Gorra tÃ©cnica con visera curva, tejido transpirable y banda antideslizante.',
+    description: 'Gorra técnica con visera curva, tejido transpirable y banda antideslizante.',
   },
 
-  // MÃ¡s Hogar
+  // Más Hogar
   {
     id: 93,
     name: 'Portavelas Decorativo',
@@ -800,21 +800,21 @@ export const DEFAULT_PRODUCTS = [
   },
   {
     id: 94,
-    name: 'Alfombra de Ãrea',
+    name: 'Alfombra de Área',
     price: 49.99,
     image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400',
     category: 'Hogar',
     description: 'Alfombra de pelo corto 120x180 cm, lavable a mÃ¡quina y antideslizante.',
   },
 
-  // MÃ¡s Libros
+  // Más Libros
   {
     id: 95,
     name: 'Mindfulness en 8 semanas',
     price: 14.99,
     image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400',
     category: 'Libros',
-    description: 'Programa cientÃ­fico de mindfulness basado en el MBSR de Jon Kabat-Zinn.',
+    description: 'Programa científico de mindfulness basado en el MBSR de Jon Kabat-Zinn.',
   },
   {
     id: 96,
@@ -822,17 +822,17 @@ export const DEFAULT_PRODUCTS = [
     price: 39.99,
     image: 'https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=400',
     category: 'Libros',
-    description: 'EdiciÃ³n ilustrada con mÃ¡s de 600 obras maestras desde el PaleolÃ­tico hasta hoy.',
+    description: 'Edición ilustrada con más de 600 obras maestras desde el Paleolítico hasta hoy.',
   },
 
-  // MÃ¡s Cocina
+  // Más Cocina
   {
     id: 97,
-    name: 'TermÃ³metro de Cocina',
+    name: 'Termómetro de Cocina',
     price: 12.99,
     image: 'https://images.unsplash.com/photo-1559589672-7ef9ebb21c7e?w=400',
     category: 'Cocina',
-    description: 'TermÃ³metro digital instant-read de respuesta en 2 segundos, apto para carne y postres.',
+    description: 'Termómetro digital instant-read de respuesta en 2 segundos, apto para carne y postres.',
   },
   {
     id: 98,
@@ -843,7 +843,7 @@ export const DEFAULT_PRODUCTS = [
     description: 'Cortadora de verduras ajustable en 5 grosores con guante de seguridad incluido.',
   },
 
-  // MÃ¡s Belleza
+  // Más Belleza
   {
     id: 99,
     name: 'Rodillo de Jade',
@@ -854,43 +854,43 @@ export const DEFAULT_PRODUCTS = [
   },
   {
     id: 100,
-    name: 'BÃ¡lsamo Labial Natural',
+    name: 'Bálsamo Labial Natural',
     price: 6.99,
     image: 'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=400',
     category: 'Belleza',
-    description: 'Pack de 3 bÃ¡lsamos labiales orgÃ¡nicos de manteca de karitÃ© y aceite de coco.',
+    description: 'Pack de 3 bálsamos labiales orgánicos de manteca de karité y aceite de coco.',
   },
 
-  // TecnologÃ­a Wearables
+  // Tecnología Wearables
   {
     id: 101,
     name: 'Pulsera Fitness',
     price: 39.99,
     image: 'https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'Pulsera de actividad con monitor de sueÃ±o, SpO2 y notificaciones en pantalla AMOLED.',
+    category: 'Electrónica',
+    description: 'Pulsera de actividad con monitor de sueño, SpO2 y notificaciones en pantalla AMOLED.',
   },
   {
     id: 102,
     name: 'Gafas de Realidad Virtual',
     price: 149.99,
     image: 'https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'Visor VR standalone con pantalla 4K y 6 grados de libertad para gaming e inmersiÃ³n.',
+    category: 'Electrónica',
+    description: 'Visor VR standalone con pantalla 4K y 6 grados de libertad para gaming e inmersión.',
   },
   {
     id: 103,
     name: 'Altavoz Inteligente',
     price: 79.99,
     image: 'https://images.unsplash.com/photo-1543512214-318c7553f230?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'Altavoz con asistente de voz integrado, Wi-Fi y Bluetooth multiroom 360Â°.',
+    category: 'Electrónica',
+    description: 'Altavoz con asistente de voz integrado, Wi-Fi y Bluetooth multiroom 360°.',
   },
 
   // Deportes
   {
     id: 104,
-    name: 'Chaleco de HidrataciÃ³n',
+    name: 'Chaleco de Hidratación',
     price: 44.99,
     image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400',
     category: 'Deportes',
@@ -898,11 +898,11 @@ export const DEFAULT_PRODUCTS = [
   },
   {
     id: 105,
-    name: 'Patineta ElÃ©ctrica',
+    name: 'Patineta Eléctrica',
     price: 299.99,
     image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
     category: 'Deportes',
-    description: 'Skateboard elÃ©ctrico de 30 km/h, hasta 20 km de autonomÃ­a y freno regenerativo.',
+    description: 'Skateboard eléctrico de 30 km/h, hasta 20 km de autonomía y freno regenerativo.',
   },
   {
     id: 106,
@@ -914,11 +914,11 @@ export const DEFAULT_PRODUCTS = [
   },
   {
     id: 107,
-    name: 'Tapones para OÃ­dos Deportivos',
+    name: 'Tapones para Oídos Deportivos',
     price: 11.99,
     image: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400',
     category: 'Deportes',
-    description: 'Tapones ergonÃ³micos de silicona con filtro de atenuaciÃ³n para nataciÃ³n y concentraciÃ³n.',
+    description: 'Tapones ergonómicos de silicona con filtro de atenuación para natación y concentración.',
   },
 
   // Hogar
@@ -928,7 +928,7 @@ export const DEFAULT_PRODUCTS = [
     price: 189.99,
     image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
     category: 'Hogar',
-    description: 'Robot aspirador con mapeo LiDAR, app y programaciÃ³n por voz para suelos y alfombras.',
+    description: 'Robot aspirador con mapeo LiDAR, app y programación por voz para suelos y alfombras.',
   },
   {
     id: 109,
@@ -936,25 +936,25 @@ export const DEFAULT_PRODUCTS = [
     price: 99.99,
     image: 'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=400',
     category: 'Hogar',
-    description: 'Purificador con filtro HEPA H13, carbÃ³n activo y sensor de partÃ­culas PM2.5 en tiempo real.',
+    description: 'Purificador con filtro HEPA H13, carbón activo y sensor de partículas PM2.5 en tiempo real.',
   },
   {
     id: 110,
-    name: 'Cargador de BaterÃ­as AA/AAA',
+    name: 'Cargador de Baterías AA/AAA',
     price: 16.99,
     image: 'https://images.unsplash.com/photo-1609081219090-a6d81d3085bf?w=400',
     category: 'Hogar',
-    description: 'Cargador inteligente de 8 canales con indicador de carga y corte automÃ¡tico.',
+    description: 'Cargador inteligente de 8 canales con indicador de carga y corte automático.',
   },
 
   // Cocina
   {
     id: 111,
-    name: 'Yogurtera ElÃ©ctrica',
+    name: 'Yogurtera Eléctrica',
     price: 31.99,
     image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400',
     category: 'Cocina',
-    description: 'Yogurtera de 8 vasitos de vidrio con temporizador y pantalla digital tÃ¡ctil.',
+    description: 'Yogurtera de 8 vasitos de vidrio con temporizador y pantalla digital táctil.',
   },
   {
     id: 112,
@@ -962,15 +962,15 @@ export const DEFAULT_PRODUCTS = [
     price: 18.99,
     image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400',
     category: 'Cocina',
-    description: 'Espiralizador manual de 5 cuchillas para hacer noodles de calabacÃ­n, zanahoria y mÃ¡s.',
+    description: 'Espiralizador manual de 5 cuchillas para hacer noodles de calabacín, zanahoria y más.',
   },
   {
     id: 113,
-    name: 'Molinillo de CafÃ© Manual',
+    name: 'Molinillo de Café Manual',
     price: 27.99,
     image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400',
     category: 'Cocina',
-    description: 'Molinillo de cerÃ¡mica con ajuste de 18 posiciones y cuerpo de madera maciza.',
+    description: 'Molinillo de cerámica con ajuste de 18 posiciones y cuerpo de madera maciza.',
   },
   {
     id: 114,
@@ -978,7 +978,7 @@ export const DEFAULT_PRODUCTS = [
     price: 24.99,
     image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400',
     category: 'Cocina',
-    description: 'Caja con 12 especias exÃ³ticas seleccionadas de Asia, Oriente Medio y AmÃ©rica Latina.',
+    description: 'Caja con 12 especias exóticas seleccionadas de Asia, Oriente Medio y América Latina.',
   },
 
   // Accesorios
@@ -988,15 +988,15 @@ export const DEFAULT_PRODUCTS = [
     price: 69.99,
     image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400',
     category: 'Accesorios',
-    description: 'Mochila tÃ©cnica de 35L con armazÃ³n ventilado, cubreaguas y cintura ergonÃ³mica.',
+    description: 'Mochila técnica de 35L con armazón ventilado, cubreaguas y cintura ergonómica.',
   },
   {
     id: 116,
-    name: 'PaÃ±uelo MultifunciÃ³n',
+    name: 'Pañuelo Multifunción',
     price: 8.99,
     image: 'https://images.unsplash.com/photo-1521369909029-2afed882baee?w=400',
     category: 'Accesorios',
-    description: 'Buff de microfibra con protecciÃ³n UV50+, vÃ¡lido como braga, gorro o muÃ±equera.',
+    description: 'Buff de microfibra con protección UV50+, válido como braga, gorro o muñequera.',
   },
   {
     id: 117,
@@ -1094,23 +1094,23 @@ export const DEFAULT_PRODUCTS = [
     price: 49.99,
     image: 'https://images.unsplash.com/photo-1532386236358-a33d8a9434e3?w=400',
     category: 'Juguetes',
-    description: 'Telescopio refractor 70mm con trÃ­pode ajustable, lentes 20x y 40x, guÃ­a estelar incluida.',
+    description: 'Telescopio refractor 70mm con trípode ajustable, lentes 20x y 40x, guía estelar incluida.',
   },
   {
     id: 128,
-    name: 'Pizarra MagnÃ©tica',
+    name: 'Pizarra Magnética',
     price: 22.99,
     image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400',
     category: 'Juguetes',
-    description: 'Pizarra de doble cara: pizarrÃ³n negro y pizarra blanca magnÃ©tica, con soporte de madera.',
+    description: 'Pizarra de doble cara: pizarrón negro y pizarra blanca magnética, con soporte de madera.',
   },
   {
     id: 129,
-    name: 'Dron de IniciaciÃ³n',
+    name: 'Dron de Iniciación',
     price: 59.99,
     image: 'https://images.unsplash.com/photo-1473968512647-3e447244af8f?w=400',
     category: 'Juguetes',
-    description: 'QuadcÃ³ptero con mando a distancia, modo sin cabeza y protecciÃ³n de hÃ©lices para niÃ±os.',
+    description: 'Quadcóptero con mando a distancia, modo sin cabeza y protección de hélices para niños.',
   },
   {
     id: 130,
@@ -1118,7 +1118,7 @@ export const DEFAULT_PRODUCTS = [
     price: 27.99,
     image: 'https://images.unsplash.com/photo-1564325724739-bae0bd08762c?w=400',
     category: 'Juguetes',
-    description: 'Kit STEM con 30 experimentos de quÃ­mica, electricidad y fÃ­sica para 8+ aÃ±os.',
+    description: 'Kit STEM con 30 experimentos de química, electricidad y física para 8+ años.',
   },
 
   // Oficina
@@ -1136,15 +1136,15 @@ export const DEFAULT_PRODUCTS = [
     price: 44.99,
     image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400',
     category: 'Oficina',
-    description: 'Destructora de microcorte que acepta hasta 8 hojas, tarjetas y CDs simultÃ¡neamente.',
+    description: 'Destructora de microcorte que acepta hasta 8 hojas, tarjetas y CDs simultáneamente.',
   },
   {
     id: 133,
-    name: 'ReposamuÃ±ecas ErgonÃ³mico',
+    name: 'Reposamuñecas Ergonómico',
     price: 17.99,
     image: 'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=400',
     category: 'Oficina',
-    description: 'ReposamuÃ±ecas de gel con funda de lycra lavable para teclado y ratÃ³n.',
+    description: 'Reposamuñecas de gel con funda de lycra lavable para teclado y ratón.',
   },
   {
     id: 134,
@@ -1152,7 +1152,7 @@ export const DEFAULT_PRODUCTS = [
     price: 11.99,
     image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
     category: 'Oficina',
-    description: 'Set de 3 bandejas de malla metÃ¡lica apilables para organizar documentos en el escritorio.',
+    description: 'Set de 3 bandejas de malla metálica apilables para organizar documentos en el escritorio.',
   },
   {
     id: 135,
@@ -1163,7 +1163,7 @@ export const DEFAULT_PRODUCTS = [
     description: 'Pack de 12 rotuladores de colores para pizarra blanca, borrado en seco.',
   },
 
-  // MÃ¡s Deportes
+  // Más Deportes
   {
     id: 136,
     name: 'Kayak Hinchable',
@@ -1174,11 +1174,11 @@ export const DEFAULT_PRODUCTS = [
   },
   {
     id: 137,
-    name: 'TensiÃ³metro de MuÃ±eca',
+    name: 'Tensiómetro de Muñeca',
     price: 28.99,
     image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400',
     category: 'Deportes',
-    description: 'Monitor de presiÃ³n arterial digital con detecciÃ³n de arritmias y memoria para 60 lecturas.',
+    description: 'Monitor de presión arterial digital con detección de arritmias y memoria para 60 lecturas.',
   },
   {
     id: 138,
@@ -1186,44 +1186,44 @@ export const DEFAULT_PRODUCTS = [
     price: 32.99,
     image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400',
     category: 'Deportes',
-    description: 'Barra de puerta sin tornillos hasta 150 kg, mÃºltiples agares y acolchado antideslizante.',
+    description: 'Barra de puerta sin tornillos hasta 150 kg, múltiples agares y acolchado antideslizante.',
   },
 
-  // MÃ¡s ElectrÃ³nica
+  // Más Electrónica
   {
     id: 139,
     name: 'Lector de eBooks',
     price: 99.99,
     image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'E-reader con pantalla e-ink de 6" sin reflejos, luz cÃ¡lida y 8GB, resistente al agua.',
+    category: 'Electrónica',
+    description: 'E-reader con pantalla e-ink de 6" sin reflejos, luz cálida y 8GB, resistente al agua.',
   },
   {
     id: 140,
-    name: 'Impresora PortÃ¡til',
+    name: 'Impresora Portátil',
     price: 74.99,
     image: 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'Impresora tÃ©rmica Bluetooth de bolsillo sin tinta, papel adhesivo incluido.',
+    category: 'Electrónica',
+    description: 'Impresora térmica Bluetooth de bolsillo sin tinta, papel adhesivo incluido.',
   },
   {
     id: 141,
     name: 'Cable HDMI 2.1 Ultra HD',
     price: 14.99,
     image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
-    category: 'ElectrÃ³nica',
+    category: 'Electrónica',
     description: 'Cable HDMI 2.1 de 2m compatible con 8K@60Hz y 4K@120Hz para consolas y PC.',
   },
   {
     id: 142,
-    name: 'BaterÃ­a Externa 26800 mAh',
+    name: 'Batería Externa 26800 mAh',
     price: 44.99,
     image: 'https://images.unsplash.com/photo-1609081219090-a6d81d3085bf?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'Power bank de 26800 mAh con carga rÃ¡pida 22.5W, dos puertos USB-A y uno USB-C.',
+    category: 'Electrónica',
+    description: 'Power bank de 26800 mAh con carga rápida 22.5W, dos puertos USB-A y uno USB-C.',
   },
 
-  // MÃ¡s Hogar
+  // Más Hogar
   {
     id: 143,
     name: 'Cajonera de Tela',
@@ -1241,14 +1241,14 @@ export const DEFAULT_PRODUCTS = [
     description: 'Humidificador silencioso de 4L con niebla frÃ­a y caliente, aromaterapia y temporizador.',
   },
 
-  // MÃ¡s Mascotas
+  // Más Mascotas
   {
     id: 145,
-    name: 'CortaÃºÃ±as para Mascotas',
+    name: 'Cortaúñas para Mascotas',
     price: 9.99,
     image: 'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=400',
     category: 'Mascotas',
-    description: 'CortaÃºÃ±as de acero inoxidable con tope de seguridad y mango antideslizante.',
+    description: 'Cortaúñas de acero inoxidable con tope de seguridad y mango antideslizante.',
   },
   {
     id: 146,
@@ -1256,17 +1256,17 @@ export const DEFAULT_PRODUCTS = [
     price: 26.99,
     image: 'https://images.unsplash.com/photo-1606214174585-fe31582dc6ee?w=400',
     category: 'Mascotas',
-    description: 'Bebedero circulante con filtro de carbÃ³n activo, capacidad de 2.5L y bomba silenciosa.',
+    description: 'Bebedero circulante con filtro de carbón activo, capacidad de 2.5L y bomba silenciosa.',
   },
 
-  // MÃ¡s Cocina
+  // Más Cocina
   {
     id: 147,
-    name: 'MÃ¡quina de Pasta Manual',
+    name: 'Máquina de Pasta Manual',
     price: 41.99,
     image: 'https://images.unsplash.com/photo-1555949258-eb67b1ef0ceb?w=400',
     category: 'Cocina',
-    description: 'MÃ¡quina de acero inoxidable con 9 grosores para espagueti, linguini y lÃ¡minas de lasaÃ±a.',
+    description: 'Máquina de acero inoxidable con 9 grosores para espagueti, linguini y láminas de lasaña.',
   },
   {
     id: 148,
@@ -1274,66 +1274,66 @@ export const DEFAULT_PRODUCTS = [
     price: 13.99,
     image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400',
     category: 'Cocina',
-    description: 'Aceitera de vidrio borosilicato con pico vertedor antiderrame y tapÃ³n hermÃ©tico.',
+    description: 'Aceitera de vidrio borosilicato con pico vertedor antiderrame y tapón hermético.',
   },
 
-  // MÃ¡s Libros
+  // Más Libros
   {
     id: 149,
-    name: 'CÃ³mo hablar para que te escuchen',
+    name: 'Cómo hablar para que te escuchen',
     price: 13.99,
     image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400',
     category: 'Libros',
-    description: 'GuÃ­a prÃ¡ctica de comunicaciÃ³n asertiva, escucha activa y resoluciÃ³n de conflictos.',
+    description: 'Guía práctica de comunicación asertiva, escucha activa y resolución de conflictos.',
   },
   {
     id: 150,
-    name: 'Colorea tu EstrÃ©s',
+    name: 'Colorea tu Estrés',
     price: 10.99,
     image: 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400',
     category: 'Libros',
-    description: 'Libro de colorear para adultos con 50 mandalas y patrones botÃ¡nicos antiestrÃ©s.',
+    description: 'Libro de colorear para adultos con 50 mandalas y patrones botánicos antiestrés.',
   },
 
-  // MÃºsica
+  // Música
   {
     id: 151,
     name: 'Ukelele de Caoba',
     price: 54.99,
     image: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=400',
-    category: 'MÃºsica',
+    category: 'Música',
     description: 'Ukelele soprano de caoba con clavijas estabilizadas y bolsa de transporte incluida.',
   },
   {
     id: 152,
-    name: 'MetrÃ³nomo Digital',
+    name: 'Metrónomo Digital',
     price: 19.99,
     image: 'https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=400',
-    category: 'MÃºsica',
-    description: 'MetrÃ³nomo con pantalla LCD, 40-208 BPM, 9 compases y salida de auriculares.',
+    category: 'Música',
+    description: 'Metrónomo con pantalla LCD, 40-208 BPM, 9 compases y salida de auriculares.',
   },
   {
     id: 153,
     name: 'Teclado MIDI 25 teclas',
     price: 69.99,
     image: 'https://images.unsplash.com/photo-1513883049090-d0b7439799bf?w=400',
-    category: 'MÃºsica',
-    description: 'Controlador MIDI USB de 25 teclas con pads de percusiÃ³n y ruedas de pitch y modulaciÃ³n.',
+    category: 'Música',
+    description: 'Controlador MIDI USB de 25 teclas con pads de percusión y ruedas de pitch y modulación.',
   },
   {
     id: 154,
     name: 'Soporte de Partituras',
     price: 16.99,
     image: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400',
-    category: 'MÃºsica',
-    description: 'Atril de mÃºsica plegable de aluminio con altura regulable de 60 a 130 cm.',
+    category: 'Música',
+    description: 'Atril de música plegable de aluminio con altura regulable de 60 a 130 cm.',
   },
   {
     id: 155,
     name: 'Auriculares de Estudio',
     price: 89.99,
     image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
-    category: 'MÃºsica',
+    category: 'Música',
     description: 'Auriculares circum-aurales de referencia con respuesta plana y cable desmontable.',
   },
 
@@ -1344,23 +1344,23 @@ export const DEFAULT_PRODUCTS = [
     price: 18.99,
     image: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400',
     category: 'Arte',
-    description: 'Caja metÃ¡lica de 36 pastillas de acuarela profesional con pincel de agua incluido.',
+    description: 'Caja metálica de 36 pastillas de acuarela profesional con pincel de agua incluido.',
   },
   {
     id: 157,
-    name: 'Lienzos de AlgodÃ³n Pack x5',
+    name: 'Lienzos de Algodón Pack x5',
     price: 14.99,
     image: 'https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=400',
     category: 'Arte',
-    description: 'Pack de 5 lienzos de algodÃ³n 30x40 cm sobre bastidor de pino, preparados con gesso.',
+    description: 'Pack de 5 lienzos de algodón 30x40 cm sobre bastidor de pino, preparados con gesso.',
   },
   {
     id: 158,
-    name: 'Caja de LÃ¡pices de Colores 72 piezas',
+    name: 'Caja de Lápices de Colores 72 piezas',
     price: 22.99,
     image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400',
     category: 'Arte',
-    description: 'LÃ¡pices de madera de cedro con mina de 3,8 mm, colores vivos y alta pigmentaciÃ³n.',
+    description: 'Lápices de madera de cedro con mina de 3,8 mm, colores vivos y alta pigmentación.',
   },
   {
     id: 159,
@@ -1368,7 +1368,7 @@ export const DEFAULT_PRODUCTS = [
     price: 8.99,
     image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
     category: 'Arte',
-    description: 'Bastidor de bambÃº ajustable para bordado a mano, apto para tela de hasta 2 cm de grosor.',
+    description: 'Bastidor de bambú ajustable para bordado a mano, apto para tela de hasta 2 cm de grosor.',
   },
   {
     id: 160,
@@ -1402,34 +1402,34 @@ export const DEFAULT_PRODUCTS = [
     price: 44.99,
     image: 'https://images.unsplash.com/photo-1594787318286-3d835c1d207f?w=400',
     category: 'Juguetes',
-    description: 'Buggy 1:18 todo terreno con tracciÃ³n en las 4 ruedas, 30 km/h y baterÃ­a recargable.',
+    description: 'Buggy 1:18 todo terreno con tracción en las 4 ruedas, 30 km/h y batería recargable.',
   },
 
-  // MÃ¡s Oficina
+  // Más Oficina
   {
     id: 164,
     name: 'Agenda 2026 Premium',
     price: 17.99,
     image: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=400',
     category: 'Oficina',
-    description: 'Agenda anual de tapa rÃ­gida con papel crema 90g, semana a la vista y bolsillo interior.',
+    description: 'Agenda anual de tapa rígida con papel crema 90g, semana a la vista y bolsillo interior.',
   },
   {
     id: 165,
-    name: 'Clip MagnÃ©tico para Monitor',
+    name: 'Clip Magnético para Monitor',
     price: 11.99,
     image: 'https://images.unsplash.com/photo-1547949003-9792a18a2601?w=400',
     category: 'Oficina',
-    description: 'Soporte magnÃ©tico para notas y mÃ³vil que se sujeta al marco de cualquier pantalla.',
+    description: 'Soporte magnético para notas y móvil que se sujeta al marco de cualquier pantalla.',
   },
 
-  // MÃ¡s ElectrÃ³nica
+  // Más Electrónica
   {
     id: 166,
     name: 'Switch HDMI 4 en 1',
     price: 22.99,
     image: 'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=400',
-    category: 'ElectrÃ³nica',
+    category: 'Electrónica',
     description: 'Selector HDMI 2.0 de 4 entradas y 1 salida 4K@60Hz con mando a distancia incluido.',
   },
   {
@@ -1437,7 +1437,7 @@ export const DEFAULT_PRODUCTS = [
     name: 'Ventilador USB de Escritorio',
     price: 13.99,
     image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
-    category: 'ElectrÃ³nica',
+    category: 'Electrónica',
     description: 'Mini ventilador silencioso de 3 velocidades con cuello de cisne flexible y cable USB-A.',
   },
   {
@@ -1445,18 +1445,18 @@ export const DEFAULT_PRODUCTS = [
     name: 'Tarjeta de Memoria 256 GB',
     price: 29.99,
     image: 'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'MicroSD V30 A2 de 256 GB, 100 MB/s lectura, ideal para smartphones, cÃ¡maras y drones.',
+    category: 'Electrónica',
+    description: 'MicroSD V30 A2 de 256 GB, 100 MB/s lectura, ideal para smartphones, cámaras y drones.',
   },
 
-  // MÃ¡s Deportes
+  // Más Deportes
   {
     id: 169,
-    name: 'Tenis de Mesa PortÃ¡til',
+    name: 'Tenis de Mesa Portátil',
     price: 24.99,
     image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400',
     category: 'Deportes',
-    description: 'Red retrÃ¡ctil de ping-pong con clips universales para cualquier mesa, 2 palas y 3 pelotas.',
+    description: 'Red retráctil de ping-pong con clips universales para cualquier mesa, 2 palas y 3 pelotas.',
   },
   {
     id: 170,
@@ -1464,17 +1464,17 @@ export const DEFAULT_PRODUCTS = [
     price: 149.99,
     image: 'https://images.unsplash.com/photo-1571068316344-75bc76f77890?w=400',
     category: 'Deportes',
-    description: 'Rodillo de entrenamiento con resistencia magnÃ©tica de 8 niveles y freno progresivo.',
+    description: 'Rodillo de entrenamiento con resistencia magnética de 8 niveles y freno progresivo.',
   },
 
-  // MÃ¡s Hogar
+  // Más Hogar
   {
     id: 171,
-    name: 'BÃ¡scula de BaÃ±o Digital',
+    name: 'Báscula de Baño Digital',
     price: 21.99,
     image: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400',
     category: 'Hogar',
-    description: 'BÃ¡scula con anÃ¡lisis de composiciÃ³n corporal: peso, IMC, grasa y masa muscular.',
+    description: 'Báscula con análisis de composición corporal: peso, IMC, grasa y masa muscular.',
   },
   {
     id: 172,
@@ -1485,14 +1485,14 @@ export const DEFAULT_PRODUCTS = [
     description: 'Perchero de metal estilo industrial con 8 ganchos y base circular antideslizante.',
   },
 
-  // MÃ¡s Cocina
+  // Más Cocina
   {
     id: 173,
     name: 'Bol de Ensalada con Tapa',
     price: 16.99,
     image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400',
     category: 'Cocina',
-    description: 'Bol de vidrio borosilicato de 3L con tapa hermÃ©tica y cubiertos de bambÃº incluidos.',
+    description: 'Bol de vidrio borosilicato de 3L con tapa hermética y cubiertos de bambú incluidos.',
   },
   {
     id: 174,
@@ -1500,17 +1500,17 @@ export const DEFAULT_PRODUCTS = [
     price: 36.99,
     image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400',
     category: 'Cocina',
-    description: 'Tostadora doble de acero inoxidable con 6 niveles de tostado y funciÃ³n de recalentar.',
+    description: 'Tostadora doble de acero inoxidable con 6 niveles de tostado y función de recalentar.',
   },
 
-  // MÃ¡s JardÃ­n
+  // Más Jardín
   {
     id: 175,
-    name: 'Compostador de JardÃ­n',
+    name: 'Compostador de Jardín',
     price: 44.99,
     image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400',
-    category: 'JardÃ­n',
-    description: 'Compostador de 300L en plÃ¡stico reciclado con tapa anti-lluvia y puerta de extracciÃ³n.',
+    category: 'Jardín',
+    description: 'Compostador de 300L en plástico reciclado con tapa anti-lluvia y puerta de extracción.',
   },
 
   // Viajes
@@ -1520,7 +1520,7 @@ export const DEFAULT_PRODUCTS = [
     price: 79.99,
     image: 'https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?w=400',
     category: 'Viajes',
-    description: 'Maleta rÃ­gida de policarbonato con candado TSA, 4 ruedas 360Â° y peso de 2,4 kg.',
+    description: 'Maleta rígida de policarbonato con candado TSA, 4 ruedas 360° y peso de 2,4 kg.',
   },
   {
     id: 177,
@@ -1536,32 +1536,32 @@ export const DEFAULT_PRODUCTS = [
     price: 19.99,
     image: 'https://images.unsplash.com/photo-1609081219090-a6d81d3085bf?w=400',
     category: 'Viajes',
-    description: 'Adaptador para mÃ¡s de 150 paÃ­ses con 4 puertos USB-A y 1 USB-C de carga rÃ¡pida.',
+    description: 'Adaptador para más de 150 países con 4 puertos USB-A y 1 USB-C de carga rápida.',
   },
   {
     id: 179,
-    name: 'Candado CombinaciÃ³n TSA',
+    name: 'Candado Combinación TSA',
     price: 9.99,
     image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
     category: 'Viajes',
-    description: 'Candado de dial de 4 dÃ­gitos homologado TSA con cable de acero de 60 cm.',
+    description: 'Candado de dial de 4 dígitos homologado TSA con cable de acero de 60 cm.',
   },
   {
     id: 180,
-    name: 'BotiquÃ­n de Viaje',
+    name: 'Botiquín de Viaje',
     price: 24.99,
     image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400',
     category: 'Viajes',
-    description: 'Estuche compacto con 42 artÃ­culos de primeros auxilios: vendas, antisÃ©ptico, pinzas y mÃ¡s.',
+    description: 'Estuche compacto con 42 artículos de primeros auxilios: vendas, antiséptico, pinzas y más.',
   },
 
   // FotografÃ­a
   {
     id: 181,
-    name: 'Mochila para CÃ¡mara RÃ©flex',
+    name: 'Mochila para Cámara Réflex',
     price: 54.99,
     image: 'https://images.unsplash.com/photo-1606986628253-e3d1e7e6a18c?w=400',
-    category: 'FotografÃ­a',
+    category: 'Fotografía',
     description: 'Mochila de 20L con divisores modulares acolchados para cuerpo, 3 objetivos y accesorios.',
   },
   {
@@ -1569,23 +1569,23 @@ export const DEFAULT_PRODUCTS = [
     name: 'Filtro ND Variable 77mm',
     price: 34.99,
     image: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400',
-    category: 'FotografÃ­a',
-    description: 'Filtro densidad neutra de ND2 a ND400 para control de exposiciÃ³n sin cambiar apertura.',
+    category: 'Fotografía',
+    description: 'Filtro densidad neutra de ND2 a ND400 para control de exposición sin cambiar apertura.',
   },
   {
     id: 183,
     name: 'Disparador Remoto Bluetooth',
     price: 14.99,
     image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400',
-    category: 'FotografÃ­a',
-    description: 'Disparador inalÃ¡mbrico hasta 10 m compatible con iOS y Android para selfies y larga exposiciÃ³n.',
+    category: 'Fotografía',
+    description: 'Disparador inalámbrico hasta 10 m compatible con iOS y Android para selfies y larga exposición.',
   },
   {
     id: 184,
-    name: 'Reflector FotogrÃ¡fico 5 en 1',
+    name: 'Reflector Fotográfico 5 en 1',
     price: 22.99,
     image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400',
-    category: 'FotografÃ­a',
+    category: 'Fotografía',
     description: 'Reflector plegable de 80 cm con difusor y superficies plateada, dorada, blanca y negra.',
   },
   {
@@ -1593,36 +1593,36 @@ export const DEFAULT_PRODUCTS = [
     name: 'Tarjeta SD 128 GB V90',
     price: 39.99,
     image: 'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=400',
-    category: 'FotografÃ­a',
-    description: 'Tarjeta SD V90 de 128 GB con 300 MB/s de lectura para vÃ­deo 8K y rÃ¡faga RAW.',
+    category: 'Fotografía',
+    description: 'Tarjeta SD V90 de 128 GB con 300 MB/s de lectura para vídeo 8K y ráfaga RAW.',
   },
 
-  // MÃ¡s MÃºsica
+  // Más Música
   {
     id: 186,
-    name: 'Guitarra ClÃ¡sica 4/4',
+    name: 'Guitarra Clásica 4/4',
     price: 119.99,
     image: 'https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=400',
-    category: 'MÃºsica',
-    description: 'Guitarra de cuerdas de nylon con tapa de abeto macizo y diapasÃ³n de palisandro.',
+    category: 'Música',
+    description: 'Guitarra de cuerdas de nylon con tapa de abeto macizo y diapasón de palisandro.',
   },
   {
     id: 187,
-    name: 'CajÃ³n Flamenco',
+    name: 'Cajón Flamenco',
     price: 69.99,
     image: 'https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=400',
-    category: 'MÃºsica',
-    description: 'CajÃ³n de abedul con cuerdas de guitarra internas ajustables y tapa de okume.',
+    category: 'Música',
+    description: 'Cajón de abedul con cuerdas de guitarra internas ajustables y tapa de okume.',
   },
 
-  // MÃ¡s Arte
+  // Más Arte
   {
     id: 188,
-    name: 'Arcilla PolimÃ©rica 24 colores',
+    name: 'Arcilla Polimérica 24 colores',
     price: 16.99,
     image: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400',
     category: 'Arte',
-    description: 'Kit de 24 bloques de arcilla polimÃ©rica con herramientas de modelado y moldes.',
+    description: 'Kit de 24 bloques de arcilla polimérica con herramientas de modelado y moldes.',
   },
   {
     id: 189,
@@ -1633,7 +1633,7 @@ export const DEFAULT_PRODUCTS = [
     description: 'Set de 48 rotuladores con doble punta: brush flexible y fina, base de agua.',
   },
 
-  // MÃ¡s Accesorios
+  // Más Accesorios
   {
     id: 190,
     name: 'Cartera de Pasaporte',
@@ -1648,17 +1648,17 @@ export const DEFAULT_PRODUCTS = [
     price: 35.99,
     image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
     category: 'Accesorios',
-    description: 'Auriculares con drivers de 40 mm, respuesta de 20-20.000 Hz y micrÃ³fono integrado.',
+    description: 'Auriculares con drivers de 40 mm, respuesta de 20-20.000 Hz y micrófono integrado.',
   },
 
-  // MÃ¡s Juguetes
+  // Más Juguetes
   {
     id: 192,
     name: 'Puzzle 1000 piezas',
     price: 19.99,
     image: 'https://images.unsplash.com/photo-1464890100898-a385f744067f?w=400',
     category: 'Juguetes',
-    description: 'Puzzle de 1000 piezas con imagen de mapa del mundo en cartÃ³n grueso y antirreflejo.',
+    description: 'Puzzle de 1000 piezas con imagen de mapa del mundo en cartón grueso y antirreflejo.',
   },
   {
     id: 193,
@@ -1666,17 +1666,17 @@ export const DEFAULT_PRODUCTS = [
     price: 16.99,
     image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400',
     category: 'Deportes',
-    description: 'BalÃ³n de ejercicio antirreventÃ³n de PVC con bomba de inflado incluida.',
+    description: 'Balón de ejercicio antirrevénton de PVC con bomba de inflado incluida.',
   },
 
-  // MÃ¡s Cocina
+  // Más Cocina
   {
     id: 194,
-    name: 'Vaporera de BambÃº 30 cm',
+    name: 'Vaporera de Bambú 30 cm',
     price: 21.99,
     image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400',
     category: 'Cocina',
-    description: 'Set de 2 cestas de bambÃº natural con tapa para cocinar al vapor al estilo asiÃ¡tico.',
+    description: 'Set de 2 cestas de bambú natural con tapa para cocinar al vapor al estilo asiático.',
   },
   {
     id: 195,
@@ -1684,17 +1684,17 @@ export const DEFAULT_PRODUCTS = [
     price: 18.99,
     image: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400',
     category: 'Cocina',
-    description: 'Delantal de lona de algodÃ³n con bolsillos laterales, ajustable y lavable a mÃ¡quina.',
+    description: 'Delantal de lona de algodón con bolsillos laterales, ajustable y lavable a máquina.',
   },
 
-  // MÃ¡s Hogar
+  // Más Hogar
   {
     id: 196,
     name: 'Deshumidificador Compacto',
     price: 64.99,
     image: 'https://images.unsplash.com/photo-1585515320310-259814833e62?w=400',
     category: 'Hogar',
-    description: 'Deshumidificador de 1L/dÃ­a con depÃ³sito de 500 ml, silencioso y consumo de 22W.',
+    description: 'Deshumidificador de 1L/día con depósito de 500 ml, silencioso y consumo de 22W.',
   },
   {
     id: 197,
@@ -1702,10 +1702,10 @@ export const DEFAULT_PRODUCTS = [
     price: 89.99,
     image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400',
     category: 'Hogar',
-    description: 'Cama supletoria de 190x80 cm con colchÃ³n viscoelÃ¡stico de 10 cm y funda lavable.',
+    description: 'Cama supletoria de 190x80 cm con colchón viscoelástico de 10 cm y funda lavable.',
   },
 
-  // MÃ¡s Mascotas
+  // Más Mascotas
   {
     id: 198,
     name: 'Antiparasitario Natural',
@@ -1715,50 +1715,50 @@ export const DEFAULT_PRODUCTS = [
     description: 'Spray repelente de pulgas y garrapatas a base de aceite de neem, sin toxinas.',
   },
 
-  // MÃ¡s Libros
+  // Más Libros
   {
     id: 199,
-    name: 'Aprende Python en 30 dÃ­as',
+    name: 'Aprende Python en 30 días',
     price: 21.99,
     image: 'https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?w=400',
     category: 'Libros',
-    description: 'Curso en libro de programaciÃ³n Python con ejercicios prÃ¡cticos y proyectos reales.',
+    description: 'Curso en libro de programación Python con ejercicios prácticos y proyectos reales.',
   },
 
-  // MÃ¡s JardÃ­n
+  // Más Jardín
   {
     id: 200,
-    name: 'LÃ¡mpara Solar de JardÃ­n',
+    name: 'Lámpara Solar de Jardín',
     price: 17.99,
     image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400',
-    category: 'JardÃ­n',
-    description: 'Farol solar LED de acero inoxidable con encendido automÃ¡tico al anochecer, IP65.',
+    category: 'Jardín',
+    description: 'Farol solar LED de acero inoxidable con encendido automático al anochecer, IP65.',
   },
 
   // Salud
   {
     id: 201,
-    name: 'OxÃ­metro de Pulso',
+    name: 'Oxímetro de Pulso',
     price: 18.99,
     image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400',
     category: 'Salud',
-    description: 'OxÃ­metro con pantalla OLED para medir saturaciÃ³n de oxÃ­geno y pulso en segundos.',
+    description: 'Oxímetro con pantalla OLED para medir saturación de oxígeno y pulso en segundos.',
   },
   {
     id: 202,
-    name: 'TensiÃ³metro de Brazo',
+    name: 'Tensiómetro de Brazo',
     price: 36.99,
     image: 'https://images.unsplash.com/photo-1584515933487-779824d29309?w=400',
     category: 'Salud',
-    description: 'Monitor automÃ¡tico de presiÃ³n arterial con memoria para dos usuarios y detecciÃ³n de arritmias.',
+    description: 'Monitor automático de presión arterial con memoria para dos usuarios y detección de arritmias.',
   },
   {
     id: 203,
-    name: 'Almohadilla TÃ©rmica',
+    name: 'Almohadilla Térmica',
     price: 22.99,
     image: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=400',
     category: 'Salud',
-    description: 'Manta elÃ©ctrica de calor seco con 6 niveles de temperatura y apagado automÃ¡tico.',
+    description: 'Manta eléctrica de calor seco con 6 niveles de temperatura y apagado automático.',
   },
   {
     id: 204,
@@ -1784,15 +1784,15 @@ export const DEFAULT_PRODUCTS = [
     price: 79.99,
     image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400',
     category: 'Oficina',
-    description: 'EscÃ¡ner de mano con resoluciÃ³n de 900 DPI, guarda en microSD y funciona por baterÃ­a.',
+    description: 'Escáner de mano con resolución de 900 DPI, guarda en microSD y funciona por batería.',
   },
   {
     id: 207,
-    name: 'Lampara de Escritura LED',
+    name: 'Lámpara de Escritura LED',
     price: 24.99,
     image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400',
     category: 'Oficina',
-    description: 'Lampara de mesa con brazo articulado, tres temperaturas de color y puerto USB.',
+    description: 'Lámpara de mesa con brazo articulado, tres temperaturas de color y puerto USB.',
   },
   {
     id: 208,
@@ -1800,7 +1800,7 @@ export const DEFAULT_PRODUCTS = [
     price: 10.99,
     image: 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=400',
     category: 'Oficina',
-    description: 'Set de 500 etiquetas blancas para organizaciÃ³n de archivos, cajas y estanterÃ­as.',
+    description: 'Set de 500 etiquetas blancas para organización de archivos, cajas y estanterías.',
   },
 
   // Juguetes
@@ -1810,7 +1810,7 @@ export const DEFAULT_PRODUCTS = [
     price: 27.99,
     image: 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=400',
     category: 'Juguetes',
-    description: 'Circuito de tren de madera con puente, estaciÃ³n y locomotora magnÃ©tica.',
+    description: 'Circuito de tren de madera con puente, estación y locomotora magnética.',
   },
   {
     id: 210,
@@ -1818,7 +1818,7 @@ export const DEFAULT_PRODUCTS = [
     price: 13.99,
     image: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=400',
     category: 'Juguetes',
-    description: 'Pack de 24 colores de plastilina no tÃ³xica con moldes y herramientas de modelado.',
+    description: 'Pack de 24 colores de plastilina no tóxica con moldes y herramientas de modelado.',
   },
   {
     id: 211,
@@ -1826,33 +1826,33 @@ export const DEFAULT_PRODUCTS = [
     price: 29.99,
     image: 'https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=400',
     category: 'Juguetes',
-    description: 'Peluche hipoalergÃ©nico de 80 cm con relleno suave y costuras reforzadas.',
+    description: 'Peluche hipoalergénico de 80 cm con relleno suave y costuras reforzadas.',
   },
 
-  // ElectrÃ³nica
+  // Electrónica
   {
     id: 212,
     name: 'Mini Proyector HD',
     price: 129.99,
     image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'Proyector portÃ¡til 1080p con HDMI y USB, ideal para cine en casa y presentaciones.',
+    category: 'Electrónica',
+    description: 'Proyector portátil 1080p con HDMI y USB, ideal para cine en casa y presentaciones.',
   },
   {
     id: 213,
     name: 'Teclado Bluetooth Slim',
     price: 34.99,
     image: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'Teclado inalÃ¡mbrico de perfil bajo compatible con Windows, macOS, iPad y Android.',
+    category: 'Electrónica',
+    description: 'Teclado inalámbrico de perfil bajo compatible con Windows, macOS, iPad y Android.',
   },
   {
     id: 214,
     name: 'Webcam 2K',
     price: 84.99,
     image: 'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'Camara web 2K con enfoque automÃ¡tico, doble micrÃ³fono y tapa de privacidad integrada.',
+    category: 'Electrónica',
+    description: 'Cámara web 2K con enfoque automático, doble micrófono y tapa de privacidad integrada.',
   },
 
   // Hogar
@@ -1862,7 +1862,7 @@ export const DEFAULT_PRODUCTS = [
     price: 19.99,
     image: 'https://images.unsplash.com/photo-1607006344380-b6775a0824a7?w=400',
     category: 'Hogar',
-    description: 'Cesta de 70L con estructura plegable y asas reforzadas para transporte fÃ¡cil.',
+    description: 'Cesta de 70L con estructura plegable y asas reforzadas para transporte fácil.',
   },
   {
     id: 216,
@@ -1870,7 +1870,7 @@ export const DEFAULT_PRODUCTS = [
     price: 32.99,
     image: 'https://images.unsplash.com/photo-1581147036324-c1c6f9f6f7c3?w=400',
     category: 'Hogar',
-    description: 'MaletÃ­n domÃ©stico con destornilladores, alicates, llaves y cinta mÃ©trica para reparaciones.',
+    description: 'Maletín doméstico con destornilladores, alicates, llaves y cinta métrica para reparaciones.',
   },
   {
     id: 217,
@@ -1902,11 +1902,11 @@ export const DEFAULT_PRODUCTS = [
   // Libros
   {
     id: 220,
-    name: 'HÃ¡bitos AtÃ³micos para Equipos',
+    name: 'Hábitos Atómicos para Equipos',
     price: 18.99,
     image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400',
     category: 'Libros',
-    description: 'Enfoque prÃ¡ctico para mejorar productividad y cultura de trabajo mediante microhÃ¡bitos.',
+    description: 'Enfoque práctico para mejorar productividad y cultura de trabajo mediante microhábitos.',
   },
   {
     id: 221,
@@ -1914,7 +1914,7 @@ export const DEFAULT_PRODUCTS = [
     price: 15.99,
     image: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400',
     category: 'Libros',
-    description: 'GuÃ­a clara sobre presupuesto, ahorro, inversiÃ³n y manejo de deudas para principiantes.',
+    description: 'Guía clara sobre presupuesto, ahorro, inversión y manejo de deudas para principiantes.',
   },
 
   // Belleza
@@ -1924,7 +1924,7 @@ export const DEFAULT_PRODUCTS = [
     price: 17.99,
     image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400',
     category: 'Belleza',
-    description: 'Estuche con 12 herramientas de acero inoxidable para cuidado de uÃ±as y cutÃ­culas.',
+    description: 'Estuche con 12 herramientas de acero inoxidable para cuidado de uñas y cutículas.',
   },
   {
     id: 223,
@@ -1932,7 +1932,7 @@ export const DEFAULT_PRODUCTS = [
     price: 14.99,
     image: 'https://images.unsplash.com/photo-1571781926291-c477ebfd024b?w=400',
     category: 'Belleza',
-    description: 'Limpiador facial sÃ³nico con cerdas de silicona hipoalergÃ©nica y carga USB.',
+    description: 'Limpiador facial sónico con cerdas de silicona hipoalergénica y carga USB.',
   },
 
   // Mascotas
@@ -1945,14 +1945,14 @@ export const DEFAULT_PRODUCTS = [
     description: 'Mordedor resistente de caucho natural con textura dental y aroma a pollo.',
   },
 
-  // JardÃ­n
+  // Jardín
   {
     id: 225,
     name: 'Tijeras de Podar',
     price: 13.99,
     image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400',
-    category: 'JardÃ­n',
-    description: 'Tijeras de podar de acero templado con mango ergonÃ³mico y seguro de bloqueo.',
+    category: 'Jardín',
+    description: 'Tijeras de podar de acero templado con mango ergonómico y seguro de bloqueo.',
   },
   {
     id: 226,
@@ -1960,15 +1960,15 @@ export const DEFAULT_PRODUCTS = [
     price: 34.99,
     image: 'https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=400',
     category: 'Juguetes',
-    description: 'LÃ¡mpara proyector de estrellas y galaxias con 8 modos de luz y temporizador.',
+    description: 'Lámpara proyector de estrellas y galaxias con 8 modos de luz y temporizador.',
   },
   {
     id: 227,
-    name: 'Set de Velas AromÃ¡ticas',
+    name: 'Set de Velas Aromáticas',
     price: 19.99,
     image: 'https://images.unsplash.com/photo-1603006905003-be475563bc59?w=400',
     category: 'Hogar',
-    description: 'Pack de 4 velas de soja con aromas naturales y mecha de algodÃ³n sin humo.',
+    description: 'Pack de 4 velas de soja con aromas naturales y mecha de algodón sin humo.',
   },
   {
     id: 228,
@@ -1976,27 +1976,27 @@ export const DEFAULT_PRODUCTS = [
     price: 27.99,
     image: 'https://images.unsplash.com/photo-1583779457094-ab6f77f7bf57?w=400',
     category: 'Cocina',
-    description: 'Balanza digital con conexiÃ³n app para nutriciÃ³n y mediciÃ³n precisa hasta 10 kg.',
+    description: 'Balanza digital con conexión app para nutrición y medición precisa hasta 10 kg.',
   },
   {
     id: 229,
-    name: 'Libro de Recetas MediterrÃ¡neas',
+    name: 'Libro de Recetas Mediterráneas',
     price: 21.99,
     image: 'https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=400',
     category: 'Libros',
-    description: 'MÃ¡s de 180 recetas saludables con ingredientes de temporada y pasos ilustrados.',
+    description: 'Más de 180 recetas saludables con ingredientes de temporada y pasos ilustrados.',
   },
   {
     id: 230,
-    name: 'CÃ¡mara de Seguridad Wi-Fi',
+    name: 'Cámara de Seguridad Wi-Fi',
     price: 59.99,
     image: 'https://images.unsplash.com/photo-1558002038-1055907df827?w=400',
-    category: 'ElectrÃ³nica',
-    description: 'CÃ¡mara 2K con visiÃ³n nocturna, detecciÃ³n de movimiento y audio bidireccional.',
+    category: 'Electrónica',
+    description: 'Cámara 2K con visión nocturna, detección de movimiento y audio bidireccional.',
   },
   {
     id: 231,
-    name: 'Set de Bandas ElÃ¡sticas Premium',
+    name: 'Set de Bandas Elásticas Premium',
     price: 24.99,
     image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400',
     category: 'Deportes',
@@ -2008,7 +2008,7 @@ export const DEFAULT_PRODUCTS = [
     price: 17.99,
     image: 'https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?w=400',
     category: 'Viajes',
-    description: 'Neceser colgante con mÃºltiples compartimentos y material resistente al agua.',
+    description: 'Neceser colgante con múltiples compartimentos y material resistente al agua.',
   },
   {
     id: 233,
@@ -2016,7 +2016,7 @@ export const DEFAULT_PRODUCTS = [
     price: 16.99,
     image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400',
     category: 'Salud',
-    description: '120 cÃ¡psulas de omega 3 purificado con vitamina E para apoyo cardiovascular.',
+    description: '120 cápsulas de omega 3 purificado con vitamina E para apoyo cardiovascular.',
   },
   {
     id: 234,
@@ -2024,15 +2024,15 @@ export const DEFAULT_PRODUCTS = [
     price: 12.99,
     image: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=400',
     category: 'Arte',
-    description: 'Sketchbook de 120 hojas de papel grueso de 160 g/mÂ² para lÃ¡piz, tinta y carbÃ³n.',
+    description: 'Sketchbook de 120 hojas de papel grueso de 160 g/m² para lápiz, tinta y carbón.',
   },
   {
     id: 235,
-    name: 'Soporte Plegable para PortÃ¡til',
+    name: 'Soporte Plegable para Portátil',
     price: 25.99,
     image: 'https://images.unsplash.com/photo-1547949003-9792a18a2601?w=400',
     category: 'Oficina',
-    description: 'Base de aluminio con 7 niveles de altura para mejorar postura y ventilaciÃ³n del equipo.',
+    description: 'Base de aluminio con 7 niveles de altura para mejorar postura y ventilación del equipo.',
   },
   {
     id: 236,
@@ -2047,8 +2047,8 @@ export const DEFAULT_PRODUCTS = [
     name: 'Kit de Riego por Goteo',
     price: 29.99,
     image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400',
-    category: 'JardÃ­n',
-    description: 'Sistema de riego automÃ¡tico para macetas y huerto urbano con 15 goteros regulables.',
+    category: 'Jardín',
+    description: 'Sistema de riego automático para macetas y huerto urbano con 15 goteros regulables.',
   },
   // Generated by GitHub Copilot
   // Moda
@@ -2094,11 +2094,11 @@ export const DEFAULT_PRODUCTS = [
   },
   {
     id: 243,
-    name: 'Polo ClÃ¡sico AlgodÃ³n',
+    name: 'Polo Clásico Algodón',
     price: 24.99,
     image: 'https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=400',
     category: 'Moda',
-    description: 'Polo de algodÃ³n peinado con cuello estructurado y corte moderno.',
+    description: 'Polo de algodón peinado con cuello estructurado y corte moderno.',
   },
   {
     id: 244,
@@ -2106,7 +2106,7 @@ export const DEFAULT_PRODUCTS = [
     price: 29.99,
     image: 'https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=400',
     category: 'Moda',
-    description: 'Falda midi plisada con caÃ­da fluida y cintura alta confortable.',
+    description: 'Falda midi plisada con caída fluida y cintura alta confortable.',
   },
   {
     id: 245,
@@ -2114,11 +2114,11 @@ export const DEFAULT_PRODUCTS = [
     price: 64.99,
     image: 'https://images.unsplash.com/photo-1593032465171-8bd94f8b0d6a?w=400',
     category: 'Moda',
-    description: 'Blazer de silueta recta con forro interior y cierre de un botÃ³n.',
+    description: 'Blazer de silueta recta con forro interior y cierre de un botón.',
   },
   {
     id: 246,
-    name: 'Pijama de AlgodÃ³n',
+    name: 'Pijama de Algodón',
     price: 27.99,
     image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400',
     category: 'Moda',
@@ -2142,11 +2142,11 @@ export const DEFAULT_PRODUCTS = [
   },
   {
     id: 249,
-    name: 'Camiseta BÃ¡sica Pack x3',
+    name: 'Camiseta Básica Pack x3',
     price: 32.99,
     image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400',
     category: 'Moda',
-    description: 'Pack de tres camisetas de algodÃ³n orgÃ¡nico en colores neutros.',
+    description: 'Pack de tres camisetas de algodón orgánico en colores neutros.',
   },
   {
     id: 250,
@@ -2154,7 +2154,7 @@ export const DEFAULT_PRODUCTS = [
     price: 89.99,
     image: 'https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=400',
     category: 'Moda',
-    description: 'Abrigo elegante de mezcla de lana con solapa clÃ¡sica y corte recto.',
+    description: 'Abrigo elegante de mezcla de lana con solapa clásica y corte recto.',
   },
   {
     id: 251,
@@ -2162,7 +2162,7 @@ export const DEFAULT_PRODUCTS = [
     price: 31.99,
     image: 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=400',
     category: 'Moda',
-    description: 'Jersey de punto fino con cuello alto y tacto suave para clima frÃ­o.',
+    description: 'Jersey de punto fino con cuello alto y tacto suave para clima frío.',
   },
   {
     id: 252,
@@ -2170,7 +2170,7 @@ export const DEFAULT_PRODUCTS = [
     price: 33.99,
     image: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400',
     category: 'Moda',
-    description: 'Cardigan de punto con botones frontales y puÃ±os acanalados.',
+    description: 'Cardigan de punto con botones frontales y puños acanalados.',
   },
   {
     id: 253,
@@ -2178,15 +2178,15 @@ export const DEFAULT_PRODUCTS = [
     price: 46.99,
     image: 'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?w=400',
     category: 'Moda',
-    description: 'Mono de tela ligera con cinturÃ³n desmontable y cierre trasero discreto.',
+    description: 'Mono de tela ligera con cinturón desmontable y cierre trasero discreto.',
   },
   {
     id: 254,
-    name: 'Gabardina ClÃ¡sica',
+    name: 'Gabardina Clásica',
     price: 79.99,
     image: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=400',
     category: 'Moda',
-    description: 'Gabardina impermeable con cinturÃ³n ajustable y corte atemporal.',
+    description: 'Gabardina impermeable con cinturón ajustable y corte atemporal.',
   },
   {
     id: 255,
@@ -2194,7 +2194,7 @@ export const DEFAULT_PRODUCTS = [
     price: 23.99,
     image: 'https://images.unsplash.com/photo-1485230895905-ec40ba36b9bc?w=400',
     category: 'Moda',
-    description: 'Top satinado con caÃ­da elegante y tirantes regulables.',
+    description: 'Top satinado con caída elegante y tirantes regulables.',
   },
   {
     id: 256,

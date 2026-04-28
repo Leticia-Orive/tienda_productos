@@ -1012,7 +1012,7 @@ export default function AdminProducts() {
 
       <section className="mb-8 rounded-2xl border border-indigo-200 bg-indigo-50/40 p-4" aria-label="GestiÃ³n de productos">
         <h2 className="text-lg font-semibold text-indigo-900 mb-3">
-          {editingProductId ? 'Editar producto' : 'AÃ±adir producto'}
+          {editingProductId ? 'Editar producto' : 'Añadir producto'}
         </h2>
 
         <form className="grid grid-cols-1 md:grid-cols-2 gap-3" onSubmit={handleAdminSubmit}>

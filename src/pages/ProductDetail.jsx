@@ -183,7 +183,7 @@ export default function ProductDetail() {
               aria-pressed={favorite}
               aria-label={`${favorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}: ${product.name}`}
             >
-              {favorite ? 'â¤ Favorito' : 'â™¡ Favorito'}
+              {favorite ? '❤️ Favorito' : '♡ Favorito'}
             </button>
           )}
 

@@ -100,7 +100,7 @@ function ProductCard({
               aria-pressed={favorite}
               aria-label={`${favorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}: ${product.name}`}
             >
-              {favorite ? 'â¤ Favorito' : 'â™¡ Favorito'}
+              {favorite ? '❤️ Favorito' : '♡ Favorito'}
             </button>
           )}
         </div>
@@ -132,7 +132,7 @@ function ProductCard({
                 type="button"
                 onClick={() => onDeleteProduct?.(product)}
                 className="rounded-lg border border-red-300 bg-white px-3 py-2 text-xs font-medium text-red-600 transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500"
-                aria-label={`Borrar producto del catÃ¡logo: ${product.name}`}
+                aria-label={`Borrar producto del catálogo: ${product.name}`}
               >
                 Borrar
               </button>
@@ -161,7 +161,7 @@ function ProductCard({
                 }`}
                 aria-pressed={isSelected}
                 aria-keyshortcuts="Shift+Space Shift+Enter"
-                aria-label={`${isSelected ? 'Quitar de selecciÃ³n' : 'Seleccionar'}: ${product.name}`}
+                aria-label={`${isSelected ? 'Quitar de selección' : 'Seleccionar'}: ${product.name}`}
                 title="Atajo: Shift+Espacio o Shift+Enter para seleccionar rango"
               >
                 {isSelected ? 'Seleccionado' : 'Seleccionar'}
@@ -175,9 +175,9 @@ function ProductCard({
                     type="button"
                     onClick={handleAdd}
                     className="rounded-lg bg-indigo-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    aria-label={`AÃ±adir producto: ${product.name}`}
+                    aria-label={`Añadir producto: ${product.name}`}
                   >
-                    AÃ±adir producto
+                    Añadir producto
                   </button>
                   <button
                     type="button"

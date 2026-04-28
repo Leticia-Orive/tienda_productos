@@ -52,7 +52,7 @@ export default function Navbar() {
           aria-label="Ir a inicio"
           onClick={closeMenu}
         >
-          ðŸ›ï¸ TiendaReact
+           TiendaReact
         </Link>
 
         {/* Desktop links */}
@@ -86,7 +86,7 @@ export default function Navbar() {
                 aria-current={pathname === '/favoritos' ? 'page' : undefined}
                 aria-label={`Favoritos, ${favoriteCount} producto${favoriteCount !== 1 ? 's' : ''}`}
               >
-                â¤ Favoritos
+                Favoritos
                 {favoriteCount > 0 && (
                   <span
                     className="absolute -top-2 -right-3 bg-rose-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
@@ -108,7 +108,7 @@ export default function Navbar() {
                 aria-current={pathname === '/carrito' ? 'page' : undefined}
                 aria-label={`Carrito, ${totalItems} producto${totalItems !== 1 ? 's' : ''}`}
               >
-                ðŸ›’ Carrito
+                Carrito
                 {totalItems > 0 && (
                   <span
                     className="absolute -top-2 -right-3 bg-indigo-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"

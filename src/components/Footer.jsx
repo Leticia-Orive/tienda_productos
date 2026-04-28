@@ -16,15 +16,15 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Marca */}
           <div>
-            <h2 className="text-lg font-bold text-white mb-3">ðŸ›ï¸ TiendaReact</h2>
+            <h2 className="text-lg font-bold text-white mb-3">TiendaReact</h2>
             <p className="text-sm text-gray-400">
-              Tu tienda de confianza para productos electrÃ³nicos, deportivos y accesorios de calidad.
+              Tu tienda de confianza para productos electronicos, deportivos y accesorios de calidad.
             </p>
           </div>
 
-          {/* NavegaciÃ³n */}
+          {/* Navegación */}
           <div>
-            <h3 className="font-semibold text-white mb-3">NavegaciÃ³n</h3>
+            <h3 className="font-semibold text-white mb-3">Navegación</h3>
             <ul className="flex flex-col gap-2 text-sm" role="list">
               <li>
                 <Link to="/" className="text-gray-400 hover:text-indigo-400 transition">
@@ -49,9 +49,9 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* InformaciÃ³n */}
+          {/* Información */}
           <div>
-            <h3 className="font-semibold text-white mb-3">InformaciÃ³n</h3>
+            <h3 className="font-semibold text-white mb-3">Información</h3>
             <ul className="flex flex-col gap-2 text-sm" role="list">
               <li>
                 <a href="mailto:contacto@tiendareact.com" className="text-gray-400 hover:text-indigo-400 transition">
@@ -60,12 +60,12 @@ export default function Footer() {
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-indigo-400 transition">
-                  TÃ©rminos y condiciones
+                  Términos y condiciones
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-indigo-400 transition">
-                  PolÃ­tica de privacidad
+                  Política de privacidad
                 </a>
               </li>
               <li>
@@ -78,7 +78,7 @@ export default function Footer() {
 
           {/* Redes sociales */}
           <div>
-            <h3 className="font-semibold text-white mb-3">SÃ­guenos</h3>
+            <h3 className="font-semibold text-white mb-3">Síguenos</h3>
             <ul className="flex gap-3" role="list">
               <li>
                 <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition" aria-label="Facebook">
@@ -87,12 +87,12 @@ export default function Footer() {
               </li>
               <li>
                 <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition" aria-label="Twitter">
-                  ð•
+                  t
                 </a>
               </li>
               <li>
                 <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition" aria-label="Instagram">
-                  ðŸ“·
+                  i
                 </a>
               </li>
             </ul>

@@ -507,8 +507,8 @@ export default function Home() {
 
       {isAdmin && (
         <section className="mb-8 rounded-2xl border border-indigo-200 bg-indigo-50/40 p-4" aria-label="Acceso a administraciÃ³n">
-          <h2 className="text-lg font-semibold text-indigo-900 mb-1">GestiÃ³n de catÃ¡logo</h2>
-          <p className="text-sm text-indigo-800 mb-3">Usa el panel de administraciÃ³n para crear, editar y borrar productos.</p>
+          <h2 className="text-lg font-semibold text-indigo-900 mb-1">Gestión de catálogo</h2>
+          <p className="text-sm text-indigo-800 mb-3">Usa el panel de administración para crear, editar y borrar productos.</p>
           <Link
             to="/admin/productos"
             className="inline-block rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -526,7 +526,7 @@ export default function Home() {
             onChange={toggleManualApply}
             className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
           />
-          <span className="text-sm text-gray-700">Modo manual en mÃ³vil: aplicar bÃºsqueda/precio con botÃ³n</span>
+          <span className="text-sm text-gray-700">Modo manual en móvil: aplicar búsqueda/precio con botón</span>
         </label>
         <label className="md:col-span-2">
           <span className="sr-only">Buscar productos</span>
@@ -543,7 +543,7 @@ export default function Home() {
                 resetToFirstPage();
               }
             }}
-            placeholder="Buscar por nombre, categorÃ­a o descripciÃ³n..."
+            placeholder="Buscar por nombre, categoría o descripción..."
             className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </label>
@@ -567,7 +567,7 @@ export default function Home() {
           </select>
         </label>
         <label>
-          <span className="sr-only">TamaÃ±o de pÃ¡gina</span>
+          <span className="sr-only">Tamaño de página</span>
           <select
             value={String(pageSize)}
             onChange={(e) => {
@@ -577,14 +577,14 @@ export default function Home() {
             }}
             className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
-            <option value="8">8 por pÃ¡gina</option>
-            <option value="16">16 por pÃ¡gina</option>
-            <option value="24">24 por pÃ¡gina</option>
+            <option value="8">8 por página</option>
+            <option value="16">16 por página</option>
+            <option value="24">24 por página</option>
           </select>
         </label>
         <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
           <label>
-            <span className="sr-only">Precio mÃ­nimo</span>
+            <span className="sr-only">Precio mínimo</span>
             <input
               type="number"
               min={0}
@@ -600,12 +600,12 @@ export default function Home() {
                   resetToFirstPage();
                 }
               }}
-              placeholder="Precio mÃ­nimo"
+              placeholder="Precio mínimo"
               className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </label>
           <label>
-            <span className="sr-only">Precio mÃ¡ximo</span>
+            <span className="sr-only">Precio máximo</span>
             <input
               type="number"
               min={0}
@@ -621,7 +621,7 @@ export default function Home() {
                   resetToFirstPage();
                 }
               }}
-              placeholder="Precio mÃ¡ximo"
+              placeholder="Precio máximo"
               className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </label>
@@ -661,12 +661,12 @@ export default function Home() {
             }`}
             aria-pressed={onlyNew}
           >
-            {onlyNew ? 'Mostrando solo novedades' : `Ver solo novedades (${NEW_PRODUCTS_WINDOW} mÃ¡s recientes)`}
+            {onlyNew ? 'Mostrando solo novedades' : `Ver solo novedades (${NEW_PRODUCTS_WINDOW} más recientes)`}
           </button>
         </div>
         {hasInvalidPriceRange && (
           <p className="md:col-span-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800" role="status" aria-live="polite">
-            El precio mÃ­nimo no puede ser mayor que el mÃ¡ximo.
+            El precio mínimo no puede ser mayor que el máximo.
           </p>
         )}
       </section>
@@ -752,7 +752,7 @@ export default function Home() {
               }}
               className="shrink-0 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-800"
             >
-              Min: ${effectiveMinPrice} Ã—
+              Min: ${effectiveMinPrice} 
             </button>
           )}
           {effectiveMaxPrice !== '' && (
@@ -768,7 +768,7 @@ export default function Home() {
               }}
               className="shrink-0 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-800"
             >
-              Max: ${effectiveMaxPrice} Ã—
+              Max: ${effectiveMaxPrice} 
             </button>
           )}
           {onlyNew && (
@@ -780,7 +780,7 @@ export default function Home() {
               }}
               className="shrink-0 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-800"
             >
-              Solo novedades Ã—
+              Solo novedades 
             </button>
           )}
         </section>
@@ -793,13 +793,13 @@ export default function Home() {
       </p>
 
       <p className="text-sm text-gray-500 mb-6" aria-live="polite">
-        {sortedProducts.length} resultado{sortedProducts.length !== 1 ? 's' : ''} Â· PÃ¡gina {safeCurrentPage} de {totalPages}
+        {sortedProducts.length} resultado{sortedProducts.length !== 1 ? 's' : ''}  Página {safeCurrentPage} de {totalPages}
       </p>
 
       {sortedProducts.length > 0 && (
         <section className="mb-6 grid grid-cols-1 gap-2 sm:grid-cols-3" aria-label="Resumen de precios">
           <div className="rounded-xl border border-gray-200 bg-white px-4 py-3">
-            <p className="text-xs uppercase tracking-wide text-gray-500">Precio mÃ­nimo</p>
+            <p className="text-xs uppercase tracking-wide text-gray-500">Precio mínimo</p>
             <p className="text-lg font-semibold text-gray-900">${priceStats.min.toFixed(2)}</p>
           </div>
           <div className="rounded-xl border border-gray-200 bg-white px-4 py-3">
@@ -807,7 +807,7 @@ export default function Home() {
             <p className="text-lg font-semibold text-gray-900">${priceStats.avg.toFixed(2)}</p>
           </div>
           <div className="rounded-xl border border-gray-200 bg-white px-4 py-3">
-            <p className="text-xs uppercase tracking-wide text-gray-500">Precio mÃ¡ximo</p>
+            <p className="text-xs uppercase tracking-wide text-gray-500">Precio máximo</p>
             <p className="text-lg font-semibold text-gray-900">${priceStats.max.toFixed(2)}</p>
           </div>
         </section>
@@ -836,7 +836,7 @@ export default function Home() {
       <div
         className="mb-8 flex gap-2 overflow-x-auto pb-1 sm:flex-wrap"
         role="group"
-        aria-label="Filtrar por categorÃ­a"
+        aria-label="Filtrar por categoría"
       >
         {sortedCategories.map((cat, index) => (
           <button
@@ -864,7 +864,7 @@ export default function Home() {
             className="inline-flex shrink-0 rounded-full border border-gray-300 bg-white px-4 py-1.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 md:hidden"
             aria-expanded={showAllCategories}
           >
-            {showAllCategories ? 'Ver menos categorÃ­as' : `Ver mÃ¡s categorÃ­as (${sortedCategories.length - 8})`}
+            {showAllCategories ? 'Ver menos categorías' : `Ver más categorías (${sortedCategories.length - 8})`}
           </button>
         )}
       </div>
@@ -914,7 +914,7 @@ export default function Home() {
                 onClick={() => setRenderChunk((prev) => prev + 1)}
                 className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Cargar mÃ¡s en esta pÃ¡gina
+                Cargar más en esta página
               </button>
             </div>
           )}
@@ -922,14 +922,14 @@ export default function Home() {
           {sortedProducts.length === 0 && (
             <div className="mt-8 rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-10 text-center">
               <p className="text-lg font-semibold text-gray-800">No encontramos productos</p>
-              <p className="text-sm text-gray-500 mt-1">Prueba con otra bÃºsqueda o cambia la categorÃ­a.</p>
+              <p className="text-sm text-gray-500 mt-1">Prueba con otra búsqueda o cambia la categoría.</p>
             </div>
           )}
         </>
       )}
 
       {!isSearchPending && sortedProducts.length > pageSize && (
-        <nav className="mt-8 flex items-center justify-center gap-3" aria-label="PaginaciÃ³n de productos">
+        <nav className="mt-8 flex items-center justify-center gap-3" aria-label="Paginación de productos">
           <button
             type="button"
             onClick={() => goToPage(safeCurrentPage - 1)}

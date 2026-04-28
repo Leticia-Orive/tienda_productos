@@ -7,7 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const QUICK_CATEGORIES = [
-  { label: 'ElectrÃ³nica', query: 'ElectrÃ³nica' },
+  { label: 'Electrónica', query: 'Electrónica' },
   { label: 'Deportes', query: 'Deportes' },
   { label: 'Hogar', query: 'Hogar' },
   { label: 'Moda', query: 'Moda' },
@@ -27,9 +27,9 @@ export default function NotFound() {
     <main className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 py-20 text-center bg-gray-50">
       <div className="relative mb-6 select-none" aria-hidden="true">
         <p className="text-[8rem] font-extrabold text-indigo-100 leading-none">404</p>
-        <p className="absolute inset-0 flex items-center justify-center text-5xl">ðŸ”</p>
+        <p className="absolute inset-0 flex items-center justify-center text-5xl">😵‍💫</p>
       </div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-3">PÃ¡gina no encontrada</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-3">Página no encontrada</h1>
       <p className="text-gray-500 mb-8 max-w-sm">
         La ruta que buscaste no existe o fue movida. Revisa la URL o vuelve al inicio.
       </p>
@@ -39,7 +39,7 @@ export default function NotFound() {
           onClick={() => navigate(-1)}
           className="rounded-xl border border-gray-300 bg-white px-5 py-2.5 font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          â† Volver atrÃ¡s
+          ← Volver atrás
         </button>
         <Link
           to="/"

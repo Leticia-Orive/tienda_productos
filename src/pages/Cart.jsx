@@ -99,8 +99,8 @@ export default function Cart() {
   if (cart.length === 0) {
     return (
       <main className="max-w-2xl mx-auto px-4 py-16 text-center">
-        <p className="text-6xl mb-4" aria-hidden="true">ðŸ›’</p>
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">Tu carrito estÃ¡ vacÃ­o</h1>
+        
+        <h1 className="text-2xl font-bold text-gray-800 mb-2">Tu carrito esta vaci­o</h1>
         <p className="text-gray-500 mb-6">Agrega productos para comenzar a comprar.</p>
         <Link
           to="/"
