@@ -37,7 +37,7 @@ export default function ScrollToTop() {
         <button
           type="button"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          aria-label="Volver al inicio de la pÃ¡gina"
+          aria-label="Volver al inicio de la página"
           className="fixed bottom-20 right-4 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-white shadow-lg transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 active:scale-90"
         >
           <svg

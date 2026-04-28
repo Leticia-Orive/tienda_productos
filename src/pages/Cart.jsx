@@ -197,10 +197,10 @@ export default function Cart() {
                       ? 'border-rose-300 bg-rose-50 text-rose-600 hover:bg-rose-100'
                       : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-50'
                   }`}
-                  aria-label={`Guardar ${item.name} para despuÃ©s`}
-                  title="Guardar para despuÃ©s"
+                  aria-label={`Guardar ${item.name} para despues`}
+                  title="Guardar para despues"
                 >
-                  {isFavorite(item.id) ? 'â¤ Guardado' : 'â™¡ Guardar'}
+                  {isFavorite(item.id) ? ' Guardado' : '¡ Guardar'}
                 </button>
               </li>
             ))}
@@ -215,7 +215,7 @@ export default function Cart() {
             {/* Coupon input */}
             <form onSubmit={handleApplyCoupon} className="mb-4" aria-label="Aplicar cupÃ³n de descuento">
               <label htmlFor="coupon-input" className="block text-sm font-medium text-gray-700 mb-1">
-                CupÃ³n de descuento
+                Cupón de descuento
               </label>
               <div className="flex gap-2">
                 <input
@@ -227,7 +227,7 @@ export default function Cart() {
                     setCouponInput(e.target.value.toUpperCase());
                     if (couponError) setCouponError('');
                   }}
-                  placeholder="CÃ“DIGO"
+                  placeholder="CÓDIGO"
                   title="Atajo: /"
                   autoComplete="off"
                   disabled={!!coupon}
@@ -239,7 +239,7 @@ export default function Cart() {
                     type="button"
                     onClick={removeCoupon}
                     className="rounded-lg border border-red-300 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-red-400"
-                    aria-label="Quitar cupÃ³n"
+                    aria-label="Quitar cupón"
                   >
                     Quitar
                   </button>
@@ -288,7 +288,7 @@ export default function Cart() {
                 </div>
               )}
               <div className="flex justify-between">
-                <dt>EnvÃ­o</dt>
+                <dt>Enví­o</dt>
                 <dd className="text-green-600 font-medium">Gratis</dd>
               </div>
             </dl>
@@ -317,8 +317,8 @@ export default function Cart() {
       <ConfirmDialog
         open={isConfirmClearOpen}
         title="Vaciar carrito"
-        message="Se eliminarÃ¡n todos los productos del carrito. Â¿Quieres continuar?"
-        confirmLabel="SÃ­, vaciar"
+        message="Se eliminarán todos los productos del carrito.  ¿Quieres continuar?"
+        confirmLabel="Sí­, vaciar"
         cancelLabel="Cancelar"
         onCancel={() => setIsConfirmClearOpen(false)}
         onConfirm={handleClearCart}

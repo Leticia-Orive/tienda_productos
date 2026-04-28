@@ -39,9 +39,9 @@ export default function Toast() {
           type="button"
           onClick={dismissToast}
           className="ml-1 rounded p-0.5 opacity-70 hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-white transition"
-          aria-label="Cerrar notificaciÃ³n"
+          aria-label="Cerrar notificación"
         >
-          âœ•
+          ×
         </button>
       </div>
     </div>

@@ -65,16 +65,16 @@ export default function ForgotPassword() {
     }
 
     if (name === 'password') {
-      if (!value) return 'La nueva contraseÃ±a es obligatoria.';
+      if (!value) return 'La nueva contraseña es obligatoria.';
       if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(value)) {
-        return 'Usa 8+ caracteres, mayÃºscula, minÃºscula y nÃºmero.';
+        return 'Usa  mas de 8 caracteres, mayúscula, minúscula y número.';
       }
       return undefined;
     }
 
     if (name === 'confirmPassword') {
-      if (!value) return 'Debes confirmar la contraseÃ±a.';
-      if (value !== nextForm.password) return 'Las contraseÃ±as no coinciden.';
+      if (!value) return 'Debes confirmar la contraseña.';
+      if (value !== nextForm.password) return 'Las contraseñas no coinciden.';
       return undefined;
     }
 
@@ -130,7 +130,7 @@ export default function ForgotPassword() {
     const result = await resetPassword(form);
 
     if (!result.ok) {
-      const message = result.error || 'No se pudo restablecer la contraseÃ±a.';
+      const message = result.error || 'No se pudo restablecer la contraseña.';
       setSuccess('');
       setError(message);
       showToast(message, 'error');
@@ -139,20 +139,20 @@ export default function ForgotPassword() {
     }
 
     setError('');
-    setSuccess('ContraseÃ±a actualizada correctamente. Te llevaremos al login.');
-    showToast('ContraseÃ±a actualizada correctamente', 'success');
+    setSuccess('Contraseña actualizada correctamente. Te llevaremos al login.');
+    showToast('Contraseña actualizada correctamente', 'success');
     setTimeout(() => navigate('/login', { replace: true }), 1200);
   };
 
   return (
     <main className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-10 bg-gray-50">
-      <section className="w-full max-w-md rounded-2xl bg-white p-6 shadow" aria-label="Formulario de recuperaciÃ³n de contraseÃ±a">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Recuperar contraseÃ±a</h1>
-        <p className="text-sm text-gray-500 mb-6">Ingresa tu correo y define una nueva contraseÃ±a.</p>
+      <section className="w-full max-w-md rounded-2xl bg-white p-6 shadow" aria-label="Formulario de recuperación de contraseña">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Recuperar contraseña</h1>
+        <p className="text-sm text-gray-500 mb-6">Ingresa tu correo y define una nueva contraseña.</p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
           <div className="flex flex-col gap-1">
-            <label htmlFor="email" className="text-sm font-medium text-gray-700">Correo electrÃ³nico</label>
+            <label htmlFor="email" className="text-sm font-medium text-gray-700">Correo electrónico</label>
             <input
               id="email"
               type="email"
@@ -175,7 +175,7 @@ export default function ForgotPassword() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="password" className="text-sm font-medium text-gray-700">Nueva contraseÃ±a</label>
+            <label htmlFor="password" className="text-sm font-medium text-gray-700">Nueva contraseña</label>
             <input
               id="password"
               type={showPassword ? 'text' : 'password'}
@@ -190,7 +190,7 @@ export default function ForgotPassword() {
               disabled={isSubmitting}
               minLength={8}
               pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
-              title="MÃ­nimo 8 caracteres, incluyendo mayÃºscula, minÃºscula y nÃºmero."
+              title="Mínimo 8 caracteres, incluyendo mayúscula, minúscula y número."
               aria-invalid={Boolean(touched.password && fieldErrors.password)}
               aria-describedby={touched.password && fieldErrors.password ? 'forgot-password-error' : undefined}
               required
@@ -199,12 +199,12 @@ export default function ForgotPassword() {
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
               className="mt-1 text-xs text-indigo-600 hover:text-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-fit"
-              aria-label={showPassword ? 'Ocultar contraseÃ±a' : 'Mostrar contraseÃ±a'}
+              aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
             >
-              {showPassword ? 'Ocultar contraseÃ±a' : 'Mostrar contraseÃ±a'}
+              {showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
             </button>
             {form.password && (
-              <div className="mt-1" aria-label={`Fortaleza de contraseÃ±a: ${passwordStrength.label}`}>
+              <div className="mt-1" aria-label={`Fortaleza de contraseña: ${passwordStrength.label}`}>
                 <div className="flex gap-1 mb-1" aria-hidden="true">
                   {[1, 2, 3, 4].map((step) => (
                     <div
@@ -226,7 +226,7 @@ export default function ForgotPassword() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">Confirmar contraseÃ±a</label>
+            <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">Confirmar contraseña</label>
             <input
               id="confirmPassword"
               type={showConfirmPassword ? 'text' : 'password'}
@@ -248,9 +248,9 @@ export default function ForgotPassword() {
               type="button"
               onClick={() => setShowConfirmPassword((prev) => !prev)}
               className="mt-1 text-xs text-indigo-600 hover:text-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-fit"
-              aria-label={showConfirmPassword ? 'Ocultar confirmaciÃ³n' : 'Mostrar confirmaciÃ³n'}
+              aria-label={showConfirmPassword ? 'Ocultar confirmación' : 'Mostrar confirmación'}
             >
-              {showConfirmPassword ? 'Ocultar confirmaciÃ³n' : 'Mostrar confirmaciÃ³n'}
+              {showConfirmPassword ? 'Ocultar confirmación' : 'Mostrar confirmación'}
             </button>
             {touched.confirmPassword && fieldErrors.confirmPassword && (
               <p id="forgot-confirm-password-error" className="text-xs text-red-600" role="alert">{fieldErrors.confirmPassword}</p>
@@ -265,12 +265,12 @@ export default function ForgotPassword() {
             disabled={isSubmitting}
             className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            {isSubmitting ? 'Actualizando...' : 'Actualizar contraseÃ±a'}
+            {isSubmitting ? 'Actualizando...' : 'Actualizar contraseña'}
           </button>
         </form>
 
         <p className="mt-5 text-sm text-gray-600">
-          Â¿Recordaste tu acceso?{' '}
+          ¿Recordaste tu acceso?{' '}
           <Link
             to="/login"
             className="font-medium text-indigo-600 underline underline-offset-2 hover:text-indigo-700"

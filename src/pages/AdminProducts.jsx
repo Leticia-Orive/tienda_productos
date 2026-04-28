@@ -1330,7 +1330,7 @@ export default function AdminProducts() {
             onClick={selectAllCatalogProducts}
             className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            Seleccionar todo catÃ¡logo
+            Seleccionar todo catálogo
           </button>
           <button
             type="button"

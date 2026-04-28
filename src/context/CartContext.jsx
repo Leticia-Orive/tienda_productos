@@ -197,15 +197,15 @@ export function CartProvider({ children }) {
   const applyCoupon = useCallback((rawCode) => {
     const found = findCoupon(rawCode);
     if (!found) {
-      showToast('CupÃ³n invÃ¡lido o no existe', 'error');
+      showToast('Cupón inválido o no existe', 'error');
       return false;
     }
     if (coupon?.code === found.code) {
-      showToast(`El cupÃ³n "${found.code}" ya estÃ¡ aplicado`, 'info');
+      showToast(`El cupón "${found.code}" ya está aplicado`, 'info');
       return false;
     }
     setCoupon(found);
-    showToast(`CupÃ³n "${found.code}" aplicado â€” ${found.label}`, 'success');
+    showToast(`Cupón "${found.code}" aplicado — ${found.label}`, 'success');
     return true;
   }, [coupon, showToast]);
 
