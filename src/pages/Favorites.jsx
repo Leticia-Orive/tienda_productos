@@ -75,13 +75,13 @@ export default function Favorites() {
 
 			{favoriteProducts.length === 0 ? (
 				<section className="rounded-2xl border border-dashed border-gray-300 bg-white p-8 text-center">
-					<h2 className="text-lg font-semibold text-gray-800">Tu lista estÃ¡ vacÃ­a</h2>
-					<p className="mt-2 text-sm text-gray-600">Guarda productos desde el catÃ¡logo para verlos aquÃ­.</p>
+					<h2 className="text-lg font-semibold text-gray-800">Tu lista está vací­a</h2>
+					<p className="mt-2 text-sm text-gray-600">Guarda productos desde el catálogo para verlos aquí­.</p>
 					<Link
 						to="/"
 						className="mt-5 inline-flex rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700"
 					>
-						Ir al catÃ¡logo
+						Ir al catálogo
 					</Link>
 				</section>
 			) : (
