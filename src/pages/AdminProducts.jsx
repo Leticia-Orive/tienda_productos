@@ -390,22 +390,22 @@ export default function AdminProducts() {
     }
 
     if (name === 'category') {
-      if (!value.trim()) return 'La categorÃ­a es obligatoria.';
-      if (value.trim().length < 2) return 'La categorÃ­a debe tener al menos 2 caracteres.';
-      if (value.trim().length > 50) return 'La categorÃ­a no puede superar 50 caracteres.';
+      if (!value.trim()) return 'La categorí­a es obligatoria.';
+      if (value.trim().length < 2) return 'La categorí­a debe tener al menos 2 caracteres.';
+      if (value.trim().length > 50) return 'La categorí­a no puede superar 50 caracteres.';
       return undefined;
     }
 
     if (name === 'description') {
-      if (!value.trim()) return 'La descripciÃ³n es obligatoria.';
-      if (value.trim().length < 5) return 'La descripciÃ³n debe tener al menos 5 caracteres.';
-      if (value.trim().length > 300) return 'La descripciÃ³n no puede superar 300 caracteres.';
+      if (!value.trim()) return 'La descripción es obligatoria.';
+      if (value.trim().length < 5) return 'La descripción debe tener al menos 5 caracteres.';
+      if (value.trim().length > 300) return 'La descripción no puede superar 300 caracteres.';
       return undefined;
     }
 
     if (name === 'image') {
       if (value.trim() && !/^https?:\/\/[^\s]+$/i.test(value.trim())) {
-        return 'La imagen debe ser una URL vÃ¡lida (http/https).';
+        return 'La imagen debe ser una URL válida (http/https).';
       }
       return undefined;
     }
@@ -664,7 +664,7 @@ export default function AdminProducts() {
     }
 
     if (!bulkCategoryTarget) {
-      showToast('Selecciona una categorÃ­a destino.', 'info');
+      showToast('Selecciona una categoría destino.', 'info');
       return;
     }
 
@@ -714,7 +714,7 @@ export default function AdminProducts() {
     }
 
     if (movedCount === 0 && failedCount === 0) {
-      showToast('Los productos seleccionados ya estÃ¡n en esa categorÃ­a.', 'info');
+      showToast('Los productos seleccionados ya están en esa categoría.', 'info');
     }
   };
 
@@ -727,7 +727,7 @@ export default function AdminProducts() {
 
     const parsedValue = Number.parseFloat(String(bulkPriceValue));
     if (!Number.isFinite(parsedValue)) {
-      showToast('Ingresa un valor vÃ¡lido para el ajuste.', 'error');
+      showToast('Ingresa un valor válido para el ajuste.', 'error');
       return;
     }
 
@@ -749,7 +749,7 @@ export default function AdminProducts() {
     const parsedValue = Number.parseFloat(String(bulkPriceValue));
     if (!Number.isFinite(parsedValue)) {
       setIsBulkPriceConfirmOpen(false);
-      showToast('Ingresa un valor vÃ¡lido para el ajuste.', 'error');
+      showToast('Ingresa un valor válido para el ajuste.', 'error');
       return;
     }
 
@@ -1003,7 +1003,7 @@ export default function AdminProducts() {
                 onClick={() => setShowFullAudit((prev) => !prev)}
                 className="mt-3 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
               >
-                {showFullAudit ? 'Ver menos' : `Ver mÃ¡s (${Math.min(24, authAuditEntries.length)})`}
+                {showFullAudit ? 'Ver menos' : `Ver más (${Math.min(24, authAuditEntries.length)})`}
               </button>
             )}
           </>
@@ -1063,7 +1063,7 @@ export default function AdminProducts() {
             )}
           </label>
           <label className="text-sm text-gray-700">
-            CategorÃ­a
+            Categoría
             <input
               type="text"
               name="category"
@@ -1152,7 +1152,7 @@ export default function AdminProducts() {
                 onClick={resetAdminForm}
                 className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-                Cancelar ediciÃ³n
+                Cancelar edición
               </button>
             )}
           </div>
@@ -1167,7 +1167,7 @@ export default function AdminProducts() {
             type="search"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
-            placeholder="Buscar por nombre, categorÃ­a o descripciÃ³n..."
+            placeholder="Buscar por nombre, categoría o descripción..."
             title="Atajo: Ctrl/Cmd + K"
             className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
@@ -1179,14 +1179,14 @@ export default function AdminProducts() {
             onChange={(e) => { setSortBy(e.target.value); setCurrentPage(1); }}
             className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
-            <option value="name-asc">Nombre: Aâ€“Z</option>
-            <option value="name-desc">Nombre: Zâ€“A</option>
+            <option value="name-asc">Nombre: A a Z</option>
+            <option value="name-desc">Nombre: Z a A</option>
             <option value="price-asc">Precio: menor a mayor</option>
             <option value="price-desc">Precio: mayor a menor</option>
           </select>
         </label>
         <label>
-          <span className="sr-only">TamaÃ±o de pÃ¡gina</span>
+          <span className="sr-only">Tamaño de página</span>
           <select
             value={String(pageSize)}
             onChange={(e) => {
@@ -1196,15 +1196,15 @@ export default function AdminProducts() {
             }}
             className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
-            <option value="12">12 por pÃ¡gina</option>
-            <option value="24">24 por pÃ¡gina</option>
-            <option value="48">48 por pÃ¡gina</option>
+            <option value="12">12 por página</option>
+            <option value="24">24 por página</option>
+            <option value="48">48 por página</option>
           </select>
         </label>
       </section>
 
       {/* Category chips */}
-      <div className="flex flex-wrap gap-2 mb-6" role="group" aria-label="Filtrar por categorÃ­a">
+      <div className="flex flex-wrap gap-2 mb-6" role="group" aria-label="Filtrar por categoría">
         {categories.map((cat) => (
           <button
             key={cat}
@@ -1235,7 +1235,7 @@ export default function AdminProducts() {
             aria-label="Alcance de acciones masivas"
           >
             <option value="selected">Alcance: seleccionados</option>
-            <option value="visible">Alcance: visibles (pÃ¡gina)</option>
+            <option value="visible">Alcance: visibles (página)</option>
           </select>
           <button
             type="button"
@@ -1244,7 +1244,7 @@ export default function AdminProducts() {
             className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-700 transition hover:bg-amber-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600 disabled:cursor-not-allowed disabled:opacity-50"
             title={lastBulkChange ? `Deshacer: ${lastBulkChange.label}` : 'No hay cambios masivos para deshacer'}
           >
-            Deshacer Ãºltimo masivo
+            Deshacer último masivo
           </button>
           <select
             value={bulkPriceMode}
@@ -1276,7 +1276,7 @@ export default function AdminProducts() {
             value={bulkCategoryTarget}
             onChange={(event) => setBulkCategoryTarget(event.target.value)}
             className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            aria-label="CategorÃ­a destino para productos seleccionados"
+            aria-label="Categoría destino para productos seleccionados"
           >
             <option value="">Mover seleccionados a...</option>
             {categories.filter((category) => category !== 'Todos').map((category) => (
@@ -1289,15 +1289,15 @@ export default function AdminProducts() {
             disabled={bulkTargetProducts.length === 0 || !bulkCategoryTarget}
             className="rounded-lg border border-indigo-300 bg-indigo-50 px-3 py-2 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Mover categorÃ­a
+            Mover categoría
           </button>
           <select
             value={selectedCategoryForBulk}
             onChange={(event) => setSelectedCategoryForBulk(event.target.value)}
             className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            aria-label="Seleccionar categorÃ­a para acciÃ³n masiva"
+            aria-label="Seleccionar categoría para acción masiva"
           >
-            <option value="">Seleccionar categorÃ­a...</option>
+            <option value="">Seleccionar categorí­a...</option>
             {categories.filter((category) => category !== 'Todos').map((category) => (
               <option key={category} value={category}>{category}</option>
             ))}
@@ -1307,7 +1307,7 @@ export default function AdminProducts() {
             onClick={selectProductsByCategory}
             className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            Seleccionar categorÃ­a
+            Seleccionar categoría
           </button>
           <button
             type="button"
@@ -1369,7 +1369,7 @@ export default function AdminProducts() {
             disabled={selectedProductIds.length === 0}
             className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Limpiar selecciÃ³n
+            Limpiar selección
           </button>
           <button
             type="button"
@@ -1400,7 +1400,7 @@ export default function AdminProducts() {
       </p>
 
       <p className="text-sm text-gray-500 mb-6" aria-live="polite">
-        {filteredProducts.length} producto{filteredProducts.length !== 1 ? 's' : ''} Â· PÃ¡gina {safeCurrentPage} de {totalPages}
+        {filteredProducts.length} producto{filteredProducts.length !== 1 ? 's' : ''} · Página {safeCurrentPage} de {totalPages}
       </p>
 
       <section
@@ -1423,12 +1423,12 @@ export default function AdminProducts() {
       {filteredProducts.length === 0 && (
         <div className="mt-8 rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-10 text-center">
           <p className="text-lg font-semibold text-gray-800">Sin resultados</p>
-          <p className="text-sm text-gray-500 mt-1">Prueba con otro tÃ©rmino de bÃºsqueda o cambia la categorÃ­a.</p>
+          <p className="text-sm text-gray-500 mt-1">Prueba con otro término de búsqueda o cambia la categoría.</p>
         </div>
       )}
 
       {totalPages > 1 && (
-        <nav className="mt-8 flex items-center justify-center gap-3" aria-label="PaginaciÃ³n de productos">
+        <nav className="mt-8 flex items-center justify-center gap-3" aria-label="Paginación de productos">
           <button
             type="button"
             onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
@@ -1480,8 +1480,8 @@ export default function AdminProducts() {
       <ConfirmDialog
         open={Boolean(productPendingDelete)}
         title="Eliminar producto"
-        message={productPendingDelete ? `Â¿Seguro que quieres borrar "${productPendingDelete.name}"? Esta acciÃ³n no se puede deshacer.` : ''}
-        confirmLabel="SÃ­, eliminar"
+        message={productPendingDelete ? `¿Seguro que quieres borrar "${productPendingDelete.name}"? Esta acción no se puede deshacer.` : ''}
+        confirmLabel="Sí, eliminar"
         cancelLabel="Cancelar"
         onCancel={() => setProductPendingDelete(null)}
         onConfirm={confirmDeleteProduct}
@@ -1491,8 +1491,8 @@ export default function AdminProducts() {
       <ConfirmDialog
         open={isBulkDeleteOpen}
         title="Borrar productos seleccionados"
-        message={`Se eliminarÃ¡n ${selectedProductIds.length} producto${selectedProductIds.length !== 1 ? 's' : ''} del catÃ¡logo. Esta acciÃ³n no se puede deshacer.`}
-        confirmLabel="SÃ­, borrar todo"
+        message={`Se eliminarán ${selectedProductIds.length} producto${selectedProductIds.length !== 1 ? 's' : ''} del catálogo. Esta acción no se puede deshacer.`}
+        confirmLabel="Sí, borrar todo"
         cancelLabel="Cancelar"
         onCancel={() => setIsBulkDeleteOpen(false)}
         onConfirm={confirmBulkDelete}
@@ -1502,8 +1502,8 @@ export default function AdminProducts() {
       <ConfirmDialog
         open={isBulkPriceConfirmOpen}
         title="Confirmar ajuste de precio"
-        message={`Se aplicarÃ¡ ${bulkPriceMode === 'percent' ? `${bulkPriceValue}%` : `$${bulkPriceValue}`} sobre ${bulkTargetProducts.length} producto${bulkTargetProducts.length !== 1 ? 's' : ''} (${bulkScope === 'visible' ? 'visibles' : 'seleccionados'}).`}
-        confirmLabel="SÃ­, aplicar ajuste"
+        message={`Se aplicará ${bulkPriceMode === 'percent' ? `${bulkPriceValue}%` : `$${bulkPriceValue}`} sobre ${bulkTargetProducts.length} producto${bulkTargetProducts.length !== 1 ? 's' : ''} (${bulkScope === 'visible' ? 'visibles' : 'seleccionados'}).`}
+        confirmLabel="Sí, aplicar ajuste"
         cancelLabel="Cancelar"
         onCancel={() => setIsBulkPriceConfirmOpen(false)}
         onConfirm={confirmBulkPriceAdjustment}

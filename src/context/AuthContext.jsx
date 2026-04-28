@@ -656,19 +656,19 @@ export function AuthProvider({ children }) {
     }
 
     if (!isStrongPassword(password)) {
-      return { ok: false, error: 'La contraseÃ±a debe tener al menos 8 caracteres, una mayÃºscula, una minÃºscula y un nÃºmero.' };
+      return { ok: false, error: 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.' };
     }
 
     if (password !== confirmPassword) {
-      return { ok: false, error: 'Las contraseÃ±as no coinciden.' };
+      return { ok: false, error: 'Las contraseñas no coinciden.' };
     }
 
     if (users.some((item) => item.email === safeEmail)) {
-      return { ok: false, error: 'Ese correo ya estÃ¡ registrado.' };
+      return { ok: false, error: 'Ese correo ya está registrado.' };
     }
 
     if (safeRole !== 'admin' && safeRole !== 'cliente') {
-      return { ok: false, error: 'Selecciona un rol vÃ¡lido.' };
+      return { ok: false, error: 'Selecciona un rol válido.' };
     }
 
     const passwordHash = await hashPassword(password);
@@ -697,11 +697,11 @@ export function AuthProvider({ children }) {
     }
 
     if (!isStrongPassword(password)) {
-      return { ok: false, error: 'La nueva contraseÃ±a debe tener al menos 8 caracteres, una mayÃºscula, una minÃºscula y un nÃºmero.' };
+      return { ok: false, error: 'La nueva contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.' };
     }
 
     if (password !== confirmPassword) {
-      return { ok: false, error: 'Las contraseÃ±as no coinciden.' };
+      return { ok: false, error: 'Las contraseñas no coinciden.' };
     }
 
     const exists = users.some((item) => item.email === safeEmail);
@@ -720,7 +720,7 @@ export function AuthProvider({ children }) {
     appendAuthAuditEvent({
       code: 'password_reset',
       type: 'info',
-      message: 'Contrasena actualizada correctamente.',
+      message: 'Contraseña actualizada correctamente.',
       source: 'local',
     });
 

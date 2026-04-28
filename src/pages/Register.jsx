@@ -50,7 +50,7 @@ export default function Register() {
     if (/[a-z]/.test(pwd)) score += 1;
     if (/[A-Z]/.test(pwd)) score += 1;
     if (/\d/.test(pwd)) score += 1;
-    const labels = ['', 'DÃ©bil', 'Regular', 'Buena', 'Fuerte'];
+    const labels = ['', 'Débil', 'Regular', 'Buena', 'Fuerte'];
     const colors = ['', 'bg-red-400', 'bg-orange-400', 'bg-yellow-400', 'bg-green-500'];
     return { score, label: labels[score], color: colors[score] };
   };
@@ -68,26 +68,26 @@ export default function Register() {
     if (name === 'email') {
       const safeEmail = value.trim();
       if (!safeEmail) return 'El correo es obligatorio.';
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(safeEmail)) return 'Ingresa un correo vÃ¡lido.';
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(safeEmail)) return 'Ingresa un correo válido.';
       return undefined;
     }
 
     if (name === 'role') {
-      if (value !== 'admin' && value !== 'cliente') return 'Selecciona un rol vÃ¡lido.';
+      if (value !== 'admin' && value !== 'cliente') return 'Selecciona un rol válido.';
       return undefined;
     }
 
     if (name === 'password') {
-      if (!value) return 'La contraseÃ±a es obligatoria.';
+      if (!value) return 'La contraseña es obligatoria.';
       if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(value)) {
-        return 'Usa 8+ caracteres, mayÃºscula, minÃºscula y nÃºmero.';
+        return 'Usa 8+ caracteres, mayúscula, minúscula y número.';
       }
       return undefined;
     }
 
     if (name === 'confirmPassword') {
-      if (!value) return 'Debes confirmar la contraseÃ±a.';
-      if (value !== nextForm.password) return 'Las contraseÃ±as no coinciden.';
+      if (!value) return 'Debes confirmar la contraseña.';
+      if (value !== nextForm.password) return 'Las contraseñas no coinciden.';
       return undefined;
     }
 
@@ -160,7 +160,7 @@ export default function Register() {
     <main className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-10 bg-gray-50">
       <section className="w-full max-w-md rounded-2xl bg-white p-6 shadow" aria-label="Formulario de registro">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Crear cuenta</h1>
-        <p className="text-sm text-gray-500 mb-6">Regi­strate para comprar y gestionar tus pedidos.</p>
+        <p className="text-sm text-gray-500 mb-6">Regístrate para comprar y gestionar tus pedidos.</p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
           <div className="flex flex-col gap-1">
@@ -188,7 +188,7 @@ export default function Register() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="email" className="text-sm font-medium text-gray-700">Correo electrÃ³nico</label>
+            <label htmlFor="email" className="text-sm font-medium text-gray-700">Correo electrónico</label>
             <input
               id="email"
               type="email"

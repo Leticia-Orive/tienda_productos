@@ -71,15 +71,15 @@ function normalizeProductPayload(payload) {
   }
 
   if (category.length < 2 || category.length > 50) {
-    return { ok: false, error: 'La categorÃ­a debe tener entre 2 y 50 caracteres.' };
+    return { ok: false, error: 'La categoría debe tener entre 2 y 50 caracteres.' };
   }
 
   if (description.length < 5 || description.length > 300) {
-    return { ok: false, error: 'La descripciÃ³n debe tener entre 5 y 300 caracteres.' };
+    return { ok: false, error: 'La descripción debe tener entre 5 y 300 caracteres.' };
   }
 
   if (image.length > 0 && !/^https?:\/\/[^\s]+$/i.test(image)) {
-    return { ok: false, error: 'La imagen debe ser una URL vÃ¡lida (http o https).' };
+    return { ok: false, error: 'La imagen debe ser una URL válida (http o https).' };
   }
 
   return {
@@ -157,7 +157,7 @@ export function ProductProvider({ children }) {
   const updateProduct = useCallback((id, payload) => {
     const productId = Number.parseInt(String(id), 10);
     if (!Number.isInteger(productId) || productId <= 0) {
-      return { ok: false, error: 'Producto invÃ¡lido.' };
+      return { ok: false, error: 'Producto inválido.' };
     }
 
     const result = normalizeProductPayload(payload);
@@ -175,7 +175,7 @@ export function ProductProvider({ children }) {
     if (duplicateExists) {
       return {
         ok: false,
-        error: 'Ya existe otro producto con ese nombre en la misma categorÃ­a.',
+        error: 'Ya existe otro producto con ese nombre en la misma categoría.',
       };
     }
 
@@ -193,7 +193,7 @@ export function ProductProvider({ children }) {
     });
 
     if (!found) {
-      return { ok: false, error: 'No se encontrÃ³ el producto.' };
+      return { ok: false, error: 'No se encontró el producto.' };
     }
 
     return { ok: true };
@@ -207,7 +207,7 @@ export function ProductProvider({ children }) {
   const deleteProduct = useCallback((id) => {
     const productId = Number.parseInt(String(id), 10);
     if (!Number.isInteger(productId) || productId <= 0) {
-      return { ok: false, error: 'Producto invÃ¡lido.' };
+      return { ok: false, error: 'Producto inválido.' };
     }
 
     let removed = false;
@@ -224,7 +224,7 @@ export function ProductProvider({ children }) {
     });
 
     if (!removed) {
-      return { ok: false, error: 'No se encontrÃ³ el producto.' };
+      return { ok: false, error: 'No se encontró el producto.' };
     }
 
     return { ok: true };

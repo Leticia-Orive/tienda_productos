@@ -144,7 +144,7 @@ export default function ProductDetail() {
         to="/"
         className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
       >
-        â† Volver a productos
+         Volver a productos
       </Link>
 
       <section className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-8 bg-white rounded-2xl shadow p-6" aria-label="Detalle del producto">

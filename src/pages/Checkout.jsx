@@ -295,13 +295,13 @@ export default function Checkout() {
 
     if (name === 'email') {
       if (!value.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-        return 'Ingresa un correo vÃ¡lido.';
+        return 'Ingresa un correo válido.';
       }
       return undefined;
     }
 
     if (name === 'address') {
-      if (!value.trim()) return 'La direcciÃ³n es obligatoria.';
+      if (!value.trim()) return 'La dirección es obligatoria.';
       return undefined;
     }
 
@@ -312,7 +312,7 @@ export default function Checkout() {
 
     if (name === 'zip') {
       if (!value.trim() || !/^\d{4,10}$/.test(value)) {
-        return 'CÃ³digo postal invÃ¡lido (4-10 dÃ­gitos).';
+        return 'Código postal inválido (4-10 dígitos).';
       }
       return undefined;
     }
@@ -320,7 +320,7 @@ export default function Checkout() {
     if (name === 'card') {
       const normalizedCard = value.replace(/\s/g, '');
       if (!/^\d{16}$/.test(normalizedCard) || !isValidCardLuhn(normalizedCard)) {
-        return 'NÃºmero de tarjeta invÃ¡lido.';
+        return 'Número de tarjeta inválido.';
       }
       return undefined;
     }
@@ -389,7 +389,7 @@ export default function Checkout() {
   if (cart.length === 0 && !submitted) {
     return (
       <main className="max-w-xl mx-auto px-4 py-16 text-center">
-        <p className="text-5xl mb-4" aria-hidden="true">ðŸ›’</p>
+        <p className="text-5xl mb-4" aria-hidden="true">🛒</p>
         <h1 className="text-2xl font-bold text-gray-800 mb-2">No hay productos en el carrito</h1>
         <Link to="/" className="text-indigo-600 underline">Volver a la tienda</Link>
       </main>
@@ -399,9 +399,9 @@ export default function Checkout() {
   if (submitted) {
     return (
       <main className="max-w-xl mx-auto px-4 py-20 text-center" role="status" aria-live="polite">
-        <p className="text-6xl mb-4" aria-hidden="true">âœ…</p>
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">Â¡Pedido confirmado!</h1>
-        <p className="text-gray-500 mb-5">Gracias por tu compra. SerÃ¡s redirigido al historial de pedidos.</p>
+        <p className="text-6xl mb-4" aria-hidden="true">✔</p>
+        <h1 className="text-2xl font-bold text-gray-800 mb-2">¡Pedido confirmado!</h1>
+        <p className="text-gray-500 mb-5">Gracias por tu compra. Serás redirigido al historial de pedidos.</p>
         <Link
           to="/pedidos"
           className="inline-block rounded-xl bg-indigo-600 px-5 py-2.5 font-medium text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -432,7 +432,7 @@ export default function Checkout() {
 
       {/* Pasos visuales */}
       <div className="mb-8 flex items-center justify-between">
-        {[{label: 'Datos', num: 1}, {label: 'EnvÃ­o', num: 2}, {label: 'Pago', num: 3}].map((step, idx) => (
+        {[{label: 'Datos', num: 1}, {label: 'Envío', num: 2}, {label: 'Pago', num: 3}].map((step, idx) => (
           <div key={step.num} className="flex items-center flex-1">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${idx === 0 ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-600'}`}>
               {step.num}
@@ -445,7 +445,7 @@ export default function Checkout() {
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Form */}
-        <section className="flex-1" aria-label="Formulario de envÃ­o y pago">
+        <section className="flex-1" aria-label="Formulario de enví­o y pago">
           <form onSubmit={handleSubmit} noValidate aria-busy={isSubmitting} className="flex flex-col gap-5">
             {hasVisibleErrors && (
               <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
@@ -454,21 +454,21 @@ export default function Checkout() {
             )}
             <fieldset className="flex flex-col gap-4">
               <legend className="font-semibold text-gray-800 text-base mb-1">Datos personales</legend>
-              <CheckoutField id="name" label="Nombre completo" name="name" required placeholder="Ana GarcÃ­a" autoComplete="name" value={form.name} hasError={Boolean(touched.name && errors.name)} errorMessage={errors.name} onChange={handleChange} onBlur={handleBlur} />
-              <CheckoutField id="email" label="Correo electrÃ³nico" name="email" type="email" required placeholder="ana@correo.com" autoComplete="email" value={form.email} hasError={Boolean(touched.email && errors.email)} errorMessage={errors.email} onChange={handleChange} onBlur={handleBlur} />
+              <CheckoutField id="name" label="Nombre completo" name="name" required placeholder="Ana Garcí­a" autoComplete="name" value={form.name} hasError={Boolean(touched.name && errors.name)} errorMessage={errors.name} onChange={handleChange} onBlur={handleBlur} />
+              <CheckoutField id="email" label="Correo electrónico" name="email" type="email" required placeholder="ana@correo.com" autoComplete="email" value={form.email} hasError={Boolean(touched.email && errors.email)} errorMessage={errors.email} onChange={handleChange} onBlur={handleBlur} />
             </fieldset>
 
             <fieldset className="flex flex-col gap-4">
-              <legend className="font-semibold text-gray-800 text-base mb-1">DirecciÃ³n de envÃ­o</legend>
-              <CheckoutField id="address" label="Calle y nÃºmero" name="address" required placeholder="Av. Libertad 1234" autoComplete="street-address" value={form.address} hasError={Boolean(touched.address && errors.address)} errorMessage={errors.address} onChange={handleChange} onBlur={handleBlur} />
+              <legend className="font-semibold text-gray-800 text-base mb-1">Dirección de envío</legend>
+              <CheckoutField id="address" label="Calle y número" name="address" required placeholder="Av. Libertad 1234" autoComplete="street-address" value={form.address} hasError={Boolean(touched.address && errors.address)} errorMessage={errors.address} onChange={handleChange} onBlur={handleBlur} />
               <div className="grid grid-cols-2 gap-4">
                 <CheckoutField id="city" label="Ciudad" name="city" required placeholder="Buenos Aires" autoComplete="address-level2" value={form.city} hasError={Boolean(touched.city && errors.city)} errorMessage={errors.city} onChange={handleChange} onBlur={handleBlur} />
-                <CheckoutField id="zip" label="CÃ³digo postal" name="zip" required placeholder="1425" autoComplete="postal-code" value={form.zip} hasError={Boolean(touched.zip && errors.zip)} errorMessage={errors.zip} onChange={handleChange} onBlur={handleBlur} />
+                <CheckoutField id="zip" label="Código postal" name="zip" required placeholder="1425" autoComplete="postal-code" value={form.zip} hasError={Boolean(touched.zip && errors.zip)} errorMessage={errors.zip} onChange={handleChange} onBlur={handleBlur} />
               </div>
               <fieldset className="rounded-xl border border-gray-200 bg-white px-3 py-3">
-                <legend className="text-sm font-medium text-gray-700 px-1">Tipo de envÃ­o</legend>
+                <legend className="text-sm font-medium text-gray-700 px-1">Tipo de envío</legend>
                 <label className="mt-1 flex cursor-pointer items-center justify-between rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                  <span>EstÃ¡ndar (3-5 dÃ­as)</span>
+                  <span>Estándar (3-5 días)</span>
                   <span className="font-semibold text-emerald-700">Gratis</span>
                   <input
                     type="radio"
@@ -480,7 +480,7 @@ export default function Checkout() {
                   />
                 </label>
                 <label className="mt-2 flex cursor-pointer items-center justify-between rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                  <span>ExprÃ©s (1-2 dÃ­as)</span>
+                  <span>Exprés (1-2 días)</span>
                   <span className="font-semibold text-gray-900">$4.99</span>
                   <input
                     type="radio"
@@ -498,7 +498,7 @@ export default function Checkout() {
               <legend className="font-semibold text-gray-800 text-base mb-1">Pago</legend>
               <CheckoutField
                 id="card"
-                label="NÃºmero de tarjeta"
+                label="Número de tarjeta"
                 name="card"
                 placeholder="1234 5678 9012 3456"
                 autoComplete="cc-number"
@@ -557,7 +557,7 @@ export default function Checkout() {
                 </div>
               )}
               <div className="flex justify-between">
-                <dt>EnvÃ­o</dt>
+                <dt>Enví­o</dt>
                 <dd className="font-medium">
                   {shippingFee === 0 ? <span className="text-green-600">Gratis</span> : `$${shippingFee.toFixed(2)}`}
                 </dd>
