@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useCart from '../context/useCart';
 import useAuth from '../context/useAuth';
+import useLanguage from '../context/useLanguage';
 
 /**
  * Navbar component with accessible navigation links, cart badge, and mobile hamburger menu.
@@ -15,6 +16,7 @@ import useAuth from '../context/useAuth';
 export default function Navbar() {
   const { totalItems, favoriteCount } = useCart();
   const { user, logout } = useAuth();
+  const { language, languages, setLanguage, t } = useLanguage();
   const isAdmin = user?.role === 'admin';
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -24,7 +26,7 @@ export default function Navbar() {
   const handleLogout = () => {
     logout({
       broadcastNotice: {
-        message: 'Tu sesion se cerro manualmente desde otra pestana.',
+        message: t('navbar.manualLogoutNotice'),
         type: 'info',
         code: 'manual_logout',
       },
@@ -43,13 +45,13 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 bg-white shadow-sm">
       <nav
         className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between"
-        aria-label="NavegaciÃ³n principal"
+        aria-label={t('navbar.primaryNavigation')}
       >
         {/* Brand */}
         <Link
           to="/"
           className="text-xl font-bold text-indigo-600 focus-visible:outline-2 focus-visible:outline-indigo-600 rounded"
-          aria-label="Ir a inicio"
+          aria-label={t('navbar.goHome')}
           onClick={closeMenu}
         >
            TiendaReact
@@ -59,20 +61,20 @@ export default function Navbar() {
         <ul className="hidden md:flex items-center gap-6" role="list">
           <li>
             <Link to="/" className={linkClass('/')} aria-current={pathname === '/' ? 'page' : undefined}>
-              Productos
+              {t('navbar.home')}
             </Link>
           </li>
           {isAdmin && (
             <li>
               <Link to="/admin/productos" className={linkClass('/admin/productos')} aria-current={pathname === '/admin/productos' ? 'page' : undefined}>
-                Admin
+                {t('navbar.admin')}
               </Link>
             </li>
           )}
           {!isAdmin && (
             <li>
               <Link to="/pedidos" className={linkClass('/pedidos')} aria-current={pathname === '/pedidos' ? 'page' : undefined}>
-                Pedidos
+                {t('navbar.orders')}
               </Link>
             </li>
           )}
@@ -84,9 +86,9 @@ export default function Navbar() {
                   pathname === '/favoritos' ? 'text-indigo-600' : 'text-gray-600 hover:text-indigo-600'
                 }`}
                 aria-current={pathname === '/favoritos' ? 'page' : undefined}
-                aria-label={`Favoritos, ${favoriteCount} producto${favoriteCount !== 1 ? 's' : ''}`}
+                aria-label={t('navbar.favoritesCount', { count: favoriteCount, suffix: favoriteCount !== 1 ? 's' : '' })}
               >
-                Favoritos
+                {t('navbar.favorites')}
                 {favoriteCount > 0 && (
                   <span
                     className="absolute -top-2 -right-3 bg-rose-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
@@ -106,9 +108,9 @@ export default function Navbar() {
                   pathname === '/carrito' ? 'text-indigo-600' : 'text-gray-600 hover:text-indigo-600'
                 }`}
                 aria-current={pathname === '/carrito' ? 'page' : undefined}
-                aria-label={`Carrito, ${totalItems} producto${totalItems !== 1 ? 's' : ''}`}
+                aria-label={t('navbar.cartCount', { count: totalItems, suffix: totalItems !== 1 ? 's' : '' })}
               >
-                Carrito
+                {t('navbar.cart')}
                 {totalItems > 0 && (
                   <span
                     className="absolute -top-2 -right-3 bg-indigo-600 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
@@ -120,6 +122,20 @@ export default function Navbar() {
               </Link>
             </li>
           )}
+          <li>
+            <label className="sr-only" htmlFor="navbar-language-select">{t('navbar.language')}</label>
+            <select
+              id="navbar-language-select"
+              value={language}
+              onChange={(event) => setLanguage(event.target.value)}
+              className="rounded-lg border border-gray-300 bg-white px-2 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              aria-label={t('navbar.language')}
+            >
+              {languages.map((item) => (
+                <option key={item.code} value={item.code}>{item.label}</option>
+              ))}
+            </select>
+          </li>
           <li className="text-xs text-gray-500" aria-label="Usuario autenticado" title={user?.email}>
             {user?.name || user?.email}
           </li>
@@ -128,9 +144,9 @@ export default function Navbar() {
               type="button"
               onClick={handleLogout}
               className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              aria-label="Cerrar sesiÃ³n"
+              aria-label={t('navbar.closeSession')}
             >
-              Salir
+              {t('navbar.signOut')}
             </button>
           </li>
         </ul>
@@ -141,7 +157,7 @@ export default function Navbar() {
             <Link
               to="/carrito"
               className="relative text-gray-600"
-              aria-label={`Carrito, ${totalItems} producto${totalItems !== 1 ? 's' : ''}`}
+              aria-label={t('navbar.cartCount', { count: totalItems, suffix: totalItems !== 1 ? 's' : '' })}
             >
               ðŸ›’
               {totalItems > 0 && (
@@ -156,7 +172,7 @@ export default function Navbar() {
             onClick={() => setMenuOpen((prev) => !prev)}
             aria-expanded={menuOpen}
             aria-controls="mobile-menu"
-            aria-label={menuOpen ? 'Cerrar menÃº' : 'Abrir menÃº'}
+            aria-label={menuOpen ? t('navbar.closeMenu') : t('navbar.openMenu')}
             className="rounded-lg p-2 text-gray-600 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-indigo-600 transition"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -174,28 +190,41 @@ export default function Navbar() {
           id="mobile-menu"
           className="md:hidden bg-white border-t border-gray-100 px-4 py-4 flex flex-col gap-4"
           role="navigation"
-          aria-label="MenÃº mÃ³vil"
+          aria-label={t('navbar.mobileMenu')}
         >
-          <Link to="/" onClick={closeMenu} className={linkClass('/')} aria-current={pathname === '/' ? 'page' : undefined}>Productos</Link>
-          {isAdmin && <Link to="/admin/productos" onClick={closeMenu} className={linkClass('/admin/productos')}>Admin</Link>}
-          {!isAdmin && <Link to="/pedidos" onClick={closeMenu} className={linkClass('/pedidos')}>Pedidos</Link>}
+          <Link to="/" onClick={closeMenu} className={linkClass('/')} aria-current={pathname === '/' ? 'page' : undefined}>{t('navbar.home')}</Link>
+          {isAdmin && <Link to="/admin/productos" onClick={closeMenu} className={linkClass('/admin/productos')}>{t('navbar.admin')}</Link>}
+          {!isAdmin && <Link to="/pedidos" onClick={closeMenu} className={linkClass('/pedidos')}>{t('navbar.orders')}</Link>}
           {!isAdmin && (
-            <Link to="/favoritos" onClick={closeMenu} className={linkClass('/favoritos')} aria-label={`Favoritos, ${favoriteCount} guardados`}>
-              â¤ Favoritos {favoriteCount > 0 && <span className="ml-1 text-xs font-bold text-rose-500">({favoriteCount})</span>}
+            <Link to="/favoritos" onClick={closeMenu} className={linkClass('/favoritos')} aria-label={t('navbar.favoritesSaved', { count: favoriteCount })}>
+              â¤ {t('navbar.favorites')} {favoriteCount > 0 && <span className="ml-1 text-xs font-bold text-rose-500">({favoriteCount})</span>}
             </Link>
           )}
           {!isAdmin && (
             <Link to="/carrito" onClick={closeMenu} className={linkClass('/carrito')}>
-              ðŸ›’ Carrito {totalItems > 0 && <span className="ml-1 text-xs font-bold text-indigo-600">({totalItems})</span>}
+              ðŸ›’ {t('navbar.cart')} {totalItems > 0 && <span className="ml-1 text-xs font-bold text-indigo-600">({totalItems})</span>}
             </Link>
           )}
+          <div className="flex flex-col gap-1">
+            <label htmlFor="navbar-language-mobile" className="text-xs font-medium text-gray-500">{t('navbar.language')}</label>
+            <select
+              id="navbar-language-mobile"
+              value={language}
+              onChange={(event) => setLanguage(event.target.value)}
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              {languages.map((item) => (
+                <option key={item.code} value={item.code}>{item.label}</option>
+              ))}
+            </select>
+          </div>
           <p className="text-xs text-gray-400">{user?.name || user?.email}</p>
           <button
             type="button"
             onClick={() => { handleLogout(); closeMenu(); }}
             className="w-fit rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            Salir
+            {t('navbar.signOut')}
           </button>
         </div>
       )}

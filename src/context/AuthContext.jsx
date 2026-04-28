@@ -5,6 +5,7 @@
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AuthContext } from './AuthStateContext';
+import useLanguage from './useLanguage';
 
 const AUTH_STORAGE_KEY = 'tienda_react_auth_user';
 const USERS_STORAGE_KEY = 'tienda_react_auth_users';
@@ -372,6 +373,7 @@ function safeHashEquals(left, right) {
  * @param {{ children: React.ReactNode }} props
  */
 export function AuthProvider({ children }) {
+  const { t } = useLanguage();
   const [user, setUser] = useState(getInitialUser);
   const [users, setUsers] = useState(getInitialUsers);
   const [authNotice, setAuthNotice] = useState(null);
@@ -520,7 +522,7 @@ export function AuthProvider({ children }) {
         logout({
           keepExpiredMetadata: true,
           broadcastNotice: {
-            message: 'Tu sesion se cerro por inactividad en otra pestana.',
+            message: t('common.sessionClosedInactive'),
             type: 'info',
             code: 'idle_timeout',
           },
@@ -571,11 +573,11 @@ export function AuthProvider({ children }) {
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(safeEmail)) {
-      return { ok: false, error: 'Ingresa un correo vÃ¡lido.' };
+      return { ok: false, error: t('common.invalidEmail') };
     }
 
     if (!password || password.length < 8) {
-      return { ok: false, error: 'La contraseÃ±a debe tener al menos 8 caracteres.' };
+      return { ok: false, error: t('auth.passwordTooShort') };
     }
 
     const existingUser = users.find((item) => item.email === safeEmail);
@@ -608,12 +610,12 @@ export function AuthProvider({ children }) {
         appendAuthAuditEvent({
           code: 'login_lockout',
           type: 'error',
-          message: 'Se activo bloqueo temporal por demasiados intentos fallidos.',
+          message: t('auth.loginLockoutAudit'),
           source: 'local',
         });
         return {
           ok: false,
-          error: 'Demasiados intentos fallidos. Tu acceso se bloqueÃ³ temporalmente por 5 minutos.',
+          error: t('auth.loginLockoutError'),
         };
       }
 
@@ -621,7 +623,7 @@ export function AuthProvider({ children }) {
       const remainingAttempts = MAX_FAILED_LOGIN_ATTEMPTS - nextFailedCount;
       return {
         ok: false,
-        error: `Correo o contraseÃ±a incorrectos. Te quedan ${remainingAttempts} intento${remainingAttempts !== 1 ? 's' : ''}.`,
+        error: t('auth.invalidCredentials', { remainingAttempts, suffix: remainingAttempts !== 1 ? 's' : '' }),
       };
     }
 
@@ -629,7 +631,7 @@ export function AuthProvider({ children }) {
     appendAuthAuditEvent({
       code: 'login_success',
       type: 'success',
-      message: 'Inicio de sesion exitoso.',
+      message: t('auth.loginSuccessAudit'),
       source: 'local',
     });
     const role = existingUser.role || 'cliente';
@@ -652,23 +654,23 @@ export function AuthProvider({ children }) {
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(safeEmail)) {
-      return { ok: false, error: 'Ingresa un correo vÃ¡lido.' };
+      return { ok: false, error: t('common.invalidEmail') };
     }
 
     if (!isStrongPassword(password)) {
-      return { ok: false, error: 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.' };
+      return { ok: false, error: t('auth.registerPasswordInvalid') };
     }
 
     if (password !== confirmPassword) {
-      return { ok: false, error: 'Las contraseñas no coinciden.' };
+      return { ok: false, error: t('common.passwordsMismatch') };
     }
 
     if (users.some((item) => item.email === safeEmail)) {
-      return { ok: false, error: 'Ese correo ya está registrado.' };
+      return { ok: false, error: t('auth.emailTaken') };
     }
 
     if (safeRole !== 'admin' && safeRole !== 'cliente') {
-      return { ok: false, error: 'Selecciona un rol válido.' };
+      return { ok: false, error: t('common.invalidRole') };
     }
 
     const passwordHash = await hashPassword(password);
@@ -678,11 +680,11 @@ export function AuthProvider({ children }) {
     appendAuthAuditEvent({
       code: 'register_success',
       type: 'success',
-      message: 'Registro de cuenta completado.',
+      message: t('auth.registerSuccessAudit'),
       source: 'local',
     });
     return { ok: true };
-  }, [users]);
+  }, [t, users]);
 
   /**
    * Resets an existing user's password by email.
@@ -693,20 +695,20 @@ export function AuthProvider({ children }) {
     const safeEmail = email.trim().toLowerCase();
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(safeEmail)) {
-      return { ok: false, error: 'Ingresa un correo vÃ¡lido.' };
+      return { ok: false, error: t('common.invalidEmail') };
     }
 
     if (!isStrongPassword(password)) {
-      return { ok: false, error: 'La nueva contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.' };
+      return { ok: false, error: t('auth.resetPasswordInvalid') };
     }
 
     if (password !== confirmPassword) {
-      return { ok: false, error: 'Las contraseñas no coinciden.' };
+      return { ok: false, error: t('common.passwordsMismatch') };
     }
 
     const exists = users.some((item) => item.email === safeEmail);
     if (!exists) {
-      return { ok: false, error: 'No existe una cuenta con ese correo.' };
+      return { ok: false, error: t('auth.accountMissing') };
     }
 
     const passwordHash = await hashPassword(password);
@@ -720,12 +722,12 @@ export function AuthProvider({ children }) {
     appendAuthAuditEvent({
       code: 'password_reset',
       type: 'info',
-      message: 'Contraseña actualizada correctamente.',
+      message: t('auth.passwordResetAudit'),
       source: 'local',
     });
 
     return { ok: true };
-  }, [users]);
+  }, [t, users]);
 
   const value = useMemo(() => ({
     user,

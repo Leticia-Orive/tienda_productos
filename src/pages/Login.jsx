@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../context/useAuth';
 import useCart from '../context/useCart';
+import useLanguage from '../context/useLanguage';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const REMEMBERED_EMAIL_KEY = 'tienda_react_remembered_email';
@@ -59,8 +60,9 @@ function getSavedEmail() {
  * Accessibility: fields are labeled and errors are announced.
  */
 export default function Login() {
+  const { t } = useLanguage();
   // WCAG 2.4.2: descriptive page title announced by screen readers on navigation.
-  useDocumentTitle('Iniciar sesión');
+  useDocumentTitle(t('common.login'));
   const { isAuthenticated, login } = useAuth();
   const { showToast } = useCart();
   const location = useLocation();
@@ -77,9 +79,9 @@ export default function Login() {
 
   useEffect(() => {
     if (expiredSessionContext.expired) {
-      showToast('Sesion cerrada por inactividad. Inicia sesion nuevamente.', 'info');
+      showToast(t('common.sessionClosedInactive'), 'info');
     }
-  }, [expiredSessionContext.expired, showToast]);
+  }, [expiredSessionContext.expired, showToast, t]);
 
   const redirectTo = location.state?.from?.pathname || expiredSessionContext.redirectPath || '/';
 
@@ -91,14 +93,14 @@ export default function Login() {
   const validateField = (name, value) => {
     if (name === 'email') {
       const safeValue = value.trim();
-      if (!safeValue) return 'El correo es obligatorio.';
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(safeValue)) return 'Ingresa un correo vÃ¡lido.';
+      if (!safeValue) return t('common.requiredEmail');
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(safeValue)) return t('common.invalidEmail');
       return undefined;
     }
 
     if (name === 'password') {
-      if (!value) return 'La contraseÃ±a es obligatoria.';
-      if (value.length < 8) return 'Debe tener al menos 8 caracteres.';
+      if (!value) return t('common.requiredPassword');
+      if (value.length < 8) return t('common.passwordMin');
       return undefined;
     }
 
@@ -128,7 +130,7 @@ export default function Login() {
     const result = await login(form);
 
     if (!result.ok) {
-      const message = result.error || 'No se pudo iniciar sesión.';
+      const message = result.error || t('common.signInFailed');
       setError(message);
       showToast(message, 'error');
       setIsSubmitting(false);
@@ -136,8 +138,8 @@ export default function Login() {
     }
 
     setError('');
-    const roleLabel = result.role === 'admin' ? 'administrador' : 'cliente';
-    showToast(`Sesión iniciada como ${roleLabel}`, 'success');
+    const roleLabel = result.role === 'admin' ? t('common.roleAdmin').toLowerCase() : t('common.roleClient').toLowerCase();
+    showToast(t('common.loginAs', { role: roleLabel }), 'success');
     try {
       if (rememberEmail) {
         localStorage.setItem(REMEMBERED_EMAIL_KEY, form.email.trim());
@@ -152,12 +154,12 @@ export default function Login() {
   return (
     <main className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-10 bg-gray-50">
       <section className="w-full max-w-md rounded-2xl bg-white p-6 shadow" aria-label="Formulario de inicio de sesiÃ³n">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Iniciar sesiÃ³n</h1>
-        <p className="text-sm text-gray-500 mb-6">Accede para ver productos y completar tus compras.</p>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('common.login')}</h1>
+        <p className="text-sm text-gray-500 mb-6">{t('common.accessToProducts')}</p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
           <div className="flex flex-col gap-1">
-            <label htmlFor="email" className="text-sm font-medium text-gray-700">Correo electrÃ³nico</label>
+            <label htmlFor="email" className="text-sm font-medium text-gray-700">{t('common.email')}</label>
             <input
               id="email"
               type="email"
@@ -191,7 +193,7 @@ export default function Login() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="password" className="text-sm font-medium text-gray-700">Contraseña</label>
+            <label htmlFor="password" className="text-sm font-medium text-gray-700">{t('common.password')}</label>
             <input
               id="password"
               type={showPassword ? 'text' : 'password'}
@@ -224,9 +226,9 @@ export default function Login() {
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
               className="mt-1 text-xs text-indigo-600 hover:text-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-fit"
-              aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              aria-label={showPassword ? t('common.hidePassword') : t('common.showPassword')}
             >
-              {showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              {showPassword ? t('common.hidePassword') : t('common.showPassword')}
             </button>
             {touched.password && fieldErrors.password && (
               <p id="password-error" className="text-xs text-red-600" role="alert">{fieldErrors.password}</p>
@@ -245,7 +247,7 @@ export default function Login() {
               disabled={isSubmitting}
               className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
             />
-            Recordar mi correo
+            {t('common.rememberEmail')}
           </label>
 
           <button
@@ -253,7 +255,7 @@ export default function Login() {
             disabled={isSubmitting}
             className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            {isSubmitting ? 'Entrando...' : 'Entrar'}
+            {isSubmitting ? t('common.signingIn') : t('common.signIn')}
           </button>
         </form>
 
@@ -262,17 +264,17 @@ export default function Login() {
             to="/recuperar"
             className="font-medium text-indigo-600 underline underline-offset-2 hover:text-indigo-700"
           >
-            ¿Olvidaste tu contraseña?
+            {t('common.forgotPassword')}
           </Link>
         </p>
 
         <p className="mt-5 text-sm text-gray-600">
-          ¿No tienes cuenta?{' '}
+          {t('common.dontHaveAccount')}{' '}
           <Link
             to="/registro"
             className="font-medium text-indigo-600 underline underline-offset-2 hover:text-indigo-700"
           >
-            Regístrate
+            {t('common.register')}
           </Link>
         </p>
       </section>

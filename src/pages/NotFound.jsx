@@ -4,6 +4,7 @@
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
 import { Link, useNavigate } from 'react-router-dom';
+import useLanguage from '../context/useLanguage';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const QUICK_CATEGORIES = [
@@ -19,8 +20,9 @@ const QUICK_CATEGORIES = [
  * Fallback page for unknown routes with illustrated header.
  */
 export default function NotFound() {
+  const { t, translateCategory } = useLanguage();
   // WCAG 2.4.2: descriptive page title announced by screen readers on navigation.
-  useDocumentTitle('Página no encontrada');
+  useDocumentTitle(t('notFound.title'));
   const navigate = useNavigate();
 
   return (
@@ -29,9 +31,9 @@ export default function NotFound() {
         <p className="text-[8rem] font-extrabold text-indigo-100 leading-none">404</p>
         <p className="absolute inset-0 flex items-center justify-center text-5xl">😵‍💫</p>
       </div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-3">Página no encontrada</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-3">{t('notFound.title')}</h1>
       <p className="text-gray-500 mb-8 max-w-sm">
-        La ruta que buscaste no existe o fue movida. Revisa la URL o vuelve al inicio.
+        {t('notFound.subtitle')}
       </p>
       <div className="flex flex-wrap gap-3 justify-center mb-10">
         <button
@@ -39,18 +41,18 @@ export default function NotFound() {
           onClick={() => navigate(-1)}
           className="rounded-xl border border-gray-300 bg-white px-5 py-2.5 font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          ← Volver atrás
+          ← {t('notFound.back')}
         </button>
         <Link
           to="/"
           className="rounded-xl bg-indigo-600 px-5 py-2.5 font-medium text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          Ir al inicio
+          {t('notFound.home')}
         </Link>
       </div>
 
-      <section aria-label="Explorar categorÃ­as">
-        <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Explorar categorÃ­as</p>
+      <section aria-label={t('notFound.exploreCategories')}>
+        <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">{t('notFound.exploreCategories')}</p>
         <ul className="flex flex-wrap justify-center gap-2" role="list">
           {QUICK_CATEGORIES.map((cat) => (
             <li key={cat.query}>
@@ -58,7 +60,7 @@ export default function NotFound() {
                 to={`/?categoria=${encodeURIComponent(cat.query)}`}
                 className="rounded-full border border-gray-300 bg-white px-4 py-1.5 text-sm font-medium text-gray-700 transition hover:bg-indigo-50 hover:border-indigo-300 hover:text-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                {cat.label}
+                {translateCategory(cat.label)}
               </Link>
             </li>
           ))}

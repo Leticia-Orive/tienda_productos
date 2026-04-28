@@ -7,9 +7,11 @@ import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import { AuthProvider } from './context/AuthContext';
+import { LanguageProvider } from './context/LanguageContext';
 import { ProductProvider } from './context/ProductContext';
 import useAuth from './context/useAuth';
 import useCart from './context/useCart';
+import useLanguage from './context/useLanguage';
 import Navbar from './components/Navbar';
 import Toast from './components/Toast';
 import Footer from './components/Footer';
@@ -36,11 +38,13 @@ const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
 
 /** Minimal full-screen loading indicator shown while a lazy page chunk loads. */
 function PageLoader() {
+  const { t } = useLanguage();
+
   return (
     <div
       className="min-h-screen flex items-center justify-center bg-gray-50"
       role="status"
-      aria-label="Cargando página"
+      aria-label={t('app.loadingPage')}
     >
       <div className="w-10 h-10 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" aria-hidden="true" />
     </div>
@@ -61,6 +65,7 @@ function AppShell() {
     logout,
   } = useAuth();
   const { showToast } = useCart();
+  const { t } = useLanguage();
 
   const countdownText = sessionExpiryRemainingSeconds >= 60
     ? `${Math.floor(sessionExpiryRemainingSeconds / 60)}:${String(sessionExpiryRemainingSeconds % 60).padStart(2, '0')}`
@@ -82,7 +87,7 @@ function AppShell() {
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-9999 focus:rounded-lg focus:bg-indigo-600 focus:px-4 focus:py-2 focus:font-medium focus:text-white"
       >
-        Saltar al contenido
+        {t('app.skipToContent')}
       </a>
 
       {isAuthenticated && <Navbar />}
@@ -112,10 +117,10 @@ function AppShell() {
 
       <ConfirmDialog
         open={isAuthenticated && showSessionExpiryWarning}
-        title="Tu sesion esta por expirar"
-        message={`Detectamos inactividad. Tu sesion expirara en ${countdownText}. Si quieres mantenerla activa, pulsa Seguir conectado.`}
-        confirmLabel="Seguir conectado"
-        cancelLabel="Cerrar sesion"
+        title={t('app.sessionExpiringTitle')}
+        message={t('app.sessionExpiringMessage', { countdown: countdownText })}
+        confirmLabel={t('app.stayConnected')}
+        cancelLabel={t('app.logout')}
         onConfirm={extendSession}
         onCancel={logout}
       />
@@ -132,13 +137,15 @@ function AppShell() {
 export default function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <ProductProvider>
-          <CartProvider>
-            <AppShell />
-          </CartProvider>
-        </ProductProvider>
-      </AuthProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <ProductProvider>
+            <CartProvider>
+              <AppShell />
+            </CartProvider>
+          </ProductProvider>
+        </AuthProvider>
+      </LanguageProvider>
     </BrowserRouter>
   );
 }

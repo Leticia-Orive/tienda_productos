@@ -4,6 +4,7 @@
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
 import useCart from '../context/useCart';
+import useLanguage from '../context/useLanguage';
 
 /**
  * Global toast notification component.
@@ -11,6 +12,7 @@ import useCart from '../context/useCart';
  */
 export default function Toast() {
   const { toast, dismissToast } = useCart();
+  const { t } = useLanguage();
 
   if (!toast.message) {
     return null;
@@ -39,7 +41,7 @@ export default function Toast() {
           type="button"
           onClick={dismissToast}
           className="ml-1 rounded p-0.5 opacity-70 hover:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-white transition"
-          aria-label="Cerrar notificación"
+          aria-label={t('common.closeNotification')}
         >
           ×
         </button>

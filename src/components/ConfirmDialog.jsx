@@ -4,6 +4,7 @@
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
 import { useEffect, useRef } from 'react';
+import useLanguage from '../context/useLanguage';
 
 /**
  * Accessible confirmation dialog with keyboard support.
@@ -23,15 +24,18 @@ export default function ConfirmDialog({
   open,
   title,
   message,
-  confirmLabel = 'Confirmar',
-  cancelLabel = 'Cancelar',
+  confirmLabel,
+  cancelLabel,
   onConfirm,
   onCancel,
   destructive = false,
   loading = false,
 }) {
+  const { t } = useLanguage();
   const cancelRef = useRef(null);
   const dialogRef = useRef(null);
+  const safeConfirmLabel = confirmLabel || t('common.confirm');
+  const safeCancelLabel = cancelLabel || t('common.cancel');
 
   useEffect(() => {
     if (!open) {
@@ -120,7 +124,7 @@ export default function ConfirmDialog({
             disabled={loading}
             className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {cancelLabel}
+            {safeCancelLabel}
           </button>
           <button
             type="button"
@@ -145,7 +149,7 @@ export default function ConfirmDialog({
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
               </svg>
             )}
-            {loading ? 'Procesando...' : confirmLabel}
+            {loading ? t('common.loading') : safeConfirmLabel}
           </button>
         </div>
       </section>

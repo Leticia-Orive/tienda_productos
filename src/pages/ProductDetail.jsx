@@ -8,6 +8,7 @@ import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import useCart from '../context/useCart';
 import useAuth from '../context/useAuth';
 import useProducts from '../context/useProducts';
+import useLanguage from '../context/useLanguage';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 
 /**
@@ -58,6 +59,7 @@ export default function ProductDetail() {
   const { dispatch, cart, isFavorite, toggleFavorite, showToast } = useCart();
   const { user } = useAuth();
   const { products } = useProducts();
+  const { t, formatCurrency, translateCategory, translateProductText } = useLanguage();
   const isAdmin = user?.role === 'admin';
   const [quantity, setQuantity] = useState(1);
   const [shareState, setShareState] = useState('idle');
@@ -66,7 +68,7 @@ export default function ProductDetail() {
   // Resolve product early so the dynamic title can be set before any early returns.
   const product = products.find((item) => item.id === productId);
   // WCAG 2.4.2: title updates reactively as soon as the product is resolved.
-  useDocumentTitle(product ? product.name : 'Producto');
+  useDocumentTitle(product ? translateProductText(product.name) : t('productDetail.title'));
 
   if (!productId) {
     return <Navigate to="/not-found" replace />;
@@ -118,13 +120,13 @@ export default function ProductDetail() {
   /** Adds the current product to cart and notifies user. */
   const handleAdd = () => {
     dispatch({ type: 'ADD_ORDER_ITEMS', payload: { items: [itemForCart] } });
-    showToast(`Agregaste ${quantity} Ã— "${product.name}" al carrito`, 'success');
+    showToast(t('productDetail.addedQuantity', { quantity, name: translateProductText(product.name) }), 'success');
   };
 
   /** Adds product to cart and navigates to checkout for quick purchase. */
   const handleBuy = () => {
     dispatch({ type: 'ADD_ORDER_ITEMS', payload: { items: [itemForCart] } });
-    showToast(`${quantity} Ã— "${product.name}" listo para comprar`, 'success');
+    showToast(t('productDetail.readyToBuyQuantity', { quantity, name: translateProductText(product.name) }), 'success');
     navigate('/checkout');
   };
 
@@ -132,22 +134,22 @@ export default function ProductDetail() {
     <main className="max-w-5xl mx-auto px-4 py-8">
       <nav className="mb-4 flex flex-wrap items-center gap-2 text-sm text-gray-500" aria-label="Breadcrumb">
         <Link to="/" className="hover:text-indigo-600 transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 rounded-sm">
-          Inicio
+          {t('notFound.home')}
         </Link>
         <span aria-hidden="true">/</span>
-        <span>{product.category}</span>
+        <span>{translateCategory(product.category)}</span>
         <span aria-hidden="true">/</span>
-        <span className="text-gray-700 font-medium">{product.name}</span>
+        <span className="text-gray-700 font-medium">{translateProductText(product.name)}</span>
       </nav>
 
       <Link
         to="/"
         className="inline-flex items-center rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
       >
-         Volver a productos
+        {t('productDetail.backToProducts')}
       </Link>
 
-      <section className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-8 bg-white rounded-2xl shadow p-6" aria-label="Detalle del producto">
+      <section className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-8 bg-white rounded-2xl shadow p-6" aria-label={t('productDetail.sectionLabel')}>
         <img
           src={product.image}
           alt={product.name}
@@ -156,20 +158,20 @@ export default function ProductDetail() {
         />
 
         <div className="flex flex-col gap-4">
-          <p className="text-xs font-semibold tracking-wide uppercase text-indigo-600">{product.category}</p>
+          <p className="text-xs font-semibold tracking-wide uppercase text-indigo-600">{translateCategory(product.category)}</p>
           <div className="flex items-start justify-between gap-3">
-            <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
+            <h1 className="text-3xl font-bold text-gray-900">{translateProductText(product.name)}</h1>
             <button
               type="button"
               onClick={handleShare}
               className="shrink-0 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-              aria-label="Compartir producto"
+              aria-label={t('productDetail.share')}
             >
-              {shareState === 'copied' ? 'URL copiada' : 'Compartir'}
+              {shareState === 'copied' ? t('common.copiedLink') : t('productDetail.share')}
             </button>
           </div>
-          <p className="text-gray-600 leading-relaxed">{product.description}</p>
-          <p className="text-3xl font-extrabold text-gray-900">${product.price.toFixed(2)}</p>
+          <p className="text-gray-600 leading-relaxed">{translateProductText(product.description)}</p>
+          <p className="text-3xl font-extrabold text-gray-900">{formatCurrency(product.price)}</p>
 
           {!isAdmin && (
             <button
@@ -181,16 +183,18 @@ export default function ProductDetail() {
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
               aria-pressed={favorite}
-              aria-label={`${favorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}: ${product.name}`}
+              aria-label={favorite
+                ? t('productCard.removeFavorite', { name: translateProductText(product.name) })
+                : t('productCard.addFavorite', { name: translateProductText(product.name) })}
             >
-              {favorite ? '❤️ Favorito' : '♡ Favorito'}
+              {favorite ? t('productCard.favoriteOn') : t('productCard.favoriteOff')}
             </button>
           )}
 
           {!isAdmin && (
             <div className="mt-2 flex flex-wrap items-end gap-3">
               <label className="w-28" htmlFor="product-quantity">
-                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-500">Cantidad</span>
+                <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-gray-500">{t('productDetail.quantity')}</span>
                 <input
                   id="product-quantity"
                   type="number"
@@ -226,44 +230,44 @@ export default function ProductDetail() {
                 onClick={handleAdd}
                 className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                AÃ±adir al carrito
+                {t('productCard.addProduct')}
               </button>
               <button
                 type="button"
                 onClick={handleBuy}
                 className="rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
               >
-                Comprar
+                {t('productCard.buy')}
               </button>
             </div>
           )}
 
           {isAdmin && (
             <p className="rounded-xl border border-indigo-200 bg-indigo-50 px-3 py-2 text-sm text-indigo-800">
-              Como administrador puedes editar o borrar este producto desde la pantalla principal.
+              {t('productDetail.adminHint')}
             </p>
           )}
 
           {!isAdmin && (
             <p className="text-xs text-gray-500">
               {cartItem
-                ? `Ya tienes ${cartItem.quantity} unidad${cartItem.quantity !== 1 ? 'es' : ''} en el carrito.`
-                : 'AÃºn no has aÃ±adido este producto al carrito.'}
+                ? t('productDetail.alreadyInCart', { count: cartItem.quantity, suffix: cartItem.quantity !== 1 ? 'es' : '' })
+                : t('productDetail.notInCartYet')}
             </p>
           )}
         </div>
       </section>
 
       {relatedProducts.length > 0 && (
-        <section className="mt-12 bg-gray-50 rounded-2xl p-8" aria-label="Productos relacionados">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Productos relacionados</h2>
+        <section className="mt-12 bg-gray-50 rounded-2xl p-8" aria-label={t('productDetail.relatedTitle')}>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('productDetail.relatedTitle')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {relatedProducts.map((p) => (
               <Link
                 key={p.id}
                 to={`/producto/${p.id}`}
                 className="group bg-white rounded-lg shadow hover:shadow-md transition overflow-hidden"
-                aria-label={`Ver producto: ${p.name}`}
+                aria-label={t('productCard.viewLabel', { name: translateProductText(p.name) })}
               >
                 <img
                   src={p.image}
@@ -273,9 +277,9 @@ export default function ProductDetail() {
                   decoding="async"
                 />
                 <div className="p-3">
-                  <p className="text-xs text-indigo-600 font-semibold uppercase">{p.category}</p>
-                  <p className="text-sm font-medium text-gray-800 truncate group-hover:text-indigo-600 transition">{p.name}</p>
-                  <p className="text-sm font-bold text-gray-900 mt-1">${p.price.toFixed(2)}</p>
+                  <p className="text-xs text-indigo-600 font-semibold uppercase">{translateCategory(p.category)}</p>
+                  <p className="text-sm font-medium text-gray-800 truncate group-hover:text-indigo-600 transition">{translateProductText(p.name)}</p>
+                  <p className="text-sm font-bold text-gray-900 mt-1">{formatCurrency(p.price)}</p>
                 </div>
               </Link>
             ))}

@@ -7,6 +7,7 @@ import { memo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useCart from '../context/useCart';
 import useAuth from '../context/useAuth';
+import useLanguage from '../context/useLanguage';
 
 /**
  * ProductCard displays a single product with an accessible "Add to cart" button.
@@ -24,6 +25,7 @@ function ProductCard({
   const navigate = useNavigate();
   const { cart, dispatch, isFavorite, toggleFavorite, showToast } = useCart();
   const { user } = useAuth();
+  const { t, formatCurrency, translateCategory, translateProductText } = useLanguage();
 
   const isAdmin = user?.role === 'admin';
   const canManageCatalog = isAdmin && typeof onEditProduct === 'function' && typeof onDeleteProduct === 'function';
@@ -37,8 +39,8 @@ function ProductCard({
    */
   const handleAdd = useCallback(() => {
     dispatch({ type: 'ADD_ITEM', payload: product });
-    showToast(`Agregaste "${product.name}" al carrito`, 'success');
-  }, [dispatch, product, showToast]);
+    showToast(t('productCard.addedToCart', { name: translateProductText(product.name) }), 'success');
+  }, [dispatch, product, showToast, t, translateProductText]);
 
   /** Muestra un resumen rapido del producto al usuario. */
   const handleView = useCallback(() => {
@@ -48,16 +50,16 @@ function ProductCard({
   /** Agrega el producto y envia al checkout para compra rapida. */
   const handleBuy = useCallback(() => {
     dispatch({ type: 'ADD_ITEM', payload: product });
-    showToast(`"${product.name}" listo para comprar`, 'success');
+    showToast(t('productCard.readyToBuy', { name: translateProductText(product.name) }), 'success');
     navigate('/checkout');
-  }, [dispatch, navigate, product, showToast]);
+  }, [dispatch, navigate, product, showToast, t, translateProductText]);
 
   return (
     <article
       className={`bg-white rounded-2xl shadow hover:shadow-md transition-shadow overflow-hidden flex flex-col ${
         isSelected ? 'ring-2 ring-indigo-300' : ''
       }`}
-      aria-label={`Producto: ${product.name}`}
+      aria-label={t('productCard.productLabel', { name: translateProductText(product.name) })}
     >
       <div className="relative">
         <img
@@ -70,23 +72,23 @@ function ProductCard({
           height={192}
         />
         {isNew && (
-          <span className="absolute top-2 left-2 rounded-full bg-emerald-500 px-2 py-0.5 text-xs font-bold text-white shadow" aria-label="Producto nuevo">
-            NUEVO
+          <span className="absolute top-2 left-2 rounded-full bg-emerald-500 px-2 py-0.5 text-xs font-bold text-white shadow" aria-label={t('productCard.newProduct')}>
+            {t('productCard.newBadge')}
           </span>
         )}
         {cartQuantity > 0 && (
           <span
             className="absolute top-2 right-2 rounded-full bg-indigo-600 px-2 py-0.5 text-xs font-bold text-white shadow"
-            aria-label={`${cartQuantity} en carrito`}
+            aria-label={t('productCard.inCartLabel', { count: cartQuantity })}
           >
-            En carrito: {cartQuantity}
+            {t('productCard.inCartText', { count: cartQuantity })}
           </span>
         )}
       </div>
       <div className="p-4 flex flex-col flex-1 gap-2">
         <div className="flex items-start justify-between gap-2">
           <span className="text-xs font-medium text-indigo-500 uppercase tracking-wide">
-            {product.category}
+            {translateCategory(product.category)}
           </span>
           {!isAdmin && (
             <button
@@ -98,25 +100,27 @@ function ProductCard({
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
               aria-pressed={favorite}
-              aria-label={`${favorite ? 'Quitar de favoritos' : 'Agregar a favoritos'}: ${product.name}`}
+              aria-label={favorite
+                ? t('productCard.removeFavorite', { name: translateProductText(product.name) })
+                : t('productCard.addFavorite', { name: translateProductText(product.name) })}
             >
-              {favorite ? '❤️ Favorito' : '♡ Favorito'}
+              {favorite ? t('productCard.favoriteOn') : t('productCard.favoriteOff')}
             </button>
           )}
         </div>
-        <h2 className="text-gray-800 font-semibold text-base leading-tight">{product.name}</h2>
-        <p className="text-gray-500 text-sm flex-1">{product.description}</p>
+        <h2 className="text-gray-800 font-semibold text-base leading-tight">{translateProductText(product.name)}</h2>
+        <p className="text-gray-500 text-sm flex-1">{translateProductText(product.description)}</p>
         <div className="flex items-center justify-between mt-2">
-          <span className="text-lg font-bold text-gray-900">${product.price.toFixed(2)}</span>
+          <span className="text-lg font-bold text-gray-900">{formatCurrency(product.price)}</span>
         </div>
         <div className="mt-1 grid grid-cols-2 gap-2">
           <button
             type="button"
             onClick={handleView}
             className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            aria-label={`Ver producto: ${product.name}`}
+            aria-label={t('productCard.viewLabel', { name: translateProductText(product.name) })}
           >
-            Ver
+            {t('productCard.view')}
           </button>
           {canManageCatalog ? (
             <>
@@ -124,25 +128,25 @@ function ProductCard({
                 type="button"
                 onClick={() => onEditProduct?.(product)}
                 className="rounded-lg border border-amber-300 bg-white px-3 py-2 text-xs font-medium text-amber-700 transition hover:bg-amber-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
-                aria-label={`Editar producto: ${product.name}`}
+                aria-label={t('productCard.editLabel', { name: translateProductText(product.name) })}
               >
-                Editar
+                {t('productCard.edit')}
               </button>
               <button
                 type="button"
                 onClick={() => onDeleteProduct?.(product)}
                 className="rounded-lg border border-red-300 bg-white px-3 py-2 text-xs font-medium text-red-600 transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500"
-                aria-label={`Borrar producto del catálogo: ${product.name}`}
+                aria-label={t('productCard.deleteLabel', { name: translateProductText(product.name) })}
               >
-                Borrar
+                {t('productCard.delete')}
               </button>
               <button
                 type="button"
                 onClick={() => onDuplicateProduct?.(product)}
                 className="col-span-2 rounded-lg border border-cyan-300 bg-cyan-50 px-3 py-2 text-xs font-medium text-cyan-700 transition hover:bg-cyan-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600"
-                aria-label={`Duplicar producto: ${product.name}`}
+                aria-label={t('productCard.duplicateLabel', { name: translateProductText(product.name) })}
               >
-                Duplicar
+                {t('productCard.duplicate')}
               </button>
               <button
                 type="button"
@@ -161,10 +165,12 @@ function ProductCard({
                 }`}
                 aria-pressed={isSelected}
                 aria-keyshortcuts="Shift+Space Shift+Enter"
-                aria-label={`${isSelected ? 'Quitar de selección' : 'Seleccionar'}: ${product.name}`}
-                title="Atajo: Shift+Espacio o Shift+Enter para seleccionar rango"
+                aria-label={isSelected
+                  ? t('productCard.unselectLabel', { name: translateProductText(product.name) })
+                  : t('productCard.selectLabel', { name: translateProductText(product.name) })}
+                title={t('productCard.selectShortcut')}
               >
-                {isSelected ? 'Seleccionado' : 'Seleccionar'}
+                {isSelected ? t('productCard.selected') : t('productCard.select')}
               </button>
             </>
           ) : (
@@ -175,17 +181,17 @@ function ProductCard({
                     type="button"
                     onClick={handleAdd}
                     className="rounded-lg bg-indigo-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    aria-label={`Añadir producto: ${product.name}`}
+                    aria-label={t('productCard.addProduct', { name: translateProductText(product.name) })}
                   >
-                    Añadir producto
+                    {t('productCard.addProduct')}
                   </button>
                   <button
                     type="button"
                     onClick={handleBuy}
                     className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
-                    aria-label={`Comprar producto: ${product.name}`}
+                    aria-label={t('productCard.buy', { name: translateProductText(product.name) })}
                   >
-                    Comprar
+                    {t('productCard.buy')}
                   </button>
                 </>
               )}

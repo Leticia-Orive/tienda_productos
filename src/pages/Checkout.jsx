@@ -6,6 +6,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useCart from '../context/useCart';
+import useLanguage from '../context/useLanguage';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 
 /* Maintenance guide:
@@ -220,8 +221,9 @@ function CheckoutField({
  * Input validation happens on the client boundary.
  */
 export default function Checkout() {
+  const { t, formatCurrency, formatDateRange } = useLanguage();
   // WCAG 2.4.2: descriptive page title announced by screen readers on navigation.
-  useDocumentTitle('Checkout');
+  useDocumentTitle(t('checkout.title'));
   const { cart, totalPrice, discountAmount, finalPrice, coupon, dispatch, showToast } = useCart();
   const navigate = useNavigate();
 
@@ -273,9 +275,8 @@ export default function Checkout() {
     from.setDate(from.getDate() + days.from);
     const to = new Date();
     to.setDate(to.getDate() + days.to);
-    const fmt = new Intl.DateTimeFormat('es-ES', { day: 'numeric', month: 'short' });
-    return `${fmt.format(from)} â€“ ${fmt.format(to)}`;
-  }, [shippingMethod]);
+    return formatDateRange(from, to, { day: 'numeric', month: 'short' });
+  }, [formatDateRange, shippingMethod]);
 
   useEffect(() => {
     const persistedForm = {
@@ -289,30 +290,30 @@ export default function Checkout() {
   /** Validates one checkout field and returns an inline-friendly message. */
   function validateField(name, value) {
     if (name === 'name') {
-      if (!value.trim()) return 'El nombre es obligatorio.';
+      if (!value.trim()) return t('checkout.nameRequired');
       return undefined;
     }
 
     if (name === 'email') {
       if (!value.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-        return 'Ingresa un correo válido.';
+        return t('checkout.emailInvalid');
       }
       return undefined;
     }
 
     if (name === 'address') {
-      if (!value.trim()) return 'La dirección es obligatoria.';
+      if (!value.trim()) return t('checkout.addressRequired');
       return undefined;
     }
 
     if (name === 'city') {
-      if (!value.trim()) return 'La ciudad es obligatoria.';
+      if (!value.trim()) return t('checkout.cityRequired');
       return undefined;
     }
 
     if (name === 'zip') {
       if (!value.trim() || !/^\d{4,10}$/.test(value)) {
-        return 'Código postal inválido (4-10 dígitos).';
+        return t('checkout.zipInvalid');
       }
       return undefined;
     }
@@ -320,7 +321,7 @@ export default function Checkout() {
     if (name === 'card') {
       const normalizedCard = value.replace(/\s/g, '');
       if (!/^\d{16}$/.test(normalizedCard) || !isValidCardLuhn(normalizedCard)) {
-        return 'Número de tarjeta inválido.';
+        return t('checkout.cardInvalid');
       }
       return undefined;
     }
@@ -373,7 +374,7 @@ export default function Checkout() {
     if (Object.values(validationErrors).some(Boolean)) {
       setErrors(validationErrors);
       focusFirstInvalidField(validationErrors);
-      showToast('Revisa los campos marcados antes de continuar', 'error');
+      showToast(t('checkout.reviewFields'), 'error');
       return;
     }
 
@@ -382,7 +383,7 @@ export default function Checkout() {
     setSubmitted(true);
     dispatch({ type: 'CLEAR_CART' });
     localStorage.removeItem(CHECKOUT_STORAGE_KEY);
-    showToast('Pedido confirmado correctamente', 'success');
+    showToast(t('checkout.orderConfirmed'), 'success');
     setTimeout(() => navigate('/pedidos'), 2200);
   };
 
@@ -390,8 +391,8 @@ export default function Checkout() {
     return (
       <main className="max-w-xl mx-auto px-4 py-16 text-center">
         <p className="text-5xl mb-4" aria-hidden="true">🛒</p>
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">No hay productos en el carrito</h1>
-        <Link to="/" className="text-indigo-600 underline">Volver a la tienda</Link>
+        <h1 className="text-2xl font-bold text-gray-800 mb-2">{t('checkout.cartEmpty')}</h1>
+        <Link to="/" className="text-indigo-600 underline">{t('checkout.backToStore')}</Link>
       </main>
     );
   }
@@ -400,13 +401,13 @@ export default function Checkout() {
     return (
       <main className="max-w-xl mx-auto px-4 py-20 text-center" role="status" aria-live="polite">
         <p className="text-6xl mb-4" aria-hidden="true">✔</p>
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">¡Pedido confirmado!</h1>
-        <p className="text-gray-500 mb-5">Gracias por tu compra. Serás redirigido al historial de pedidos.</p>
+        <h1 className="text-2xl font-bold text-gray-800 mb-2">{t('checkout.confirmedTitle')}</h1>
+        <p className="text-gray-500 mb-5">{t('checkout.confirmedBody')}</p>
         <Link
           to="/pedidos"
           className="inline-block rounded-xl bg-indigo-600 px-5 py-2.5 font-medium text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          Ver mis pedidos
+          {t('checkout.viewOrders')}
         </Link>
       </main>
     );
@@ -414,15 +415,15 @@ export default function Checkout() {
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-4">Finalizar compra</h1>
+      <h1 className="text-3xl font-bold text-gray-900 mb-4">{t('checkout.title')}</h1>
 
       {/* Progress bar */}
       <div className="mb-6">
         <div className="flex justify-between text-xs text-gray-500 mb-1">
-          <span>Completado</span>
-          <span>{filledFields} / 6 campos</span>
+          <span>{t('checkout.completed')}</span>
+          <span>{filledFields} / 6 {t('checkout.fields')}</span>
         </div>
-        <div className="h-2 rounded-full bg-gray-200 overflow-hidden" role="progressbar" aria-valuenow={progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label="Progreso del formulario">
+        <div className="h-2 rounded-full bg-gray-200 overflow-hidden" role="progressbar" aria-valuenow={progressPercent} aria-valuemin={0} aria-valuemax={100} aria-label={t('checkout.formProgress')}>
           <div
             className="h-full rounded-full bg-indigo-600 transition-all duration-300"
             style={{ width: `${progressPercent}%` }}
@@ -432,7 +433,7 @@ export default function Checkout() {
 
       {/* Pasos visuales */}
       <div className="mb-8 flex items-center justify-between">
-        {[{label: 'Datos', num: 1}, {label: 'Envío', num: 2}, {label: 'Pago', num: 3}].map((step, idx) => (
+        {[{label: t('checkout.stepData'), num: 1}, {label: t('checkout.stepShipping'), num: 2}, {label: t('checkout.stepPayment'), num: 3}].map((step, idx) => (
           <div key={step.num} className="flex items-center flex-1">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${idx === 0 ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-600'}`}>
               {step.num}
@@ -445,31 +446,31 @@ export default function Checkout() {
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Form */}
-        <section className="flex-1" aria-label="Formulario de enví­o y pago">
+        <section className="flex-1" aria-label={t('checkout.formSectionLabel')}>
           <form onSubmit={handleSubmit} noValidate aria-busy={isSubmitting} className="flex flex-col gap-5">
             {hasVisibleErrors && (
               <p className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700" role="alert">
-                Corrige los campos marcados en rojo para completar el pedido.
+                {t('checkout.fixFields')}
               </p>
             )}
             <fieldset className="flex flex-col gap-4">
-              <legend className="font-semibold text-gray-800 text-base mb-1">Datos personales</legend>
-              <CheckoutField id="name" label="Nombre completo" name="name" required placeholder="Ana Garcí­a" autoComplete="name" value={form.name} hasError={Boolean(touched.name && errors.name)} errorMessage={errors.name} onChange={handleChange} onBlur={handleBlur} />
-              <CheckoutField id="email" label="Correo electrónico" name="email" type="email" required placeholder="ana@correo.com" autoComplete="email" value={form.email} hasError={Boolean(touched.email && errors.email)} errorMessage={errors.email} onChange={handleChange} onBlur={handleBlur} />
+              <legend className="font-semibold text-gray-800 text-base mb-1">{t('checkout.customerData')}</legend>
+              <CheckoutField id="name" label={t('checkout.fullName')} name="name" required placeholder={t('checkout.namePlaceholder')} autoComplete="name" value={form.name} hasError={Boolean(touched.name && errors.name)} errorMessage={errors.name} onChange={handleChange} onBlur={handleBlur} />
+              <CheckoutField id="email" label={t('common.email')} name="email" type="email" required placeholder="ana@email.com" autoComplete="email" value={form.email} hasError={Boolean(touched.email && errors.email)} errorMessage={errors.email} onChange={handleChange} onBlur={handleBlur} />
             </fieldset>
 
             <fieldset className="flex flex-col gap-4">
-              <legend className="font-semibold text-gray-800 text-base mb-1">Dirección de envío</legend>
-              <CheckoutField id="address" label="Calle y número" name="address" required placeholder="Av. Libertad 1234" autoComplete="street-address" value={form.address} hasError={Boolean(touched.address && errors.address)} errorMessage={errors.address} onChange={handleChange} onBlur={handleBlur} />
+              <legend className="font-semibold text-gray-800 text-base mb-1">{t('checkout.deliveryData')}</legend>
+              <CheckoutField id="address" label={t('checkout.streetAndNumber')} name="address" required placeholder={t('checkout.addressPlaceholder')} autoComplete="street-address" value={form.address} hasError={Boolean(touched.address && errors.address)} errorMessage={errors.address} onChange={handleChange} onBlur={handleBlur} />
               <div className="grid grid-cols-2 gap-4">
-                <CheckoutField id="city" label="Ciudad" name="city" required placeholder="Buenos Aires" autoComplete="address-level2" value={form.city} hasError={Boolean(touched.city && errors.city)} errorMessage={errors.city} onChange={handleChange} onBlur={handleBlur} />
-                <CheckoutField id="zip" label="Código postal" name="zip" required placeholder="1425" autoComplete="postal-code" value={form.zip} hasError={Boolean(touched.zip && errors.zip)} errorMessage={errors.zip} onChange={handleChange} onBlur={handleBlur} />
+                <CheckoutField id="city" label={t('checkout.city')} name="city" required placeholder={t('checkout.cityPlaceholder')} autoComplete="address-level2" value={form.city} hasError={Boolean(touched.city && errors.city)} errorMessage={errors.city} onChange={handleChange} onBlur={handleBlur} />
+                <CheckoutField id="zip" label={t('checkout.zip')} name="zip" required placeholder="1425" autoComplete="postal-code" value={form.zip} hasError={Boolean(touched.zip && errors.zip)} errorMessage={errors.zip} onChange={handleChange} onBlur={handleBlur} />
               </div>
               <fieldset className="rounded-xl border border-gray-200 bg-white px-3 py-3">
-                <legend className="text-sm font-medium text-gray-700 px-1">Tipo de envío</legend>
+                <legend className="text-sm font-medium text-gray-700 px-1">{t('checkout.shippingMethod')}</legend>
                 <label className="mt-1 flex cursor-pointer items-center justify-between rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                  <span>Estándar (3-5 días)</span>
-                  <span className="font-semibold text-emerald-700">Gratis</span>
+                  <span>{t('checkout.standardShipping')}</span>
+                  <span className="font-semibold text-emerald-700">{t('common.free')}</span>
                   <input
                     type="radio"
                     name="shippingMethod"
@@ -480,8 +481,8 @@ export default function Checkout() {
                   />
                 </label>
                 <label className="mt-2 flex cursor-pointer items-center justify-between rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                  <span>Exprés (1-2 días)</span>
-                  <span className="font-semibold text-gray-900">$4.99</span>
+                  <span>{t('checkout.expressShipping')}</span>
+                  <span className="font-semibold text-gray-900">{formatCurrency(4.99)}</span>
                   <input
                     type="radio"
                     name="shippingMethod"
@@ -495,10 +496,10 @@ export default function Checkout() {
             </fieldset>
 
             <fieldset className="flex flex-col gap-4">
-              <legend className="font-semibold text-gray-800 text-base mb-1">Pago</legend>
+              <legend className="font-semibold text-gray-800 text-base mb-1">{t('checkout.paymentData')}</legend>
               <CheckoutField
                 id="card"
-                label="Número de tarjeta"
+                label={t('checkout.card')}
                 name="card"
                 placeholder="1234 5678 9012 3456"
                 autoComplete="cc-number"
@@ -518,15 +519,15 @@ export default function Checkout() {
               disabled={isSubmitting}
               className="mt-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-semibold px-4 py-3 rounded-xl transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              {isSubmitting ? 'Procesando...' : `Confirmar pedido — $${payableTotal.toFixed(2)}`}
+              {isSubmitting ? t('checkout.payNowSubmitting') : `${t('checkout.payNow')} - ${formatCurrency(payableTotal)}`}
             </button>
           </form>
         </section>
 
         {/* Order summary */}
-        <aside className="lg:w-72" aria-label="Resumen del pedido">
+        <aside className="lg:w-72" aria-label={t('checkout.summaryLabel')}>
           <div className="bg-white rounded-2xl shadow p-6 sticky top-24">
-            <h2 className="font-bold text-gray-800 text-base mb-4">Tu pedido</h2>
+            <h2 className="font-bold text-gray-800 text-base mb-4">{t('checkout.yourOrder')}</h2>
             <ul className="flex flex-col gap-3 mb-4" role="list">
               {cart.map((item) => (
                 <li key={item.id} className="flex items-center gap-3">
@@ -540,35 +541,35 @@ export default function Checkout() {
                     <p className="text-xs text-gray-500">x{item.quantity}</p>
                   </div>
                   <span className="text-sm font-semibold text-gray-900">
-                    ${(item.price * item.quantity).toFixed(2)}
+                    {formatCurrency(item.price * item.quantity)}
                   </span>
                 </li>
               ))}
             </ul>
             <dl className="flex flex-col gap-1 text-sm text-gray-600 border-t pt-3">
               <div className="flex justify-between">
-                <dt>Subtotal</dt>
-                <dd className="font-medium">${totalPrice.toFixed(2)}</dd>
+                <dt>{t('common.subtotal')}</dt>
+                <dd className="font-medium">{formatCurrency(totalPrice)}</dd>
               </div>
               {discountAmount > 0 && (
                 <div className="flex justify-between">
-                  <dt className="text-green-700">Descuento ({coupon?.code})</dt>
-                  <dd className="font-medium text-green-700">âˆ’${discountAmount.toFixed(2)}</dd>
+                  <dt className="text-green-700">{t('common.discount')} ({coupon?.code})</dt>
+                  <dd className="font-medium text-green-700">-{formatCurrency(discountAmount)}</dd>
                 </div>
               )}
               <div className="flex justify-between">
-                <dt>Enví­o</dt>
+                <dt>{t('common.shipping')}</dt>
                 <dd className="font-medium">
-                  {shippingFee === 0 ? <span className="text-green-600">Gratis</span> : `$${shippingFee.toFixed(2)}`}
+                  {shippingFee === 0 ? <span className="text-green-600">{t('common.free')}</span> : formatCurrency(shippingFee)}
                 </dd>
               </div>
             </dl>
             <div className="mt-2 flex justify-between font-bold text-gray-900">
-              <span>Total</span>
-              <span>${payableTotal.toFixed(2)}</span>
+              <span>{t('common.total')}</span>
+              <span>{formatCurrency(payableTotal)}</span>
             </div>
             <p className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs text-emerald-700 font-medium">
-              Entrega estimada: {estimatedDelivery}
+              {t('checkout.estimatedDelivery')}: {estimatedDelivery}
             </p>
           </div>
         </aside>

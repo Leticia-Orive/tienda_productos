@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import useCart from '../context/useCart';
 import useProducts from '../context/useProducts';
+import useLanguage from '../context/useLanguage';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 
 /* Maintenance guide:
@@ -37,15 +38,15 @@ function escapeCsvField(value) {
  */
 function buildOrdersCsv(orders) {
   const headers = [
-    'pedido_id',
-    'fecha_iso',
-    'cliente',
+    'order_id',
+    'date_iso',
+    'customer',
     'items_total',
     'subtotal',
-    'descuento',
-    'cupon',
-    'total_final',
-    'productos',
+    'discount',
+    'coupon',
+    'final_total',
+    'products',
   ];
 
   const rows = orders.map((order) => {
@@ -124,15 +125,12 @@ function safeWriteStorage(key, value) {
  * @param {string} dateIso
  * @returns {string}
  */
-function formatDate(dateIso) {
+function formatDate(dateIso, formatDateTime, fallbackText) {
   const date = new Date(dateIso);
   if (Number.isNaN(date.getTime())) {
-    return 'Fecha no disponible';
+    return fallbackText;
   }
-  return new Intl.DateTimeFormat('es-ES', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(date);
+  return formatDateTime(dateIso);
 }
 
 /** Normalizes text for accent-insensitive and case-insensitive search. */
@@ -147,8 +145,9 @@ function normalizeSearchText(value) {
  * Orders page with local persistent history.
  */
 export default function Orders() {
+  const { t, formatCurrency, formatDateTime, translateProductText } = useLanguage();
   // WCAG 2.4.2: descriptive page title announced by screen readers on navigation.
-  useDocumentTitle('Mis Pedidos');
+  useDocumentTitle(t('orders.title'));
   const { dispatch, showToast } = useCart();
   const { products } = useProducts();
   const [orders, setOrders] = useState(getInitialOrders);
@@ -189,14 +188,14 @@ export default function Orders() {
   }, []);
 
   const clearOrders = useCallback(() => {
-    const shouldClear = window.confirm('Esta accion eliminara todo tu historial de pedidos. Deseas continuar?');
+    const shouldClear = window.confirm(t('orders.clearHistoryConfirm'));
     if (!shouldClear) {
       return;
     }
     setOrders([]);
     setExpandedOrderIds([]);
-    showToast('Historial de pedidos eliminado', 'info');
-  }, [showToast]);
+    showToast(t('orders.historyRemoved'), 'info');
+  }, [showToast, t]);
 
   const clearFilters = useCallback(() => {
     setSearch('');
@@ -270,18 +269,18 @@ export default function Orders() {
       const product = productById.get(item.id);
       return {
         id: item.id,
-        name: item.name || product?.name || 'Producto',
+        name: item.name || product?.name || t('orders.productFallback'),
         price: Number(item.price ?? product?.price ?? 0),
         image: item.image || product?.image || '',
         description: product?.description || '',
-        category: product?.category || 'General',
+        category: product?.category || t('orders.generalCategory'),
         quantity: Number(item.quantity || 1),
       };
     });
 
     dispatch({ type: 'ADD_ORDER_ITEMS', payload: { items } });
-    showToast(`Pedido #${order.id} agregado nuevamente al carrito`, 'success');
-  }, [dispatch, productById, showToast]);
+    showToast(t('orders.reorderSuccess', { id: order.id }), 'success');
+  }, [dispatch, productById, showToast, t]);
 
   /**
    * Copies order id to clipboard for quick support sharing.
@@ -290,55 +289,55 @@ export default function Orders() {
   const handleCopyOrderId = useCallback(async (orderId) => {
     try {
       await navigator.clipboard.writeText(String(orderId));
-      showToast(`ID de pedido #${orderId} copiado`, 'success');
+      showToast(t('orders.copiedOrderId', { id: orderId }), 'success');
     } catch {
-      showToast('No se pudo copiar el ID del pedido', 'error');
+      showToast(t('orders.copyOrderError'), 'error');
     }
-  }, [showToast]);
+  }, [showToast, t]);
 
   /**
    * Exports currently visible orders to a UTF-8 CSV file.
    */
   const handleExportVisibleOrders = useCallback(() => {
     if (filteredOrders.length === 0) {
-      showToast('No hay pedidos visibles para exportar', 'info');
+      showToast(t('orders.noVisibleOrders'), 'info');
       return;
     }
 
     const csv = buildOrdersCsv(filteredOrders);
     const csvWithBom = `\uFEFF${csv}`;
     const date = new Date().toISOString().slice(0, 10);
-    downloadTextFile(csvWithBom, `pedidos-${date}.csv`, 'text/csv;charset=utf-8;');
+    downloadTextFile(csvWithBom, `orders-${date}.csv`, 'text/csv;charset=utf-8;');
 
-    showToast(`CSV exportado con ${filteredOrders.length} pedido${filteredOrders.length !== 1 ? 's' : ''}`, 'success');
-  }, [filteredOrders, showToast]);
+    showToast(t('orders.exportCsvSuccess', { count: filteredOrders.length, suffix: filteredOrders.length !== 1 ? 's' : '' }), 'success');
+  }, [filteredOrders, showToast, t]);
 
   /**
    * Exports currently visible orders as pretty JSON.
    */
   const handleExportVisibleOrdersJson = useCallback(() => {
     if (filteredOrders.length === 0) {
-      showToast('No hay pedidos visibles para exportar', 'info');
+      showToast(t('orders.noVisibleOrders'), 'info');
       return;
     }
 
     const date = new Date().toISOString().slice(0, 10);
     const jsonContent = `${JSON.stringify(filteredOrders, null, 2)}\n`;
-    downloadTextFile(jsonContent, `pedidos-${date}.json`, 'application/json;charset=utf-8;');
-    showToast(`JSON exportado con ${filteredOrders.length} pedido${filteredOrders.length !== 1 ? 's' : ''}`, 'success');
-  }, [filteredOrders, showToast]);
+    downloadTextFile(jsonContent, `orders-${date}.json`, 'application/json;charset=utf-8;');
+    showToast(t('orders.exportJsonSuccess', { count: filteredOrders.length, suffix: filteredOrders.length !== 1 ? 's' : '' }), 'success');
+  }, [filteredOrders, showToast, t]);
 
   if (orders.length === 0) {
     return (
       <main className="max-w-2xl mx-auto px-4 py-16 text-center">
         <p className="text-5xl mb-4" aria-hidden="true">ðŸ“¦</p>
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">AÃºn no tienes pedidos</h1>
-        <p className="text-gray-500 mb-6">Cuando completes una compra, aparecerÃ¡ aquÃ­.</p>
+        <h1 className="text-2xl font-bold text-gray-800 mb-2">{t('orders.emptyTitle')}</h1>
+        <p className="text-gray-500 mb-6">{t('orders.emptyBody')}</p>
         <Link
           to="/"
           className="inline-block rounded-xl bg-indigo-600 px-5 py-2.5 font-medium text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          Ir a productos
+          {t('orders.goProducts')}
         </Link>
       </main>
     );
@@ -347,68 +346,68 @@ export default function Orders() {
   return (
     <main className="max-w-5xl mx-auto px-4 py-8">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-3xl font-bold text-gray-900">Historial de pedidos</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{t('orders.title')}</h1>
         <button
           type="button"
           onClick={clearOrders}
           className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          Limpiar historial
+          {t('orders.clearHistory')}
         </button>
       </div>
 
-      <section className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3" aria-label="Resumen de compras">
+      <section className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3" aria-label={t('orders.summaryLabel')}>
         <div className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-center">
-          <p className="text-xs uppercase tracking-wide text-gray-500 mb-1">Pedidos</p>
+          <p className="text-xs uppercase tracking-wide text-gray-500 mb-1">{t('orders.totalOrders')}</p>
           <p className="text-2xl font-bold text-gray-900">{stats.totalOrders}</p>
         </div>
         <div className="rounded-xl border border-gray-200 bg-white px-4 py-3 text-center">
-          <p className="text-xs uppercase tracking-wide text-gray-500 mb-1">Total gastado</p>
-          <p className="text-2xl font-bold text-indigo-700">${stats.totalSpent.toFixed(2)}</p>
+          <p className="text-xs uppercase tracking-wide text-gray-500 mb-1">{t('orders.totalSpent')}</p>
+          <p className="text-2xl font-bold text-indigo-700">{formatCurrency(stats.totalSpent)}</p>
         </div>
         <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-center">
-          <p className="text-xs uppercase tracking-wide text-emerald-700 mb-1">Total ahorrado</p>
-          <p className="text-2xl font-bold text-emerald-700">${stats.totalSaved.toFixed(2)}</p>
+          <p className="text-xs uppercase tracking-wide text-emerald-700 mb-1">{t('orders.totalSaved')}</p>
+          <p className="text-2xl font-bold text-emerald-700">{formatCurrency(stats.totalSaved)}</p>
         </div>
       </section>
 
-      <section className="mb-6 grid grid-cols-1 gap-3 md:grid-cols-4" aria-label="Filtros de pedidos">
+      <section className="mb-6 grid grid-cols-1 gap-3 md:grid-cols-4" aria-label={t('orders.filtersLabel')}>
         <label className="md:col-span-2">
-          <span className="sr-only">Buscar en pedidos</span>
+          <span className="sr-only">{t('orders.searchLabel')}</span>
           <input
             ref={searchInputRef}
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar por cliente, cupÃ³n, producto o nÃºmero de pedido..."
-            title="Atajo: /"
+            placeholder={t('orders.searchPlaceholder')}
+            title={t('orders.searchShortcut')}
             className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </label>
         <label>
-          <span className="sr-only">Filtrar pedidos por fecha</span>
+          <span className="sr-only">{t('orders.dateFilterLabel')}</span>
           <select
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
             className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
-            <option value="all">Todo el historial</option>
-            <option value="7">Ãšltimos 7 dÃ­as</option>
-            <option value="30">Ãšltimos 30 dÃ­as</option>
-            <option value="90">Ãšltimos 90 dÃ­as</option>
+            <option value="all">{t('orders.allHistory')}</option>
+            <option value="7">{t('orders.last7Days')}</option>
+            <option value="30">{t('orders.last30Days')}</option>
+            <option value="90">{t('orders.last90Days')}</option>
           </select>
         </label>
         <label>
-          <span className="sr-only">Ordenar pedidos</span>
+          <span className="sr-only">{t('orders.sortLabel')}</span>
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
             className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
-            <option value="newest">MÃ¡s recientes</option>
-            <option value="oldest">MÃ¡s antiguos</option>
-            <option value="total-high">Mayor total</option>
-            <option value="total-low">Menor total</option>
+            <option value="newest">{t('orders.newest')}</option>
+            <option value="oldest">{t('orders.oldest')}</option>
+            <option value="total-high">{t('orders.totalHigh')}</option>
+            <option value="total-low">{t('orders.totalLow')}</option>
           </select>
         </label>
       </section>
@@ -420,7 +419,7 @@ export default function Orders() {
           disabled={filteredOrders.length === 0}
           className="rounded-lg border border-sky-300 bg-sky-50 px-3 py-2 text-sm font-semibold text-sky-700 transition hover:bg-sky-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Exportar JSON
+          {t('orders.exportJson')}
         </button>
         <button
           type="button"
@@ -428,48 +427,48 @@ export default function Orders() {
           disabled={filteredOrders.length === 0}
           className="rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          Exportar CSV
+          {t('orders.exportCsv')}
         </button>
         <button
           type="button"
           onClick={clearFilters}
           className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          Limpiar filtros
+          {t('common.clearFilters')}
         </button>
       </div>
 
       {filteredOrders.length === 0 && (
         <div className="mb-6 rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-10 text-center">
-          <p className="text-lg font-semibold text-gray-800">No hay resultados con esos filtros</p>
-          <p className="text-sm text-gray-500 mt-1">Prueba otra bÃºsqueda o amplÃ­a el rango de fecha.</p>
+          <p className="text-lg font-semibold text-gray-800">{t('orders.noResultsTitle')}</p>
+          <p className="text-sm text-gray-500 mt-1">{t('orders.noResultsBody')}</p>
         </div>
       )}
 
-      <section className="flex flex-col gap-4" aria-label="Lista de pedidos">
+      <section className="flex flex-col gap-4" aria-label={t('orders.listLabel')}>
         {filteredOrders.map((order) => (
           <article key={order.id} className="rounded-2xl bg-white p-5 shadow">
             <header className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b pb-3">
               <div>
-                <p className="text-sm text-gray-500">Pedido #{order.id}</p>
+                <p className="text-sm text-gray-500">{t('orders.orderId', { id: order.id })}</p>
                 <h2 className="text-lg font-semibold text-gray-900">{order.customerName}</h2>
               </div>
               <div className="text-right">
-                <p className="text-sm text-gray-500">{formatDate(order.createdAt)}</p>
-                <p className="font-bold text-indigo-700">${Number(order.totalPrice).toFixed(2)}</p>
+                <p className="text-sm text-gray-500">{formatDate(order.createdAt, formatDateTime, t('orders.dateUnavailable'))}</p>
+                <p className="font-bold text-indigo-700">{formatCurrency(Number(order.totalPrice))}</p>
               </div>
             </header>
 
             <div className="mb-3 flex flex-wrap items-center gap-3 text-sm text-gray-600">
               <span>
-                {order.totalItems} producto{order.totalItems !== 1 ? 's' : ''}
+                {t('orders.itemsCount', { count: order.totalItems, suffix: order.totalItems !== 1 ? 's' : '' })}
               </span>
               <span>
-                Subtotal: ${Number(order.subtotalPrice ?? order.totalPrice ?? 0).toFixed(2)}
+                {t('common.subtotal')}: {formatCurrency(Number(order.subtotalPrice ?? order.totalPrice ?? 0))}
               </span>
               {order.discountAmount > 0 && (
                 <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
-                  ðŸ·ï¸ {order.couponCode} &minus;${Number(order.discountAmount).toFixed(2)}
+                  ðŸ·ï¸ {order.couponCode} -{formatCurrency(Number(order.discountAmount))}
                 </span>
               )}
             </div>
@@ -478,10 +477,10 @@ export default function Orders() {
               <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2" role="list">
                 {order.items.map((item) => (
                   <li key={`${order.id}-${item.id}`} className="rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                    <span className="font-medium text-gray-800">{item.name}</span>
+                    <span className="font-medium text-gray-800">{translateProductText(item.name)}</span>
                     <span className="ml-2 text-gray-500">x{item.quantity}</span>
                     <span className="float-right font-semibold text-gray-700">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      {formatCurrency(item.price * item.quantity)}
                     </span>
                   </li>
                 ))}
@@ -495,27 +494,27 @@ export default function Orders() {
                 className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 aria-expanded={expandedOrderIds.includes(order.id)}
               >
-                {expandedOrderIds.includes(order.id) ? 'Ocultar detalle' : 'Ver detalle'}
+                {expandedOrderIds.includes(order.id) ? t('orders.hideDetail') : t('orders.viewDetail')}
               </button>
               <button
                 type="button"
                 onClick={() => handleCopyOrderId(order.id)}
                 className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Copiar ID
+                {t('orders.copyOrderId')}
               </button>
               <button
                 type="button"
                 onClick={() => handleReorder(order)}
                 className="rounded-lg border border-indigo-300 bg-indigo-50 px-3 py-2 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Repetir pedido
+                {t('orders.reorder')}
               </button>
               <Link
                 to="/carrito"
                 className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Ir al carrito
+                {t('orders.goCart')}
               </Link>
             </div>
           </article>

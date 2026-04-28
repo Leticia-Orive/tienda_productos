@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import useAuth from '../context/useAuth';
 import useCart from '../context/useCart';
+import useLanguage from '../context/useLanguage';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 
 /**
@@ -14,8 +15,9 @@ import useDocumentTitle from '../hooks/useDocumentTitle';
  * Accessibility: labels and alerts are provided for all fields and errors.
  */
 export default function Register() {
+  const { t } = useLanguage();
   // WCAG 2.4.2: descriptive page title announced by screen readers on navigation.
-  useDocumentTitle('Registro');
+  useDocumentTitle(t('common.registerAccount'));
   const { isAuthenticated, register } = useAuth();
   const { showToast } = useCart();
   const navigate = useNavigate();
@@ -50,7 +52,7 @@ export default function Register() {
     if (/[a-z]/.test(pwd)) score += 1;
     if (/[A-Z]/.test(pwd)) score += 1;
     if (/\d/.test(pwd)) score += 1;
-    const labels = ['', 'Débil', 'Regular', 'Buena', 'Fuerte'];
+    const labels = ['', t('common.strengthWeak'), t('common.strengthRegular'), t('common.strengthGood'), t('common.strengthStrong')];
     const colors = ['', 'bg-red-400', 'bg-orange-400', 'bg-yellow-400', 'bg-green-500'];
     return { score, label: labels[score], color: colors[score] };
   };
@@ -60,34 +62,34 @@ export default function Register() {
   /** Returns an inline validation error message for one register field. */
   const validateField = (name, value, nextForm = form) => {
     if (name === 'name') {
-      if (!value.trim()) return 'El nombre es obligatorio.';
-      if (value.trim().length < 2) return 'El nombre debe tener al menos 2 caracteres.';
+      if (!value.trim()) return t('common.nameRequired');
+      if (value.trim().length < 2) return t('common.nameMin');
       return undefined;
     }
 
     if (name === 'email') {
       const safeEmail = value.trim();
-      if (!safeEmail) return 'El correo es obligatorio.';
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(safeEmail)) return 'Ingresa un correo válido.';
+      if (!safeEmail) return t('common.requiredEmail');
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(safeEmail)) return t('common.invalidEmail');
       return undefined;
     }
 
     if (name === 'role') {
-      if (value !== 'admin' && value !== 'cliente') return 'Selecciona un rol válido.';
+      if (value !== 'admin' && value !== 'cliente') return t('common.invalidRole');
       return undefined;
     }
 
     if (name === 'password') {
-      if (!value) return 'La contraseña es obligatoria.';
+      if (!value) return t('common.passwordRequired');
       if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(value)) {
-        return 'Usa 8+ caracteres, mayúscula, minúscula y número.';
+        return t('common.strongPasswordHint');
       }
       return undefined;
     }
 
     if (name === 'confirmPassword') {
-      if (!value) return 'Debes confirmar la contraseña.';
-      if (value !== nextForm.password) return 'Las contraseñas no coinciden.';
+      if (!value) return t('common.confirmPasswordRequired');
+      if (value !== nextForm.password) return t('common.passwordsMismatch');
       return undefined;
     }
 
@@ -144,7 +146,7 @@ export default function Register() {
     const result = await register(form);
 
     if (!result.ok) {
-      const message = result.error || 'No se pudo completar el registro.';
+      const message = result.error || t('common.completeRegisterFailed');
       setError(message);
       showToast(message, 'error');
       setIsSubmitting(false);
@@ -152,19 +154,19 @@ export default function Register() {
     }
 
     setError('');
-    showToast('Cuenta creada correctamente', 'success');
+    showToast(t('common.accountCreated'), 'success');
     navigate('/', { replace: true });
   };
 
   return (
     <main className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-10 bg-gray-50">
       <section className="w-full max-w-md rounded-2xl bg-white p-6 shadow" aria-label="Formulario de registro">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Crear cuenta</h1>
-        <p className="text-sm text-gray-500 mb-6">Regístrate para comprar y gestionar tus pedidos.</p>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('common.registerAccount')}</h1>
+        <p className="text-sm text-gray-500 mb-6">{t('common.registerToShop')}</p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
           <div className="flex flex-col gap-1">
-            <label htmlFor="name" className="text-sm font-medium text-gray-700">Nombre</label>
+            <label htmlFor="name" className="text-sm font-medium text-gray-700">{t('common.name')}</label>
             <input
               id="name"
               type="text"
@@ -188,7 +190,7 @@ export default function Register() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="email" className="text-sm font-medium text-gray-700">Correo electrónico</label>
+            <label htmlFor="email" className="text-sm font-medium text-gray-700">{t('common.email')}</label>
             <input
               id="email"
               type="email"
@@ -211,7 +213,7 @@ export default function Register() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="role" className="text-sm font-medium text-gray-700">Rol</label>
+            <label htmlFor="role" className="text-sm font-medium text-gray-700">{t('common.role')}</label>
             <select
               id="role"
               name="role"
@@ -226,8 +228,8 @@ export default function Register() {
               aria-describedby={touched.role && fieldErrors.role ? 'register-role-error' : undefined}
               required
             >
-              <option value="cliente">Cliente</option>
-              <option value="admin">Administrador</option>
+              <option value="cliente">{t('common.roleClient')}</option>
+              <option value="admin">{t('common.roleAdmin')}</option>
             </select>
             {touched.role && fieldErrors.role && (
               <p id="register-role-error" className="text-xs text-red-600" role="alert">{fieldErrors.role}</p>
@@ -235,7 +237,7 @@ export default function Register() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="password" className="text-sm font-medium text-gray-700">Contraseña</label>
+            <label htmlFor="password" className="text-sm font-medium text-gray-700">{t('common.password')}</label>
             <input
               id="password"
               type={showPassword ? 'text' : 'password'}
@@ -249,7 +251,7 @@ export default function Register() {
               disabled={isSubmitting}
               minLength={8}
               pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
-              title="Mínimo 8 caracteres, incluyendo mayúscula, minúscula y número."
+              title={t('common.minPasswordTitle')}
               aria-invalid={Boolean(touched.password && fieldErrors.password)}
               aria-describedby={touched.password && fieldErrors.password ? 'register-password-error' : undefined}
               required
@@ -258,12 +260,12 @@ export default function Register() {
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
               className="mt-1 text-xs text-indigo-600 hover:text-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-fit"
-              aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              aria-label={showPassword ? t('common.hidePassword') : t('common.showPassword')}
             >
-              {showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              {showPassword ? t('common.hidePassword') : t('common.showPassword')}
             </button>
             {form.password && (
-              <div className="mt-1" aria-label={`Fortaleza de contraseña: ${passwordStrength.label}`}>
+              <div className="mt-1" aria-label={`${t('common.passwordStrength')}: ${passwordStrength.label}`}>
                 <div className="flex gap-1 mb-1" aria-hidden="true">
                   {[1, 2, 3, 4].map((step) => (
                     <div
@@ -275,7 +277,7 @@ export default function Register() {
                   ))}
                 </div>
                 <p className="text-xs text-gray-500">
-                  Fortaleza: <span className="font-medium">{passwordStrength.label}</span>
+                  {t('common.passwordStrength')}: <span className="font-medium">{passwordStrength.label}</span>
                 </p>
               </div>
             )}
@@ -285,7 +287,7 @@ export default function Register() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">Confirmar contraseña</label>
+            <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">{t('common.confirmPassword')}</label>
             <input
               id="confirmPassword"
               type={showConfirmPassword ? 'text' : 'password'}
@@ -307,9 +309,9 @@ export default function Register() {
               type="button"
               onClick={() => setShowConfirmPassword((prev) => !prev)}
               className="mt-1 text-xs text-indigo-600 hover:text-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-fit"
-              aria-label={showConfirmPassword ? 'Ocultar confirmación' : 'Mostrar confirmación'}
+              aria-label={showConfirmPassword ? t('common.hideConfirmation') : t('common.showConfirmation')}
             >
-              {showConfirmPassword ? 'Ocultar confirmación' : 'Mostrar confirmación'}
+              {showConfirmPassword ? t('common.hideConfirmation') : t('common.showConfirmation')}
             </button>
             {touched.confirmPassword && fieldErrors.confirmPassword && (
               <p id="register-confirm-password-error" className="text-xs text-red-600" role="alert">{fieldErrors.confirmPassword}</p>
@@ -325,17 +327,17 @@ export default function Register() {
             disabled={isSubmitting}
             className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            {isSubmitting ? 'Creando cuenta...' : 'Registrarme'}
+            {isSubmitting ? t('common.registering') : t('common.register')}
           </button>
         </form>
 
         <p className="mt-5 text-sm text-gray-600">
-          ¿Ya tienes cuenta?{' '}
+          {t('common.alreadyHaveAccount')}{' '}
           <Link
             to="/login"
             className="font-medium text-indigo-600 underline underline-offset-2 hover:text-indigo-700"
           >
-            Inicia sesión
+            {t('common.login')}
           </Link>
         </p>
       </section>

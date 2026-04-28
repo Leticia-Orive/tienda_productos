@@ -7,14 +7,16 @@ import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import useAuth from '../context/useAuth';
 import useCart from '../context/useCart';
+import useLanguage from '../context/useLanguage';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 
 /**
  * Simulated password recovery page using local user storage.
  */
 export default function ForgotPassword() {
+  const { t } = useLanguage();
   // WCAG 2.4.2: descriptive page title announced by screen readers on navigation.
-  useDocumentTitle('Recuperar contraseña');
+  useDocumentTitle(t('forgot.title'));
   const { isAuthenticated, resetPassword } = useAuth();
   const { showToast } = useCart();
   const navigate = useNavigate();
@@ -48,7 +50,7 @@ export default function ForgotPassword() {
     if (/[a-z]/.test(pwd)) score += 1;
     if (/[A-Z]/.test(pwd)) score += 1;
     if (/\d/.test(pwd)) score += 1;
-    const labels = ['', 'DÃ©bil', 'Regular', 'Buena', 'Fuerte'];
+    const labels = ['', t('common.strengthWeak'), t('common.strengthRegular'), t('common.strengthGood'), t('common.strengthStrong')];
     const colors = ['', 'bg-red-400', 'bg-orange-400', 'bg-yellow-400', 'bg-green-500'];
     return { score, label: labels[score], color: colors[score] };
   };
@@ -59,22 +61,22 @@ export default function ForgotPassword() {
   const validateField = (name, value, nextForm = form) => {
     if (name === 'email') {
       const safeEmail = value.trim();
-      if (!safeEmail) return 'El correo es obligatorio.';
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(safeEmail)) return 'Ingresa un correo vÃ¡lido.';
+      if (!safeEmail) return t('common.requiredEmail');
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(safeEmail)) return t('common.invalidEmail');
       return undefined;
     }
 
     if (name === 'password') {
-      if (!value) return 'La nueva contraseña es obligatoria.';
+      if (!value) return t('forgot.newPasswordRequired');
       if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(value)) {
-        return 'Usa  mas de 8 caracteres, mayúscula, minúscula y número.';
+        return t('common.strongPasswordHint');
       }
       return undefined;
     }
 
     if (name === 'confirmPassword') {
-      if (!value) return 'Debes confirmar la contraseña.';
-      if (value !== nextForm.password) return 'Las contraseñas no coinciden.';
+      if (!value) return t('common.confirmPasswordRequired');
+      if (value !== nextForm.password) return t('common.passwordsMismatch');
       return undefined;
     }
 
@@ -130,7 +132,7 @@ export default function ForgotPassword() {
     const result = await resetPassword(form);
 
     if (!result.ok) {
-      const message = result.error || 'No se pudo restablecer la contraseña.';
+      const message = result.error || t('forgot.resetFailed');
       setSuccess('');
       setError(message);
       showToast(message, 'error');
@@ -139,20 +141,20 @@ export default function ForgotPassword() {
     }
 
     setError('');
-    setSuccess('Contraseña actualizada correctamente. Te llevaremos al login.');
-    showToast('Contraseña actualizada correctamente', 'success');
+    setSuccess(t('forgot.resetSuccessRedirect'));
+    showToast(t('forgot.resetSuccess'), 'success');
     setTimeout(() => navigate('/login', { replace: true }), 1200);
   };
 
   return (
     <main className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-10 bg-gray-50">
-      <section className="w-full max-w-md rounded-2xl bg-white p-6 shadow" aria-label="Formulario de recuperación de contraseña">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Recuperar contraseña</h1>
-        <p className="text-sm text-gray-500 mb-6">Ingresa tu correo y define una nueva contraseña.</p>
+      <section className="w-full max-w-md rounded-2xl bg-white p-6 shadow" aria-label={t('forgot.formLabel')}>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('forgot.title')}</h1>
+        <p className="text-sm text-gray-500 mb-6">{t('forgot.subtitle')}</p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
           <div className="flex flex-col gap-1">
-            <label htmlFor="email" className="text-sm font-medium text-gray-700">Correo electrónico</label>
+            <label htmlFor="email" className="text-sm font-medium text-gray-700">{t('common.email')}</label>
             <input
               id="email"
               type="email"
@@ -175,7 +177,7 @@ export default function ForgotPassword() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="password" className="text-sm font-medium text-gray-700">Nueva contraseña</label>
+            <label htmlFor="password" className="text-sm font-medium text-gray-700">{t('forgot.newPassword')}</label>
             <input
               id="password"
               type={showPassword ? 'text' : 'password'}
@@ -190,7 +192,7 @@ export default function ForgotPassword() {
               disabled={isSubmitting}
               minLength={8}
               pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
-              title="Mínimo 8 caracteres, incluyendo mayúscula, minúscula y número."
+              title={t('common.minPasswordTitle')}
               aria-invalid={Boolean(touched.password && fieldErrors.password)}
               aria-describedby={touched.password && fieldErrors.password ? 'forgot-password-error' : undefined}
               required
@@ -199,12 +201,12 @@ export default function ForgotPassword() {
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
               className="mt-1 text-xs text-indigo-600 hover:text-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-fit"
-              aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              aria-label={showPassword ? t('common.hidePassword') : t('common.showPassword')}
             >
-              {showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+              {showPassword ? t('common.hidePassword') : t('common.showPassword')}
             </button>
             {form.password && (
-              <div className="mt-1" aria-label={`Fortaleza de contraseña: ${passwordStrength.label}`}>
+              <div className="mt-1" aria-label={`${t('common.passwordStrength')}: ${passwordStrength.label}`}>
                 <div className="flex gap-1 mb-1" aria-hidden="true">
                   {[1, 2, 3, 4].map((step) => (
                     <div
@@ -216,7 +218,7 @@ export default function ForgotPassword() {
                   ))}
                 </div>
                 <p className="text-xs text-gray-500">
-                  Fortaleza: <span className="font-medium">{passwordStrength.label}</span>
+                  {t('common.passwordStrength')}: <span className="font-medium">{passwordStrength.label}</span>
                 </p>
               </div>
             )}
@@ -226,7 +228,7 @@ export default function ForgotPassword() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">Confirmar contraseña</label>
+            <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">{t('common.confirmPassword')}</label>
             <input
               id="confirmPassword"
               type={showConfirmPassword ? 'text' : 'password'}
@@ -248,9 +250,9 @@ export default function ForgotPassword() {
               type="button"
               onClick={() => setShowConfirmPassword((prev) => !prev)}
               className="mt-1 text-xs text-indigo-600 hover:text-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-fit"
-              aria-label={showConfirmPassword ? 'Ocultar confirmación' : 'Mostrar confirmación'}
+              aria-label={showConfirmPassword ? t('common.hideConfirmation') : t('common.showConfirmation')}
             >
-              {showConfirmPassword ? 'Ocultar confirmación' : 'Mostrar confirmación'}
+              {showConfirmPassword ? t('common.hideConfirmation') : t('common.showConfirmation')}
             </button>
             {touched.confirmPassword && fieldErrors.confirmPassword && (
               <p id="forgot-confirm-password-error" className="text-xs text-red-600" role="alert">{fieldErrors.confirmPassword}</p>
@@ -265,17 +267,17 @@ export default function ForgotPassword() {
             disabled={isSubmitting}
             className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            {isSubmitting ? 'Actualizando...' : 'Actualizar contraseña'}
+            {isSubmitting ? t('forgot.updating') : t('forgot.updatePassword')}
           </button>
         </form>
 
         <p className="mt-5 text-sm text-gray-600">
-          ¿Recordaste tu acceso?{' '}
+          {t('forgot.rememberedAccess')}{' '}
           <Link
             to="/login"
             className="font-medium text-indigo-600 underline underline-offset-2 hover:text-indigo-700"
           >
-            Volver al login
+            {t('forgot.backToLogin')}
           </Link>
         </p>
       </section>

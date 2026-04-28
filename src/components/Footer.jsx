@@ -4,12 +4,15 @@
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
 import { Link } from 'react-router-dom';
+import useLanguage from '../context/useLanguage';
 
 /**
  * Footer component with company info, links, and social media.
  * Displayed at the bottom of every page after authentication.
  */
 export default function Footer() {
+  const { t } = useLanguage();
+
   return (
     <footer className="bg-gray-900 text-gray-100 mt-16">
       <div className="max-w-6xl mx-auto px-4 py-12">
@@ -18,32 +21,32 @@ export default function Footer() {
           <div>
             <h2 className="text-lg font-bold text-white mb-3">TiendaReact</h2>
             <p className="text-sm text-gray-400">
-              Tu tienda de confianza para productos electronicos, deportivos y accesorios de calidad.
+              {t('footer.description')}
             </p>
           </div>
 
           {/* Navegación */}
           <div>
-            <h3 className="font-semibold text-white mb-3">Navegación</h3>
+            <h3 className="font-semibold text-white mb-3">{t('footer.navigation')}</h3>
             <ul className="flex flex-col gap-2 text-sm" role="list">
               <li>
                 <Link to="/" className="text-gray-400 hover:text-indigo-400 transition">
-                  Productos
+                  {t('navbar.home')}
                 </Link>
               </li>
               <li>
                 <Link to="/carrito" className="text-gray-400 hover:text-indigo-400 transition">
-                  Carrito
+                  {t('navbar.cart')}
                 </Link>
               </li>
               <li>
                 <Link to="/favoritos" className="text-gray-400 hover:text-indigo-400 transition">
-                  Favoritos
+                  {t('navbar.favorites')}
                 </Link>
               </li>
               <li>
                 <Link to="/pedidos" className="text-gray-400 hover:text-indigo-400 transition">
-                  Mis Pedidos
+                  {t('orders.title')}
                 </Link>
               </li>
             </ul>
@@ -51,26 +54,26 @@ export default function Footer() {
 
           {/* Información */}
           <div>
-            <h3 className="font-semibold text-white mb-3">Información</h3>
+            <h3 className="font-semibold text-white mb-3">{t('footer.information')}</h3>
             <ul className="flex flex-col gap-2 text-sm" role="list">
               <li>
                 <a href="mailto:contacto@tiendareact.com" className="text-gray-400 hover:text-indigo-400 transition">
-                  Contacto
+                  {t('footer.contact')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-indigo-400 transition">
-                  Términos y condiciones
+                  {t('footer.terms')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-indigo-400 transition">
-                  Política de privacidad
+                  {t('footer.privacy')}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-gray-400 hover:text-indigo-400 transition">
-                  Cambios y devoluciones
+                  {t('footer.returns')}
                 </a>
               </li>
             </ul>
@@ -78,7 +81,7 @@ export default function Footer() {
 
           {/* Redes sociales */}
           <div>
-            <h3 className="font-semibold text-white mb-3">Síguenos</h3>
+            <h3 className="font-semibold text-white mb-3">{t('footer.followUs')}</h3>
             <ul className="flex gap-3" role="list">
               <li>
                 <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition" aria-label="Facebook">
@@ -102,7 +105,7 @@ export default function Footer() {
         {/* Divider */}
         <div className="border-t border-gray-800 pt-8">
           <p className="text-center text-sm text-gray-500">
-            Â© {new Date().getFullYear()} TiendaReact. Todos los derechos reservados.
+            Â© {new Date().getFullYear()} TiendaReact. {t('footer.rightsReserved')}
           </p>
         </div>
       </div>

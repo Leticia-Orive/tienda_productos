@@ -10,6 +10,7 @@ import ProductCard from '../components/ProductCard';
 import useAuth from '../context/useAuth';
 import useCart from '../context/useCart';
 import useProducts from '../context/useProducts';
+import useLanguage from '../context/useLanguage';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const ALLOWED_SORTS = ['featured', 'newest', 'price-asc', 'price-desc', 'name-asc', 'name-desc', 'favorites'];
@@ -163,8 +164,9 @@ function parseListParams(searchParams, categories) {
  * Filters are implemented client-side for performance.
  */
 export default function Home() {
+  const { t, formatCurrency, translateCategory } = useLanguage();
   // WCAG 2.4.2: descriptive page title announced by screen readers on navigation.
-  useDocumentTitle('Productos');
+  useDocumentTitle(t('navbar.home'));
   const { user } = useAuth();
   const { products, categories } = useProducts();
 
@@ -502,23 +504,23 @@ export default function Home() {
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">Nuestros Productos</h1>
-      <p className="text-gray-500 mb-6">Encuentra lo que buscas al mejor precio.</p>
+      <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('home.title')}</h1>
+      <p className="text-gray-500 mb-6">{t('home.subtitle')}</p>
 
       {isAdmin && (
-        <section className="mb-8 rounded-2xl border border-indigo-200 bg-indigo-50/40 p-4" aria-label="Acceso a administraciÃ³n">
-          <h2 className="text-lg font-semibold text-indigo-900 mb-1">Gestión de catálogo</h2>
-          <p className="text-sm text-indigo-800 mb-3">Usa el panel de administración para crear, editar y borrar productos.</p>
+        <section className="mb-8 rounded-2xl border border-indigo-200 bg-indigo-50/40 p-4" aria-label={t('home.adminAccess')}>
+          <h2 className="text-lg font-semibold text-indigo-900 mb-1">{t('home.catalogManagement')}</h2>
+          <p className="text-sm text-indigo-800 mb-3">{t('home.catalogManagementBody')}</p>
           <Link
             to="/admin/productos"
             className="inline-block rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            Ir al panel admin
+            {t('home.goToAdminPanel')}
           </Link>
         </section>
       )}
 
-      <section className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-3" aria-label="Controles de bÃºsqueda y ordenado">
+      <section className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-3" aria-label={t('home.searchAndSortControls')}>
         <label className="md:col-span-4 flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2">
           <input
             type="checkbox"
@@ -526,10 +528,10 @@ export default function Home() {
             onChange={toggleManualApply}
             className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
           />
-          <span className="text-sm text-gray-700">Modo manual en móvil: aplicar búsqueda/precio con botón</span>
+          <span className="text-sm text-gray-700">{t('home.manualModeMobile')}</span>
         </label>
         <label className="md:col-span-2">
-          <span className="sr-only">Buscar productos</span>
+          <span className="sr-only">{t('home.searchProducts')}</span>
           <input
             ref={searchInputRef}
             type="search"
@@ -543,12 +545,12 @@ export default function Home() {
                 resetToFirstPage();
               }
             }}
-            placeholder="Buscar por nombre, categoría o descripción..."
+            placeholder={t('home.searchPlaceholder')}
             className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
         </label>
         <label>
-          <span className="sr-only">Ordenar productos</span>
+          <span className="sr-only">{t('home.sortProducts')}</span>
           <select
             value={sortBy}
             onChange={(e) => {
@@ -557,17 +559,17 @@ export default function Home() {
             }}
             className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
-            <option value="featured">Destacados</option>
-            <option value="newest">Novedades</option>
-            <option value="price-asc">Precio: menor a mayor</option>
-            <option value="price-desc">Precio: mayor a menor</option>
-            <option value="name-asc">Nombre: A-Z</option>
-            <option value="name-desc">Nombre: Z-A</option>
-            <option value="favorites">Favoritos primero</option>
+            <option value="featured">{t('home.featured')}</option>
+            <option value="newest">{t('home.newest')}</option>
+            <option value="price-asc">{t('home.priceLowHigh')}</option>
+            <option value="price-desc">{t('home.priceHighLow')}</option>
+            <option value="name-asc">{t('home.nameAsc')}</option>
+            <option value="name-desc">{t('home.nameDesc')}</option>
+            <option value="favorites">{t('home.favoritesFirst')}</option>
           </select>
         </label>
         <label>
-          <span className="sr-only">Tamaño de página</span>
+          <span className="sr-only">{t('home.pageSize')}</span>
           <select
             value={String(pageSize)}
             onChange={(e) => {
@@ -577,14 +579,14 @@ export default function Home() {
             }}
             className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
-            <option value="8">8 por página</option>
-            <option value="16">16 por página</option>
-            <option value="24">24 por página</option>
+            <option value="8">{t('home.perPage', { count: 8 })}</option>
+            <option value="16">{t('home.perPage', { count: 16 })}</option>
+            <option value="24">{t('home.perPage', { count: 24 })}</option>
           </select>
         </label>
         <div className="md:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
           <label>
-            <span className="sr-only">Precio mínimo</span>
+            <span className="sr-only">{t('home.minPrice')}</span>
             <input
               type="number"
               min={0}
@@ -600,12 +602,12 @@ export default function Home() {
                   resetToFirstPage();
                 }
               }}
-              placeholder="Precio mínimo"
+              placeholder={t('home.minPrice')}
               className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </label>
           <label>
-            <span className="sr-only">Precio máximo</span>
+            <span className="sr-only">{t('home.maxPrice')}</span>
             <input
               type="number"
               min={0}
@@ -621,12 +623,12 @@ export default function Home() {
                   resetToFirstPage();
                 }
               }}
-              placeholder="Precio máximo"
+              placeholder={t('home.maxPrice')}
               className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </label>
         </div>
-        <div className="md:col-span-4 flex flex-wrap gap-2" aria-label="Atajos de precio">
+        <div className="md:col-span-4 flex flex-wrap gap-2" aria-label={t('home.priceShortcuts')}>
           {QUICK_PRICE_RANGES.map((range) => (
             <button
               key={range.label}
@@ -661,12 +663,12 @@ export default function Home() {
             }`}
             aria-pressed={onlyNew}
           >
-            {onlyNew ? 'Mostrando solo novedades' : `Ver solo novedades (${NEW_PRODUCTS_WINDOW} más recientes)`}
+            {onlyNew ? t('home.onlyNewOn') : t('home.onlyNewOff', { count: NEW_PRODUCTS_WINDOW })}
           </button>
         </div>
         {hasInvalidPriceRange && (
           <p className="md:col-span-4 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800" role="status" aria-live="polite">
-            El precio mínimo no puede ser mayor que el máximo.
+            {t('home.invalidPriceRange')}
           </p>
         )}
       </section>
@@ -679,7 +681,7 @@ export default function Home() {
             disabled={hasInvalidPriceRange}
             className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            Aplicar filtros
+            {t('home.applyFilters')}
           </button>
           <button
             type="button"
@@ -690,13 +692,13 @@ export default function Home() {
             }}
             className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            Descartar cambios
+            {t('home.discardChanges')}
           </button>
         </div>
       )}
 
       {hasActiveFilters && (
-        <section className="mb-6 flex gap-2 overflow-x-auto pb-1 sm:flex-wrap" aria-label="Filtros activos">
+        <section className="mb-6 flex gap-2 overflow-x-auto pb-1 sm:flex-wrap" aria-label={t('home.activeFilters')}>
           {activeCategorySafe !== 'Todos' && (
             <button
               type="button"
@@ -707,7 +709,7 @@ export default function Home() {
               }}
               className="shrink-0 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-800"
             >
-              CategorÃ­a: {activeCategorySafe} Ã—
+              {t('home.categoryFilter', { value: translateCategory(activeCategorySafe) })}
             </button>
           )}
           {effectiveSearch.trim() && (
@@ -724,7 +726,7 @@ export default function Home() {
               className="shrink-0 max-w-[18rem] truncate rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-800"
               title={`BÃºsqueda: ${effectiveSearch.trim()}`}
             >
-              BÃºsqueda: {effectiveSearch.trim()} Ã—
+              {t('home.searchFilter', { value: effectiveSearch.trim() })}
             </button>
           )}
           {sortBy !== 'featured' && (
@@ -736,7 +738,7 @@ export default function Home() {
               }}
               className="shrink-0 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-800"
             >
-              Orden personalizado Ã—
+              {t('home.customSortFilter')}
             </button>
           )}
           {effectiveMinPrice !== '' && (
@@ -752,7 +754,7 @@ export default function Home() {
               }}
               className="shrink-0 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-800"
             >
-              Min: ${effectiveMinPrice} 
+              {t('home.minFilter', { value: formatCurrency(effectiveMinPrice) })}
             </button>
           )}
           {effectiveMaxPrice !== '' && (
@@ -768,7 +770,7 @@ export default function Home() {
               }}
               className="shrink-0 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-800"
             >
-              Max: ${effectiveMaxPrice} 
+              {t('home.maxFilter', { value: formatCurrency(effectiveMaxPrice) })}
             </button>
           )}
           {onlyNew && (
@@ -780,7 +782,7 @@ export default function Home() {
               }}
               className="shrink-0 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-800"
             >
-              Solo novedades 
+              {t('home.onlyNewFilter')}
             </button>
           )}
         </section>
@@ -788,27 +790,27 @@ export default function Home() {
 
       <p className="mb-3 text-xs font-medium" aria-live="polite">
         <span className={`inline-flex items-center rounded-full px-2.5 py-1 ${isUrlSynced ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'}`}>
-          {isUrlSynced ? 'URL sincronizada para compartir' : 'Sincronizando URL...'}
+          {isUrlSynced ? t('home.urlSynced') : t('home.urlSyncing')}
         </span>
       </p>
 
       <p className="text-sm text-gray-500 mb-6" aria-live="polite">
-        {sortedProducts.length} resultado{sortedProducts.length !== 1 ? 's' : ''}  Página {safeCurrentPage} de {totalPages}
+        {t('common.resultsCount', { count: sortedProducts.length, suffix: sortedProducts.length !== 1 ? 's' : '' })} {t('common.page')} {safeCurrentPage} {t('common.of')} {totalPages}
       </p>
 
       {sortedProducts.length > 0 && (
-        <section className="mb-6 grid grid-cols-1 gap-2 sm:grid-cols-3" aria-label="Resumen de precios">
+        <section className="mb-6 grid grid-cols-1 gap-2 sm:grid-cols-3" aria-label={t('home.summaryPrices')}>
           <div className="rounded-xl border border-gray-200 bg-white px-4 py-3">
-            <p className="text-xs uppercase tracking-wide text-gray-500">Precio mínimo</p>
-            <p className="text-lg font-semibold text-gray-900">${priceStats.min.toFixed(2)}</p>
+            <p className="text-xs uppercase tracking-wide text-gray-500">{t('home.minPrice')}</p>
+            <p className="text-lg font-semibold text-gray-900">{formatCurrency(priceStats.min)}</p>
           </div>
           <div className="rounded-xl border border-gray-200 bg-white px-4 py-3">
-            <p className="text-xs uppercase tracking-wide text-gray-500">Precio promedio</p>
-            <p className="text-lg font-semibold text-gray-900">${priceStats.avg.toFixed(2)}</p>
+            <p className="text-xs uppercase tracking-wide text-gray-500">{t('home.avgPrice')}</p>
+            <p className="text-lg font-semibold text-gray-900">{formatCurrency(priceStats.avg)}</p>
           </div>
           <div className="rounded-xl border border-gray-200 bg-white px-4 py-3">
-            <p className="text-xs uppercase tracking-wide text-gray-500">Precio máximo</p>
-            <p className="text-lg font-semibold text-gray-900">${priceStats.max.toFixed(2)}</p>
+            <p className="text-xs uppercase tracking-wide text-gray-500">{t('home.maxPrice')}</p>
+            <p className="text-lg font-semibold text-gray-900">{formatCurrency(priceStats.max)}</p>
           </div>
         </section>
       )}
@@ -820,14 +822,14 @@ export default function Home() {
             onClick={copyFiltersLink}
             className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            {copyState === 'copied' ? 'Enlace copiado' : copyState === 'error' ? 'No se pudo copiar' : 'Copiar enlace'}
+            {copyState === 'copied' ? t('common.copiedLink') : copyState === 'error' ? t('common.copyFailed') : t('common.copyLink')}
           </button>
           <button
             type="button"
             onClick={clearFilters}
             className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            Limpiar filtros
+            {t('common.clearFilters')}
           </button>
         </div>
       </div>
@@ -836,7 +838,7 @@ export default function Home() {
       <div
         className="mb-8 flex gap-2 overflow-x-auto pb-1 sm:flex-wrap"
         role="group"
-        aria-label="Filtrar por categoría"
+        aria-label={t('home.filterByCategory')}
       >
         {sortedCategories.map((cat, index) => (
           <button
@@ -854,7 +856,7 @@ export default function Home() {
             }`}
             aria-pressed={activeCategorySafe === cat}
           >
-            {cat} ({categoryCounts[cat] || 0})
+            {translateCategory(cat)} ({categoryCounts[cat] || 0})
           </button>
         ))}
         {sortedCategories.length > 8 && (
@@ -864,14 +866,14 @@ export default function Home() {
             className="inline-flex shrink-0 rounded-full border border-gray-300 bg-white px-4 py-1.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 md:hidden"
             aria-expanded={showAllCategories}
           >
-            {showAllCategories ? 'Ver menos categorías' : `Ver más categorías (${sortedCategories.length - 8})`}
+            {showAllCategories ? t('home.showLessCategories') : t('home.showMoreCategories', { count: sortedCategories.length - 8 })}
           </button>
         )}
       </div>
 
       {isSearchPending ? (
         <section
-          aria-label="Actualizando resultados"
+          aria-label={t('home.updatingResults')}
           aria-live="polite"
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
         >
@@ -895,7 +897,7 @@ export default function Home() {
         <>
           {/* Product grid */}
           <section
-            aria-label="Lista de productos"
+            aria-label={t('home.productList')}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
           >
             {visiblePaginatedProducts.map((product) => (
@@ -914,29 +916,29 @@ export default function Home() {
                 onClick={() => setRenderChunk((prev) => prev + 1)}
                 className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Cargar más en esta página
+                {t('home.loadMoreInPage')}
               </button>
             </div>
           )}
 
           {sortedProducts.length === 0 && (
             <div className="mt-8 rounded-2xl border border-dashed border-gray-300 bg-white px-6 py-10 text-center">
-              <p className="text-lg font-semibold text-gray-800">No encontramos productos</p>
-              <p className="text-sm text-gray-500 mt-1">Prueba con otra búsqueda o cambia la categoría.</p>
+              <p className="text-lg font-semibold text-gray-800">{t('common.noResults')}</p>
+              <p className="text-sm text-gray-500 mt-1">{t('common.tryAnotherSearch')}</p>
             </div>
           )}
         </>
       )}
 
       {!isSearchPending && sortedProducts.length > pageSize && (
-        <nav className="mt-8 flex items-center justify-center gap-3" aria-label="Paginación de productos">
+        <nav className="mt-8 flex items-center justify-center gap-3" aria-label={t('home.paginationProducts')}>
           <button
             type="button"
             onClick={() => goToPage(safeCurrentPage - 1)}
             disabled={safeCurrentPage === 1}
             className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Anterior
+            {t('common.previous')}
           </button>
           {paginationItems.map((item, index) => {
             if (item === 'ellipsis') {
@@ -973,7 +975,7 @@ export default function Home() {
             disabled={safeCurrentPage === totalPages}
             className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            Siguiente
+            {t('common.next')}
           </button>
         </nav>
       )}

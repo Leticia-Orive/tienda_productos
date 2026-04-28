@@ -9,6 +9,7 @@ import ConfirmDialog from '../components/ConfirmDialog';
 import { MAX_ITEM_QUANTITY } from '../context/CartContext';
 import { COUPONS } from '../data/coupons';
 import useCart from '../context/useCart';
+import useLanguage from '../context/useLanguage';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 
 /* Maintenance guide:
@@ -23,8 +24,9 @@ import useDocumentTitle from '../hooks/useDocumentTitle';
  * Allows removing items and navigating to checkout.
  */
 export default function Cart() {
+  const { t, formatCurrency, translateProductText } = useLanguage();
   // WCAG 2.4.2: descriptive page title announced by screen readers on navigation.
-  useDocumentTitle('Carrito');
+  useDocumentTitle(t('cart.title'));
   const navigate = useNavigate();
   const {
     cart,
@@ -73,7 +75,7 @@ export default function Cart() {
   const handleApplyCoupon = (e) => {
     e.preventDefault();
     if (!couponInput.trim()) {
-      setCouponError('Ingresa un cÃ³digo de cupÃ³n.');
+      setCouponError(t('cart.emptyCoupon'));
       return;
     }
     const ok = applyCoupon(couponInput);
@@ -81,7 +83,7 @@ export default function Cart() {
       setCouponInput('');
       setCouponError('');
     } else {
-      setCouponError('CupÃ³n invÃ¡lido o ya aplicado.');
+      setCouponError(t('cart.invalidCoupon'));
     }
   };
 
@@ -89,7 +91,7 @@ export default function Cart() {
   const handleApplySuggestedCoupon = (code) => {
     const ok = applyCoupon(code);
     if (!ok) {
-      setCouponError('CupÃ³n invÃ¡lido o ya aplicado.');
+      setCouponError(t('cart.invalidCoupon'));
       return;
     }
     setCouponInput('');
@@ -99,14 +101,13 @@ export default function Cart() {
   if (cart.length === 0) {
     return (
       <main className="max-w-2xl mx-auto px-4 py-16 text-center">
-        
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">Tu carrito esta vaci­o</h1>
-        <p className="text-gray-500 mb-6">Agrega productos para comenzar a comprar.</p>
+        <h1 className="text-2xl font-bold text-gray-800 mb-2">{t('cart.emptyTitle')}</h1>
+        <p className="text-gray-500 mb-6">{t('cart.emptyBody')}</p>
         <Link
           to="/"
           className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-6 py-2 rounded-lg transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          Ver productos
+          {t('cart.viewProducts')}
         </Link>
       </main>
     );
@@ -120,25 +121,25 @@ export default function Cart() {
     const itemToRemove = cart.find((item) => item.id === id);
     dispatch({ type: 'REMOVE_ITEM', payload: { id } });
     if (itemToRemove) {
-      showToast(`Eliminaste "${itemToRemove.name}" del carrito`, 'info');
+      showToast(t('cart.removedFromCart', { name: translateProductText(itemToRemove.name) }), 'info');
     }
   };
 
   const handleClearCart = () => {
     dispatch({ type: 'CLEAR_CART' });
-    showToast('Carrito vaciado', 'info');
+    showToast(t('cart.cleared'), 'info');
     setIsConfirmClearOpen(false);
   };
 
   return (
     <main className="max-w-4xl mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-gray-900 mb-6">
-        Carrito ({totalItems} {totalItems === 1 ? 'producto' : 'productos'})
+        {t('cart.title')} ({t('cart.itemCount', { count: totalItems, suffix: totalItems === 1 ? '' : 's' })})
       </h1>
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Item list */}
-        <section className="flex-1" aria-label="Productos en el carrito">
+        <section className="flex-1" aria-label={t('cart.cartProductsLabel')}>
           <ul className="flex flex-col gap-4" role="list">
             {cart.map((item) => (
               <li
@@ -151,17 +152,17 @@ export default function Cart() {
                     className="w-20 h-20 object-cover rounded-xl shrink-0"
                 />
                 <div className="flex-1 min-w-0">
-                  <h2 className="font-semibold text-gray-800 truncate">{item.name}</h2>
-                  <p className="text-sm text-gray-500">${item.price.toFixed(2)} Ã— {item.quantity}</p>
-                  <p className="text-indigo-600 font-bold">${(item.price * item.quantity).toFixed(2)}</p>
+                  <h2 className="font-semibold text-gray-800 truncate">{translateProductText(item.name)}</h2>
+                  <p className="text-sm text-gray-500">{formatCurrency(item.price)} Ã— {item.quantity}</p>
+                  <p className="text-indigo-600 font-bold">{formatCurrency(item.price * item.quantity)}</p>
                 </div>
                 {/* Quantity controls */}
-                <div className="flex items-center gap-2" role="group" aria-label={`Cantidad de ${item.name}`}>
+                <div className="flex items-center gap-2" role="group" aria-label={t('cart.quantityOf', { name: translateProductText(item.name) })}>
                   <button
                     type="button"
                     onClick={() => handleQuantity(item.id, item.quantity - 1)}
                     className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold transition focus-visible:outline-2 focus-visible:outline-indigo-600"
-                    aria-label={`Reducir cantidad de ${item.name}`}
+                    aria-label={t('cart.reduceQuantity', { name: translateProductText(item.name) })}
                   >
                     âˆ’
                   </button>
@@ -172,7 +173,7 @@ export default function Cart() {
                     // Disabled when the cap is reached to prevent silent no-ops that confuse users.
                     disabled={item.quantity >= MAX_ITEM_QUANTITY}
                     className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold transition focus-visible:outline-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-50"
-                    aria-label={`Aumentar cantidad de ${item.name}`}
+                    aria-label={t('cart.increaseQuantity', { name: translateProductText(item.name) })}
                   >
                     +
                   </button>
@@ -181,7 +182,7 @@ export default function Cart() {
                   type="button"
                   onClick={() => handleRemove(item.id)}
                   className="text-red-400 hover:text-red-600 transition focus-visible:outline-2 focus-visible:outline-red-400 rounded p-1"
-                  aria-label={`Eliminar ${item.name} del carrito`}
+                  aria-label={t('cart.removeFromCart', { name: translateProductText(item.name) })}
                 >
                   ðŸ—‘ï¸
                 </button>
@@ -190,17 +191,17 @@ export default function Cart() {
                   onClick={() => {
                     toggleFavorite(item);
                     dispatch({ type: 'REMOVE_ITEM', payload: { id: item.id } });
-                    showToast(`"${item.name}" guardado en favoritos`, 'info');
+                    showToast(t('cart.savedToFavorites', { name: translateProductText(item.name) }), 'info');
                   }}
                   className={`rounded-lg border px-2 py-1 text-xs font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${
                     isFavorite(item.id)
                       ? 'border-rose-300 bg-rose-50 text-rose-600 hover:bg-rose-100'
                       : 'border-gray-300 bg-white text-gray-600 hover:bg-gray-50'
                   }`}
-                  aria-label={`Guardar ${item.name} para despues`}
-                  title="Guardar para despues"
+                  aria-label={t('cart.saveForLaterLabel', { name: translateProductText(item.name) })}
+                  title={t('cart.saveForLaterTitle')}
                 >
-                  {isFavorite(item.id) ? ' Guardado' : '¡ Guardar'}
+                  {isFavorite(item.id) ? t('cart.saved') : t('cart.saveForLater')}
                 </button>
               </li>
             ))}
@@ -208,14 +209,14 @@ export default function Cart() {
         </section>
 
         {/* Order summary */}
-        <aside className="lg:w-72" aria-label="Resumen del pedido">
+        <aside className="lg:w-72" aria-label={t('cart.summary')}>
           <div className="bg-white rounded-2xl shadow p-6 sticky top-24">
-            <h2 className="font-bold text-gray-800 text-lg mb-4">Resumen</h2>
+            <h2 className="font-bold text-gray-800 text-lg mb-4">{t('cart.summary')}</h2>
 
             {/* Coupon input */}
-            <form onSubmit={handleApplyCoupon} className="mb-4" aria-label="Aplicar cupÃ³n de descuento">
+            <form onSubmit={handleApplyCoupon} className="mb-4" aria-label={t('cart.applyCouponLabel')}>
               <label htmlFor="coupon-input" className="block text-sm font-medium text-gray-700 mb-1">
-                Cupón de descuento
+                {t('cart.discountCoupon')}
               </label>
               <div className="flex gap-2">
                 <input
@@ -227,7 +228,7 @@ export default function Cart() {
                     setCouponInput(e.target.value.toUpperCase());
                     if (couponError) setCouponError('');
                   }}
-                  placeholder="CÓDIGO"
+                  placeholder={t('cart.couponPlaceholder')}
                   title="Atajo: /"
                   autoComplete="off"
                   disabled={!!coupon}
@@ -239,16 +240,16 @@ export default function Cart() {
                     type="button"
                     onClick={removeCoupon}
                     className="rounded-lg border border-red-300 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50 focus-visible:outline-2 focus-visible:outline-red-400"
-                    aria-label="Quitar cupón"
+                    aria-label={t('cart.removeCoupon')}
                   >
-                    Quitar
+                    {t('common.remove')}
                   </button>
                 ) : (
                   <button
                     type="submit"
                     className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                   >
-                    Aplicar
+                    {t('common.apply')}
                   </button>
                 )}
               </div>
@@ -261,7 +262,7 @@ export default function Cart() {
                 </p>
               )}
               {!coupon && (
-                <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label="Cupones sugeridos">
+                <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label={t('cart.suggestedCoupons')}>
                   {couponSuggestions.map((suggestedCoupon) => (
                     <button
                       key={suggestedCoupon.code}
@@ -278,37 +279,37 @@ export default function Cart() {
 
             <dl className="flex flex-col gap-2 text-sm text-gray-600 mb-4">
               <div className="flex justify-between">
-                <dt>Subtotal ({totalItems} items)</dt>
-                <dd className="font-medium">${totalPrice.toFixed(2)}</dd>
+                <dt>{t('common.subtotal')} ({totalItems} items)</dt>
+                <dd className="font-medium">{formatCurrency(totalPrice)}</dd>
               </div>
               {discountAmount > 0 && (
                 <div className="flex justify-between">
-                  <dt className="text-green-700">Descuento ({coupon.code})</dt>
-                  <dd className="font-medium text-green-700">âˆ’${discountAmount.toFixed(2)}</dd>
+                  <dt className="text-green-700">{t('common.discount')} ({coupon.code})</dt>
+                  <dd className="font-medium text-green-700">âˆ’{formatCurrency(discountAmount)}</dd>
                 </div>
               )}
               <div className="flex justify-between">
-                <dt>Enví­o</dt>
-                <dd className="text-green-600 font-medium">Gratis</dd>
+                <dt>{t('common.shipping')}</dt>
+                <dd className="text-green-600 font-medium">{t('common.free')}</dd>
               </div>
             </dl>
             <div className="border-t pt-4 flex justify-between font-bold text-gray-900 text-base mb-6">
-              <span>Total</span>
-              <span>${finalPrice.toFixed(2)}</span>
+              <span>{t('common.total')}</span>
+              <span>{formatCurrency(finalPrice)}</span>
             </div>
             <button
               type="button"
               onClick={() => setIsConfirmClearOpen(true)}
               className="mb-3 block w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-              Vaciar carrito
+              {t('cart.clearCart')}
             </button>
             <Link
               to="/checkout"
               title="Atajo: Ctrl/Cmd + Enter"
               className="block w-full text-center bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-semibold px-4 py-3 rounded-xl transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-              Proceder al pago
+              {t('cart.proceedCheckout')}
             </Link>
           </div>
         </aside>
@@ -316,10 +317,8 @@ export default function Cart() {
 
       <ConfirmDialog
         open={isConfirmClearOpen}
-        title="Vaciar carrito"
-        message="Se eliminarán todos los productos del carrito.  ¿Quieres continuar?"
-        confirmLabel="Sí­, vaciar"
-        cancelLabel="Cancelar"
+        title={t('cart.clearCartTitle')}
+        message={t('cart.clearCartMessage')}
         onCancel={() => setIsConfirmClearOpen(false)}
         onConfirm={handleClearCart}
         destructive
