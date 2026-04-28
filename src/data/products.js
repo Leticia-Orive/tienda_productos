@@ -2138,7 +2138,7 @@ export const DEFAULT_PRODUCTS = [
     price: 22.99,
     image: 'https://images.unsplash.com/photo-1503342394128-c104d54dba01?w=400',
     category: 'Moda',
-    description: 'Short de secado rÃ¡pido con cintura elÃ¡stica y bolsillos laterales.',
+    description: 'Short de secado rápido con cintura elástica y bolsillos laterales.',
   },
   {
     id: 249,
@@ -2198,11 +2198,11 @@ export const DEFAULT_PRODUCTS = [
   },
   {
     id: 256,
-    name: 'PantalÃ³n Cargo Urbano',
+    name: 'Pantalón Cargo Urbano',
     price: 42.99,
     image: 'https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=400',
     category: 'Moda',
-    description: 'PantalÃ³n cargo con bolsillos utilitarios y ajuste tapered cÃ³modo.',
+    description: 'Pantalón cargo con bolsillos utilitarios y ajuste tapered cómodo.',
   },
   {
     id: 257,
@@ -2210,7 +2210,7 @@ export const DEFAULT_PRODUCTS = [
     price: 54.99,
     image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400',
     category: 'Moda',
-    description: 'Set de chaqueta y pantalÃ³n jogger con tejido elÃ¡stico y acabado premium.',
+    description: 'Set de chaqueta y pantalón jogger con tejido elástico y acabado premium.',
   },
 ];
 
