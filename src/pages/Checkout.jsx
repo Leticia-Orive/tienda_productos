@@ -81,6 +81,25 @@ function getInitialDeliveryLocation() {
   }
 }
 
+/** Reads persisted shipping destination zone safely from checkout draft. */
+function getInitialDestinationZone() {
+  try {
+    const rawForm = localStorage.getItem(CHECKOUT_STORAGE_KEY);
+    const parsed = rawForm ? JSON.parse(rawForm) : {};
+    const validZones = ['peninsula', 'islands_ceuta_melilla', 'europe', 'international'];
+    return validZones.includes(parsed?.destinationZone) ? parsed.destinationZone : 'peninsula';
+  } catch {
+    return 'peninsula';
+  }
+}
+
+const DESTINATION_SURCHARGES = {
+  peninsula: 0,
+  islands_ceuta_melilla: 5,
+  europe: 10,
+  international: 15,
+};
+
 /**
  * Writes JSON data to localStorage safely.
  * Keeps checkout usable when storage is unavailable or full.
@@ -247,9 +266,12 @@ export default function Checkout() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [shippingMethod, setShippingMethod] = useState(getInitialShippingMethod);
   const [deliveryLocation, setDeliveryLocation] = useState(getInitialDeliveryLocation);
+  const [destinationZone, setDestinationZone] = useState(getInitialDestinationZone);
 
-  const shippingFee = shippingMethod === 'express' ? 4.99 : 0;
   const needsAddress = deliveryLocation !== 'store';
+  const shippingBaseFee = needsAddress && shippingMethod === 'express' ? 4.99 : 0;
+  const destinationFee = needsAddress ? (DESTINATION_SURCHARGES[destinationZone] || 0) : 0;
+  const shippingFee = shippingBaseFee + destinationFee;
   const payableTotal = finalPrice + shippingFee;
 
   /** Counts how many of the 6 fields have valid values to drive progress indicator. */
@@ -263,7 +285,7 @@ export default function Checkout() {
       !validateField('card', form.card),
     ];
     return checks.filter(Boolean).length;
-  }, [form]);
+  }, [form, needsAddress]);
 
   const progressPercent = Math.round((filledFields / 6) * 100);
   const hasVisibleErrors = Object.values(errors).some(Boolean);
@@ -298,10 +320,11 @@ export default function Checkout() {
       ...form,
       shippingMethod,
       deliveryLocation,
+      destinationZone,
       card: '',
     };
     safeWriteStorage(CHECKOUT_STORAGE_KEY, persistedForm);
-  }, [form, shippingMethod, deliveryLocation]);
+  }, [form, shippingMethod, deliveryLocation, destinationZone]);
 
   /** Validates one checkout field and returns an inline-friendly message. */
   function validateField(name, value) {
@@ -520,36 +543,72 @@ export default function Checkout() {
                     <CheckoutField id="city" label={t('checkout.city')} name="city" required placeholder={t('checkout.cityPlaceholder')} autoComplete="address-level2" value={form.city} hasError={Boolean(touched.city && errors.city)} errorMessage={errors.city} onChange={handleChange} onBlur={handleBlur} />
                     <CheckoutField id="zip" label={t('checkout.zip')} name="zip" required placeholder="1425" autoComplete="postal-code" value={form.zip} hasError={Boolean(touched.zip && errors.zip)} errorMessage={errors.zip} onChange={handleChange} onBlur={handleBlur} />
                   </div>
+
+                  <fieldset className="rounded-xl border border-gray-200 bg-white px-3 py-3">
+                    <legend className="text-sm font-medium text-gray-700 px-1">{t('checkout.destinationZone')}</legend>
+                    <p className="text-xs text-gray-500 mb-2">{t('checkout.destinationZoneHelp')}</p>
+                    {[
+                      { value: 'peninsula', label: t('checkout.zonePeninsula'), fee: 0 },
+                      { value: 'islands_ceuta_melilla', label: t('checkout.zoneIslandsCeutaMelilla'), fee: 5 },
+                      { value: 'europe', label: t('checkout.zoneEurope'), fee: 10 },
+                      { value: 'international', label: t('checkout.zoneInternational'), fee: 15 },
+                    ].map(({ value, label, fee }) => (
+                      <label
+                        key={value}
+                        className={`mt-2 flex cursor-pointer items-center justify-between rounded-lg border px-3 py-2 text-sm transition ${
+                          destinationZone === value
+                            ? 'border-indigo-500 bg-indigo-50'
+                            : 'border-gray-200'
+                        }`}
+                      >
+                        <span>{label}</span>
+                        <span className="font-semibold text-gray-800">
+                          {fee === 0 ? t('common.free') : `+${formatCurrency(fee)}`}
+                        </span>
+                        <input
+                          type="radio"
+                          name="destinationZone"
+                          value={value}
+                          checked={destinationZone === value}
+                          onChange={(event) => setDestinationZone(event.target.value)}
+                          className="ml-3"
+                          aria-label={label}
+                        />
+                      </label>
+                    ))}
+                  </fieldset>
                 </>
               )}
 
-              <fieldset className="rounded-xl border border-gray-200 bg-white px-3 py-3">
-                <legend className="text-sm font-medium text-gray-700 px-1">{t('checkout.shippingMethod')}</legend>
-                <label className="mt-1 flex cursor-pointer items-center justify-between rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                  <span>{t('checkout.standardShipping')}</span>
-                  <span className="font-semibold text-emerald-700">{t('common.free')}</span>
-                  <input
-                    type="radio"
-                    name="shippingMethod"
-                    value="standard"
-                    checked={shippingMethod === 'standard'}
-                    onChange={(event) => setShippingMethod(event.target.value)}
-                    className="ml-3"
-                  />
-                </label>
-                <label className="mt-2 flex cursor-pointer items-center justify-between rounded-lg border border-gray-200 px-3 py-2 text-sm">
-                  <span>{t('checkout.expressShipping')}</span>
-                  <span className="font-semibold text-gray-900">{formatCurrency(4.99)}</span>
-                  <input
-                    type="radio"
-                    name="shippingMethod"
-                    value="express"
-                    checked={shippingMethod === 'express'}
-                    onChange={(event) => setShippingMethod(event.target.value)}
-                    className="ml-3"
-                  />
-                </label>
-              </fieldset>
+              {needsAddress && (
+                <fieldset className="rounded-xl border border-gray-200 bg-white px-3 py-3">
+                  <legend className="text-sm font-medium text-gray-700 px-1">{t('checkout.shippingMethod')}</legend>
+                  <label className="mt-1 flex cursor-pointer items-center justify-between rounded-lg border border-gray-200 px-3 py-2 text-sm">
+                    <span>{t('checkout.standardShipping')}</span>
+                    <span className="font-semibold text-emerald-700">{t('common.free')}</span>
+                    <input
+                      type="radio"
+                      name="shippingMethod"
+                      value="standard"
+                      checked={shippingMethod === 'standard'}
+                      onChange={(event) => setShippingMethod(event.target.value)}
+                      className="ml-3"
+                    />
+                  </label>
+                  <label className="mt-2 flex cursor-pointer items-center justify-between rounded-lg border border-gray-200 px-3 py-2 text-sm">
+                    <span>{t('checkout.expressShipping')}</span>
+                    <span className="font-semibold text-gray-900">{formatCurrency(4.99)}</span>
+                    <input
+                      type="radio"
+                      name="shippingMethod"
+                      value="express"
+                      checked={shippingMethod === 'express'}
+                      onChange={(event) => setShippingMethod(event.target.value)}
+                      className="ml-3"
+                    />
+                  </label>
+                </fieldset>
+              )}
             </fieldset>
 
             <fieldset className="flex flex-col gap-4">
@@ -617,9 +676,15 @@ export default function Checkout() {
               <div className="flex justify-between">
                 <dt>{t('common.shipping')}</dt>
                 <dd className="font-medium">
-                  {shippingFee === 0 ? <span className="text-green-600">{t('common.free')}</span> : formatCurrency(shippingFee)}
+                  {shippingBaseFee === 0 ? <span className="text-green-600">{t('common.free')}</span> : formatCurrency(shippingBaseFee)}
                 </dd>
               </div>
+              {destinationFee > 0 && (
+                <div className="flex justify-between">
+                  <dt>{t('checkout.destinationSurcharge')}</dt>
+                  <dd className="font-medium">+{formatCurrency(destinationFee)}</dd>
+                </div>
+              )}
             </dl>
             <div className="mt-2 flex justify-between font-bold text-gray-900">
               <span>{t('common.total')}</span>
