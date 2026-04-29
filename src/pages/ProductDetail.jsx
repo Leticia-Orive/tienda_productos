@@ -152,7 +152,7 @@ export default function ProductDetail() {
       <section className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-8 bg-white rounded-2xl shadow p-6" aria-label={t('productDetail.sectionLabel')}>
         <img
           src={product.image}
-          alt={product.name}
+          alt={translateProductText(product.name)}
           className="w-full h-80 lg:h-105 rounded-xl object-cover"
           loading="eager"
         />
@@ -210,6 +210,8 @@ export default function ProductDetail() {
                 type="button"
                 onClick={() => setQuantity((prev) => clampQuantity(prev - 1))}
                 className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                aria-label={t('productDetail.decreaseQuantity')}
+                disabled={quantity <= 1}
               >
                 -
               </button>
@@ -217,6 +219,8 @@ export default function ProductDetail() {
                 type="button"
                 onClick={() => setQuantity((prev) => clampQuantity(prev + 1))}
                 className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                aria-label={t('productDetail.increaseQuantity')}
+                disabled={quantity >= 99}
               >
                 +
               </button>

@@ -64,7 +64,7 @@ function ProductCard({
       <div className="relative">
         <img
           src={product.image}
-          alt={product.name}
+          alt={`${translateProductText(product.name)} - ${formatCurrency(product.price)}`}
           className="w-full h-48 object-cover"
           loading="lazy"
           decoding="async"

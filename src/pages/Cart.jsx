@@ -7,7 +7,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { MAX_ITEM_QUANTITY } from '../context/CartContext';
-import { COUPONS } from '../data/coupons';
+import { COUPONS, getCouponExpiryInfo } from '../data/coupons';
 import useCart from '../context/useCart';
 import useLanguage from '../context/useLanguage';
 import useDocumentTitle from '../hooks/useDocumentTitle';
@@ -24,7 +24,7 @@ import useDocumentTitle from '../hooks/useDocumentTitle';
  * Allows removing items and navigating to checkout.
  */
 export default function Cart() {
-  const { t, formatCurrency, translateProductText } = useLanguage();
+  const { t, formatCurrency, formatDateTime, translateProductText } = useLanguage();
   // WCAG 2.4.2: descriptive page title announced by screen readers on navigation.
   useDocumentTitle(t('cart.title'));
   const navigate = useNavigate();
@@ -50,6 +50,16 @@ export default function Cart() {
 
   // Quick chips improve conversion by reducing friction when applying discounts.
   const couponSuggestions = useMemo(() => Object.values(COUPONS).slice(0, 4), []);
+  const couponExpiryInfo = useMemo(() => {
+    const { expiresAt, daysRemaining, isExpiringSoon } = getCouponExpiryInfo(coupon);
+    return {
+      expiresOn: expiresAt,
+      daysRemaining,
+      isExpiringToday: daysRemaining === 0,
+      isExpiringTomorrow: daysRemaining === 1,
+      isExpiringSoon,
+    };
+  }, [coupon]);
 
   useEffect(() => {
     /** Keyboard shortcuts: '/' focuses coupon input and Ctrl/Cmd+Enter goes to checkout. */
@@ -257,9 +267,24 @@ export default function Cart() {
                 <p id="coupon-error" className="mt-1 text-xs text-red-500" role="alert">{couponError}</p>
               )}
               {coupon && (
-                <p className="mt-1 text-xs text-green-600 font-medium">
-                  âœ“ {coupon.label}
-                </p>
+                <div className="mt-1 rounded-md border border-green-200 bg-green-50 px-2 py-2 text-xs text-green-700">
+                  <p className="font-medium">✓ {coupon.label}</p>
+                  {couponExpiryInfo.expiresOn && (
+                    <p>{t('cart.couponExpiresOn')}: {formatDateTime(couponExpiryInfo.expiresOn, { dateStyle: 'medium' })}</p>
+                  )}
+                  {couponExpiryInfo.isExpiringSoon && (
+                    <p className="text-amber-700">
+                      {t(
+                        couponExpiryInfo.isExpiringToday
+                          ? 'cart.couponExpiringSoonToday'
+                          : couponExpiryInfo.isExpiringTomorrow
+                          ? 'cart.couponExpiringSoonOne'
+                          : 'cart.couponExpiringSoonMany',
+                        { days: couponExpiryInfo.daysRemaining }
+                      )}
+                    </p>
+                  )}
+                </div>
               )}
               {!coupon && (
                 <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label={t('cart.suggestedCoupons')}>

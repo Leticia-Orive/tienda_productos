@@ -36,9 +36,10 @@ function escapeCsvField(value) {
  * @param {Array} orders
  * @returns {string}
  */
-function buildOrdersCsv(orders) {
+export function buildOrdersCsv(orders) {
   const headers = [
     'order_id',
+    'order_number',
     'date_iso',
     'customer',
     'items_total',
@@ -56,6 +57,7 @@ function buildOrdersCsv(orders) {
 
     return [
       order.id,
+      order.orderNumber || order.id,
       order.createdAt,
       order.customerName,
       Number(order.totalItems || 0).toFixed(0),
@@ -134,7 +136,7 @@ function formatDate(dateIso, formatDateTime, fallbackText) {
 }
 
 /** Normalizes text for accent-insensitive and case-insensitive search. */
-function normalizeSearchText(value) {
+export function normalizeSearchText(value) {
   return String(value || '')
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
@@ -235,6 +237,7 @@ export default function Orders() {
 
       const haystack = [
         String(order.id),
+        String(order.orderNumber || ''),
         String(order.customerName || ''),
         String(order.couponCode || ''),
         ...order.items.map((item) => String(item.name || '')),
@@ -279,7 +282,8 @@ export default function Orders() {
     });
 
     dispatch({ type: 'ADD_ORDER_ITEMS', payload: { items } });
-    showToast(t('orders.reorderSuccess', { id: order.id }), 'success');
+    // Usa el número de pedido visible en lugar del UUID interno para el toast.
+    showToast(t('orders.reorderSuccess', { id: order.orderNumber ?? order.id }), 'success');
   }, [dispatch, productById, showToast, t]);
 
   /**
@@ -450,7 +454,7 @@ export default function Orders() {
           <article key={order.id} className="rounded-2xl bg-white p-5 shadow">
             <header className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b pb-3">
               <div>
-                <p className="text-sm text-gray-500">{t('orders.orderId', { id: order.id })}</p>
+                <p className="text-sm text-gray-500">{t('orders.orderId', { id: order.orderNumber || order.id })}</p>
                 <h2 className="text-lg font-semibold text-gray-900">{order.customerName}</h2>
               </div>
               <div className="text-right">
@@ -498,7 +502,7 @@ export default function Orders() {
               </button>
               <button
                 type="button"
-                onClick={() => handleCopyOrderId(order.id)}
+                onClick={() => handleCopyOrderId(order.orderNumber || order.id)}
                 className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 {t('orders.copyOrderId')}

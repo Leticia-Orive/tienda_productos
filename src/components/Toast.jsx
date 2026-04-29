@@ -22,6 +22,13 @@ export default function Toast() {
   // Error toasts should be announced immediately; informational toasts can be polite.
   const isErrorToast = toast.type === 'error';
 
+  // Select animation based on toast type: shake for errors, slide for success, fade for info
+  const animationClass = {
+    error: 'animate-shake',
+    success: 'animate-slide-in-right',
+    info: 'animate-fade-in-up',
+  }[toast.type] || 'animate-fade-in-up';
+
   const toneClass = {
     info: 'bg-slate-900 text-white',
     success: 'bg-emerald-600 text-white',
@@ -33,7 +40,7 @@ export default function Toast() {
       role={isErrorToast ? 'alert' : 'status'}
       aria-live={isErrorToast ? 'assertive' : 'polite'}
       // z-[9000] keeps the toast above all overlays including the sticky Navbar (z-50) and dialogs.
-      className="fixed bottom-4 right-4 z-9000 animate-fade-in-up"
+      className={`fixed bottom-4 right-4 z-9000 ${animationClass}`}
     >
       <div className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm shadow-lg ${toneClass}`}>
         <span>{toast.message}</span>

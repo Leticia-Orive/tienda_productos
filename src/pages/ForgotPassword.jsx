@@ -39,20 +39,43 @@ export default function ForgotPassword() {
   }
 
   /**
-   * Calculates password strength on a 0-4 scale for the visual meter.
+   * Calculates password strength on a 0-4 scale with specific feedback tips.
    * @param {string} pwd
-   * @returns {{ score: number, label: string, color: string }}
+   * @returns {{ score: number, label: string, color: string, tips: string[] }}
    */
   const getPasswordStrength = (pwd) => {
-    if (!pwd) return { score: 0, label: '', color: '' };
+    if (!pwd) return { score: 0, label: '', color: '', tips: [] };
     let score = 0;
-    if (pwd.length >= 8) score += 1;
-    if (/[a-z]/.test(pwd)) score += 1;
-    if (/[A-Z]/.test(pwd)) score += 1;
-    if (/\d/.test(pwd)) score += 1;
+    const tips = [];
+    
+    // Check each requirement and add specific feedback
+    if (pwd.length >= 8) {
+      score += 1;
+    } else {
+      tips.push(`${t('common.passwordRequired') || 'Mínimo 8 caracteres'} (tienes ${pwd.length})`);
+    }
+    
+    if (/[a-z]/.test(pwd)) {
+      score += 1;
+    } else {
+      tips.push('Añade letras minúsculas (a-z)');
+    }
+    
+    if (/[A-Z]/.test(pwd)) {
+      score += 1;
+    } else {
+      tips.push('Añade letras MAYÚSCULAS (A-Z)');
+    }
+    
+    if (/\d/.test(pwd)) {
+      score += 1;
+    } else {
+      tips.push('Añade número (0-9)');
+    }
+    
     const labels = ['', t('common.strengthWeak'), t('common.strengthRegular'), t('common.strengthGood'), t('common.strengthStrong')];
     const colors = ['', 'bg-red-400', 'bg-orange-400', 'bg-yellow-400', 'bg-green-500'];
-    return { score, label: labels[score], color: colors[score] };
+    return { score, label: labels[score], color: colors[score], tips };
   };
 
   const passwordStrength = getPasswordStrength(form.password);
@@ -220,6 +243,15 @@ export default function ForgotPassword() {
                 <p className="text-xs text-gray-500">
                   {t('common.passwordStrength')}: <span className="font-medium">{passwordStrength.label}</span>
                 </p>
+                {passwordStrength.tips && passwordStrength.tips.length > 0 && (
+                  <ul className="mt-1 space-y-0.5" role="list">
+                    {passwordStrength.tips.map((tip) => (
+                      <li key={tip} className="text-xs text-amber-700 flex items-center gap-1">
+                        <span className="text-amber-600">✗</span> {tip}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
             )}
             {touched.password && fieldErrors.password && (

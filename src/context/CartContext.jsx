@@ -36,13 +36,19 @@ function getInitialCart() {
 
 /**
  * Reads persisted favorites from localStorage safely.
+ * Filters out duplicates and ensures array integrity.
  * @returns {Array<number | string>}
  */
 function getInitialFavorites() {
   try {
     const rawFavorites = localStorage.getItem(FAVORITES_STORAGE_KEY);
     const parsed = rawFavorites ? JSON.parse(rawFavorites) : [];
-    return Array.isArray(parsed) ? parsed : [];
+    // Validate array and remove duplicates for data integrity
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+    // Remove duplicates by converting to Set and back
+    return Array.from(new Set(parsed));
   } catch {
     return [];
   }
