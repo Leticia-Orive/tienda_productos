@@ -755,7 +755,7 @@ export default function Checkout() {
             <h2 className="font-bold text-gray-800 text-base mb-4">{t('checkout.yourOrder')}</h2>
             <ul className="flex flex-col gap-3 mb-4" role="list">
               {cart.map((item) => (
-                <li key={item.id} className="flex items-center gap-3">
+                <li key={item.id} className="flex items-center gap-2 p-2 rounded-lg border border-gray-200 hover:border-indigo-300 transition">
                   <img
                     src={item.image}
                     alt={item.name}
@@ -763,9 +763,28 @@ export default function Checkout() {
                   />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-800 truncate">{item.name}</p>
-                    <p className="text-xs text-gray-500">x{item.quantity}</p>
+                    <p className="text-xs text-gray-600 font-medium">x{item.quantity}</p>
                   </div>
-                  <span className="text-sm font-semibold text-gray-900">
+                  <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-0.5">
+                    <button
+                      type="button"
+                      onClick={() => dispatch({ type: 'UPDATE_QUANTITY', payload: { id: item.id, quantity: item.quantity - 1 } })}
+                      className="px-2 py-1 text-gray-600 hover:bg-white rounded transition"
+                      aria-label={t('checkout.decreaseQuantity')}
+                    >
+                      −
+                    </button>
+                    <span className="px-1 text-xs font-semibold min-w-5 text-center">{item.quantity}</span>
+                    <button
+                      type="button"
+                      onClick={() => dispatch({ type: 'UPDATE_QUANTITY', payload: { id: item.id, quantity: item.quantity + 1 } })}
+                      className="px-2 py-1 text-gray-600 hover:bg-white rounded transition"
+                      aria-label={t('checkout.increaseQuantity')}
+                    >
+                      +
+                    </button>
+                  </div>
+                  <span className="text-sm font-semibold text-gray-900 min-w-15 text-right">
                     {formatCurrency(item.price * item.quantity)}
                   </span>
                 </li>
