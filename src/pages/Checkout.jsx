@@ -68,6 +68,19 @@ function getInitialShippingMethod() {
   }
 }
 
+/** Reads persisted delivery location safely from checkout draft. */
+function getInitialDeliveryLocation() {
+  try {
+    const rawForm = localStorage.getItem(CHECKOUT_STORAGE_KEY);
+    const parsed = rawForm ? JSON.parse(rawForm) : {};
+    return ['home', 'store', 'other'].includes(parsed?.deliveryLocation)
+      ? parsed.deliveryLocation
+      : 'home';
+  } catch {
+    return 'home';
+  }
+}
+
 /**
  * Writes JSON data to localStorage safely.
  * Keeps checkout usable when storage is unavailable or full.
@@ -233,8 +246,10 @@ export default function Checkout() {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [shippingMethod, setShippingMethod] = useState(getInitialShippingMethod);
+  const [deliveryLocation, setDeliveryLocation] = useState(getInitialDeliveryLocation);
 
   const shippingFee = shippingMethod === 'express' ? 4.99 : 0;
+  const needsAddress = deliveryLocation !== 'store';
   const payableTotal = finalPrice + shippingFee;
 
   /** Counts how many of the 6 fields have valid values to drive progress indicator. */
@@ -242,9 +257,9 @@ export default function Checkout() {
     const checks = [
       !validateField('name', form.name),
       !validateField('email', form.email),
-      !validateField('address', form.address),
-      !validateField('city', form.city),
-      !validateField('zip', form.zip),
+      needsAddress ? !validateField('address', form.address) : true,
+      needsAddress ? !validateField('city', form.city) : true,
+      needsAddress ? !validateField('zip', form.zip) : true,
       !validateField('card', form.card),
     ];
     return checks.filter(Boolean).length;
@@ -282,10 +297,11 @@ export default function Checkout() {
     const persistedForm = {
       ...form,
       shippingMethod,
+      deliveryLocation,
       card: '',
     };
     safeWriteStorage(CHECKOUT_STORAGE_KEY, persistedForm);
-  }, [form, shippingMethod]);
+  }, [form, shippingMethod, deliveryLocation]);
 
   /** Validates one checkout field and returns an inline-friendly message. */
   function validateField(name, value) {
@@ -332,9 +348,9 @@ export default function Checkout() {
   const validate = () => ({
     name: validateField('name', form.name),
     email: validateField('email', form.email),
-    address: validateField('address', form.address),
-    city: validateField('city', form.city),
-    zip: validateField('zip', form.zip),
+    address: needsAddress ? validateField('address', form.address) : undefined,
+    city: needsAddress ? validateField('city', form.city) : undefined,
+    zip: needsAddress ? validateField('zip', form.zip) : undefined,
     card: validateField('card', form.card),
   });
 
@@ -461,11 +477,52 @@ export default function Checkout() {
 
             <fieldset className="flex flex-col gap-4">
               <legend className="font-semibold text-gray-800 text-base mb-1">{t('checkout.deliveryData')}</legend>
-              <CheckoutField id="address" label={t('checkout.streetAndNumber')} name="address" required placeholder={t('checkout.addressPlaceholder')} autoComplete="street-address" value={form.address} hasError={Boolean(touched.address && errors.address)} errorMessage={errors.address} onChange={handleChange} onBlur={handleBlur} />
-              <div className="grid grid-cols-2 gap-4">
-                <CheckoutField id="city" label={t('checkout.city')} name="city" required placeholder={t('checkout.cityPlaceholder')} autoComplete="address-level2" value={form.city} hasError={Boolean(touched.city && errors.city)} errorMessage={errors.city} onChange={handleChange} onBlur={handleBlur} />
-                <CheckoutField id="zip" label={t('checkout.zip')} name="zip" required placeholder="1425" autoComplete="postal-code" value={form.zip} hasError={Boolean(touched.zip && errors.zip)} errorMessage={errors.zip} onChange={handleChange} onBlur={handleBlur} />
-              </div>
+
+              {/* Delivery location selector */}
+              <fieldset className="rounded-xl border border-gray-200 bg-white px-3 py-3">
+                <legend className="text-sm font-medium text-gray-700 px-1">{t('checkout.deliveryLocation')}</legend>
+                {[
+                  { value: 'home', label: t('checkout.deliveryHome'), icon: '🏠' },
+                  { value: 'store', label: t('checkout.deliveryStore'), icon: '🏪' },
+                  { value: 'other', label: t('checkout.deliveryOther'), icon: '📍' },
+                ].map(({ value, label, icon }) => (
+                  <label
+                    key={value}
+                    className={`mt-2 flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 text-sm transition ${
+                      deliveryLocation === value
+                        ? 'border-indigo-500 bg-indigo-50'
+                        : 'border-gray-200'
+                    }`}
+                  >
+                    <span aria-hidden="true">{icon}</span>
+                    <span className="flex-1">{label}</span>
+                    <input
+                      type="radio"
+                      name="deliveryLocation"
+                      value={value}
+                      checked={deliveryLocation === value}
+                      onChange={() => setDeliveryLocation(value)}
+                      className="ml-1"
+                      aria-label={label}
+                    />
+                  </label>
+                ))}
+              </fieldset>
+
+              {deliveryLocation === 'store' ? (
+                <p className="rounded-lg border border-indigo-100 bg-indigo-50 px-3 py-2 text-sm text-indigo-700">
+                  {t('checkout.deliveryStoreNote')}
+                </p>
+              ) : (
+                <>
+                  <CheckoutField id="address" label={t('checkout.streetAndNumber')} name="address" required placeholder={t('checkout.addressPlaceholder')} autoComplete="street-address" value={form.address} hasError={Boolean(touched.address && errors.address)} errorMessage={errors.address} onChange={handleChange} onBlur={handleBlur} />
+                  <div className="grid grid-cols-2 gap-4">
+                    <CheckoutField id="city" label={t('checkout.city')} name="city" required placeholder={t('checkout.cityPlaceholder')} autoComplete="address-level2" value={form.city} hasError={Boolean(touched.city && errors.city)} errorMessage={errors.city} onChange={handleChange} onBlur={handleBlur} />
+                    <CheckoutField id="zip" label={t('checkout.zip')} name="zip" required placeholder="1425" autoComplete="postal-code" value={form.zip} hasError={Boolean(touched.zip && errors.zip)} errorMessage={errors.zip} onChange={handleChange} onBlur={handleBlur} />
+                  </div>
+                </>
+              )}
+
               <fieldset className="rounded-xl border border-gray-200 bg-white px-3 py-3">
                 <legend className="text-sm font-medium text-gray-700 px-1">{t('checkout.shippingMethod')}</legend>
                 <label className="mt-1 flex cursor-pointer items-center justify-between rounded-lg border border-gray-200 px-3 py-2 text-sm">
