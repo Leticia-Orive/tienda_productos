@@ -281,6 +281,7 @@ export default function Checkout() {
   const [deliveryLocation, setDeliveryLocation] = useState(getInitialDeliveryLocation);
   const [destinationZone, setDestinationZone] = useState(getInitialDestinationZone);
   const [paymentMethod, setPaymentMethod] = useState(getInitialPaymentMethod);
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const needsAddress = deliveryLocation !== 'store';
   const requiresCard = paymentMethod === 'card';
@@ -413,6 +414,7 @@ export default function Checkout() {
     city: needsAddress ? validateField('city', form.city) : undefined,
     zip: needsAddress ? validateField('zip', form.zip) : undefined,
     card: requiresCard ? validateField('card', form.card) : undefined,
+    terms: !termsAccepted ? t('checkout.termsRequired') : undefined,
   });
 
   const handleChange = (e) => {
@@ -798,6 +800,30 @@ export default function Checkout() {
                 />
               )}
             </fieldset>
+
+            {/* Return policy checkbox */}
+            <label className={`flex items-start gap-3 rounded-lg border-2 px-3 py-3 cursor-pointer transition ${
+              errors.terms
+                ? 'border-red-300 bg-red-50'
+                : termsAccepted
+                ? 'border-indigo-500 bg-indigo-50'
+                : 'border-gray-200 hover:border-gray-300'
+            }`}>
+              <input
+                type="checkbox"
+                checked={termsAccepted}
+                onChange={(e) => setTermsAccepted(e.target.checked)}
+                className="mt-1 accent-indigo-600"
+                aria-label={t('checkout.acceptTerms')}
+              />
+              <span className="flex-1 text-sm text-gray-700">
+                {t('checkout.acceptTerms')}
+                <span className="block text-xs text-gray-500 mt-1">{t('checkout.returnPolicyNote')}</span>
+              </span>
+            </label>
+            {errors.terms && (
+              <p className="text-sm text-red-600">{errors.terms}</p>
+            )}
 
             <button
               type="submit"
