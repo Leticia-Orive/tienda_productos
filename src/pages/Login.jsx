@@ -84,7 +84,7 @@ export default function Login() {
     }
 
     setError('');
-    const roleLabel = result.role === 'admin' ? 'administrador' : 'cliente';
+    const roleLabel = result.role === 'admin' ? t('common.roleAdmin') : t('common.roleClient');
     showToast(t('common.loginAs', { role: roleLabel }), 'success');
     const targetPath = redirectTo || (result.role === 'admin' ? '/admin/productos' : '/');
     navigate(targetPath, { replace: true });
@@ -92,7 +92,7 @@ export default function Login() {
 
   return (
     <main className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-10 bg-gray-50">
-      <section className="w-full max-w-md rounded-2xl bg-white p-6 shadow" aria-label="Formulario de inicio de sesión">
+      <section className="w-full max-w-md rounded-2xl bg-white p-6 shadow" aria-label={t('common.login')}>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('common.login')}</h1>
         <p className="text-sm text-gray-500 mb-6">{t('common.accessToProducts')}</p>
 
@@ -111,6 +111,8 @@ export default function Login() {
                 if (validationErrors.length > 0) setValidationErrors([]);
               }}
               className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              aria-invalid={validationErrors.length > 0 || !!error ? 'true' : undefined}
+              aria-describedby={validationErrors.length > 0 || error ? 'login-errors' : undefined}
               required
             />
           </div>
@@ -129,6 +131,8 @@ export default function Login() {
                 if (validationErrors.length > 0) setValidationErrors([]);
               }}
               className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              aria-invalid={validationErrors.length > 0 || !!error ? 'true' : undefined}
+              aria-describedby={validationErrors.length > 0 || error ? 'login-errors' : undefined}
               minLength={8}
               required
             />
@@ -144,16 +148,13 @@ export default function Login() {
             {t('common.rememberEmail')}
           </label>
 
-          {validationErrors.length > 0 && (
-            <div className="space-y-1" role="alert" aria-live="polite">
+          {(validationErrors.length > 0 || error) && (
+            <div id="login-errors" className="space-y-1" role="alert" aria-live="polite">
               {validationErrors.map((message) => (
                 <p key={message} className="text-sm text-red-600">{message}</p>
               ))}
+              {error && <p className="text-sm text-red-600">{error}</p>}
             </div>
-          )}
-
-          {error && (
-            <p className="text-sm text-red-600" role="alert">{error}</p>
           )}
 
           <button

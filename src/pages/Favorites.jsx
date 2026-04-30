@@ -2,13 +2,17 @@
 import { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import useCart from '../context/useCart';
+import useLanguage from '../context/useLanguage';
 import useProducts from '../context/useProducts';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 /**
  * Favorites page that renders products saved by the signed-in client.
  * Accessibility: uses semantic headings and announces empty state clearly.
  */
 export default function Favorites() {
+	const { t } = useLanguage();
+	useDocumentTitle(t('favorites.title'));
 	const { favorites, toggleFavorite, clearFavorites, restoreFavorites } = useCart();
 	const { products } = useProducts();
 	const removedSnapshotRef = useRef([]);
@@ -45,11 +49,15 @@ export default function Favorites() {
 		<main className="max-w-6xl mx-auto px-4 py-6" aria-labelledby="favorites-heading">
 			<header className="mb-6 flex flex-wrap items-center justify-between gap-3">
 				<div>
-					<h1 id="favorites-heading" className="text-2xl font-bold text-gray-900">Favoritos</h1>
+					<h1 id="favorites-heading" className="text-2xl font-bold text-gray-900">{t('favorites.title')}</h1>
 					<p className="text-sm text-gray-600">
 						{favoriteProducts.length === 0
-							? 'No tienes productos guardados.'
-							: `${favoriteProducts.length} producto${favoriteProducts.length !== 1 ? 's' : ''} guardado${favoriteProducts.length !== 1 ? 's' : ''}`}
+							? t('favorites.noneSaved')
+							: t('favorites.savedCount', {
+								count: favoriteProducts.length,
+								suffixProducts: favoriteProducts.length !== 1 ? 's' : '',
+								suffixSaved: favoriteProducts.length !== 1 ? 's' : '',
+							})}
 					</p>
 				</div>
 
@@ -60,7 +68,7 @@ export default function Favorites() {
 						disabled={!canUndoClear}
 						className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
 					>
-						Deshacer vaciado
+						{t('favorites.undoClear')}
 					</button>
 					<button
 						type="button"
@@ -68,20 +76,20 @@ export default function Favorites() {
 						disabled={favoriteProducts.length === 0}
 						className="rounded-lg border border-rose-300 bg-rose-50 px-3 py-2 text-sm font-medium text-rose-700 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-50"
 					>
-						Vaciar favoritos
+						{t('favorites.clearAll')}
 					</button>
 				</div>
 			</header>
 
 			{favoriteProducts.length === 0 ? (
 				<section className="rounded-2xl border border-dashed border-gray-300 bg-white p-8 text-center">
-					<h2 className="text-lg font-semibold text-gray-800">Tu lista estÃ¡ vacÃ­a</h2>
-					<p className="mt-2 text-sm text-gray-600">Guarda productos desde el catÃ¡logo para verlos aquÃ­.</p>
+					<h2 className="text-lg font-semibold text-gray-800">{t('favorites.emptyTitle')}</h2>
+					<p className="mt-2 text-sm text-gray-600">{t('favorites.emptyBody')}</p>
 					<Link
 						to="/"
 						className="mt-5 inline-flex rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700"
 					>
-						Ir al catÃ¡logo
+						{t('favorites.goCatalog')}
 					</Link>
 				</section>
 			) : (
@@ -106,15 +114,15 @@ export default function Favorites() {
 									to={`/producto/${product.id}`}
 									className="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-center text-sm font-medium text-gray-700 transition hover:bg-gray-50"
 								>
-									Ver detalle
+									{t('favorites.viewDetail')}
 								</Link>
 								<button
 									type="button"
 									onClick={() => toggleFavorite(product)}
 									className="rounded-lg border border-rose-300 bg-rose-50 px-3 py-2 text-sm font-medium text-rose-700 transition hover:bg-rose-100"
-									aria-label={`Quitar de favoritos: ${product.name}`}
+									aria-label={t('favorites.removeAria', { name: product.name })}
 								>
-									Quitar
+									{t('common.remove')}
 								</button>
 							</div>
 						</article>

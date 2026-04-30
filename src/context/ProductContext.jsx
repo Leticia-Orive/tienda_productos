@@ -57,7 +57,7 @@ function getInitialProducts() {
         ...item,
         image: item.image || 'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=400',
         category: item.category || 'General',
-        description: item.description || 'Producto sin descripciÃ³n.',
+        description: item.description || 'Producto sin descripción.',
       }));
 
     return normalized.length > 0 ? normalized : DEFAULT_PRODUCTS;
@@ -84,7 +84,7 @@ function normalizeProductPayload(payload) {
   }
 
   if (!Number.isFinite(price) || price < 0 || price > 1000000) {
-    return { ok: false, error: 'El precio debe ser un nÃºmero vÃ¡lido mayor o igual a 0.' };
+    return { ok: false, error: 'El precio debe ser un número válido mayor o igual a 0.' };
   }
 
   if (category.length < 2 || category.length > 50) {
@@ -151,7 +151,7 @@ export function ProductProvider({ children }) {
     if (duplicateExists) {
       return {
         ok: false,
-        error: 'Ya existe un producto con ese nombre en la misma categorÃ­a.',
+        error: 'Ya existe un producto con ese nombre en la misma categoría.',
       };
     }
 

@@ -192,7 +192,7 @@ describe('Checkout integration', () => {
     await user.type(screen.getByLabelText('Ciudad'), 'Madrid');
     await user.type(screen.getByLabelText('Código postal'), '28001');
     await user.type(screen.getByPlaceholderText('1234 5678 9012 3456'), '4242424242424242');
-    await user.click(screen.getByLabelText('Acepto términos y condiciones'));
+    await user.click(screen.getByLabelText('Acepto términos y condiciones', { exact: false }));
 
     await user.click(screen.getByRole('button', { name: /Pagar ahora/i }));
 
@@ -203,7 +203,6 @@ describe('Checkout integration', () => {
   });
 
   it('submits successfully and persists order snapshot', async () => {
-    const timeoutSpy = vi.spyOn(globalThis, 'setTimeout');
     const user = userEvent.setup();
     setCartWithOneItem();
     render(<Checkout />);
@@ -215,8 +214,10 @@ describe('Checkout integration', () => {
     await user.type(screen.getByLabelText('Ciudad'), 'Madrid');
     await user.type(screen.getByLabelText('Código postal'), '28001');
     await user.type(screen.getByPlaceholderText('1234 5678 9012 3456'), '4242424242424242');
-    await user.click(screen.getByLabelText('Acepto términos y condiciones'));
+    await user.click(screen.getByLabelText('Acepto términos y condiciones', { exact: false }));
 
+    // Spy is set AFTER typing so that localStorage debounce timeouts don't pollute the assertion.
+    const timeoutSpy = vi.spyOn(globalThis, 'setTimeout');
     await user.click(screen.getByRole('button', { name: /Pagar ahora/i }));
 
     expect(mockDispatch).toHaveBeenCalledWith({ type: 'CLEAR_CART' });
@@ -231,6 +232,8 @@ describe('Checkout integration', () => {
     expect(localStorage.getItem('tienda_react_checkout_form')).toBeNull();
 
     // No auto-redirect: the confirmation screen stays so the user can download the invoice.
-    expect(timeoutSpy).not.toHaveBeenCalled();
+    // userEvent uses zero-delay setTimeouts internally; we check no redirect timer (≥100ms) was set.
+    const redirectTimers = timeoutSpy.mock.calls.filter(([, delay]) => delay >= 100);
+    expect(redirectTimers).toHaveLength(0);
   });
 });

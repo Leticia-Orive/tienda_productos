@@ -105,7 +105,7 @@ export default function Footer() {
         {/* Divider */}
         <div className="border-t border-gray-800 pt-8">
           <p className="text-center text-sm text-gray-500">
-            Â© {new Date().getFullYear()} TiendaReact. {t('footer.rightsReserved')}
+            © {new Date().getFullYear()} TiendaReact. {t('footer.rightsReserved')}
           </p>
         </div>
       </div>

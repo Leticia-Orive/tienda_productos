@@ -4,6 +4,7 @@
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
 import { useEffect, useState } from 'react';
+import useLanguage from '../context/useLanguage';
 
 /**
  * Floating scroll-to-top button and a thin reading-progress bar at the top
@@ -11,6 +12,7 @@ import { useEffect, useState } from 'react';
  * Accessibility: visible focus ring, aria-label, aria-hidden on decorative bar.
  */
 export default function ScrollToTop() {
+  const { t } = useLanguage();
   const [scrollPercent, setScrollPercent] = useState(0);
 
   useEffect(() => {
@@ -37,7 +39,7 @@ export default function ScrollToTop() {
         <button
           type="button"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          aria-label="Volver al inicio de la página"
+          aria-label={t('common.scrollToTop')}
           className="fixed bottom-20 right-4 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-white shadow-lg transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 active:scale-90"
         >
           <svg

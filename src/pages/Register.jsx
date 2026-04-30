@@ -54,25 +54,25 @@ export default function Register() {
     if (pwd.length >= 8) {
       score += 1;
     } else {
-      tips.push(`${t('common.passwordRequired') || 'Mínimo 8 caracteres'} (tienes ${pwd.length})`);
+      tips.push(t('common.tipMinChars', { min: 8, current: pwd.length }));
     }
     
     if (/[a-z]/.test(pwd)) {
       score += 1;
     } else {
-      tips.push('Añade letras minúsculas (a-z)');
+      tips.push(t('common.tipLower'));
     }
     
     if (/[A-Z]/.test(pwd)) {
       score += 1;
     } else {
-      tips.push('Añade letras MAYÚSCULAS (A-Z)');
+      tips.push(t('common.tipUpper'));
     }
     
     if (/\d/.test(pwd)) {
       score += 1;
     } else {
-      tips.push('Añade número (0-9)');
+      tips.push(t('common.tipNumber'));
     }
     
     const labels = ['', t('common.strengthWeak'), t('common.strengthRegular'), t('common.strengthGood'), t('common.strengthStrong')];
@@ -183,7 +183,7 @@ export default function Register() {
 
   return (
     <main className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-10 bg-gray-50">
-      <section className="w-full max-w-md rounded-2xl bg-white p-6 shadow" aria-label="Formulario de registro">
+      <section className="w-full max-w-md rounded-2xl bg-white p-6 shadow" aria-label={t('common.registerFormLabel')}>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('common.registerAccount')}</h1>
         <p className="text-sm text-gray-500 mb-6">{t('common.registerToShop')}</p>
 
@@ -271,12 +271,16 @@ export default function Register() {
               className={`rounded-lg border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 ${
                 touched.password && fieldErrors.password ? 'border-red-400' : 'border-gray-300'
               }`}
+              autoComplete="new-password"
               disabled={isSubmitting}
               minLength={8}
               pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
               title={t('common.minPasswordTitle')}
               aria-invalid={Boolean(touched.password && fieldErrors.password)}
-              aria-describedby={touched.password && fieldErrors.password ? 'register-password-error' : undefined}
+              aria-describedby={[
+                touched.password && fieldErrors.password ? 'register-password-error' : null,
+                form.password ? 'register-password-strength' : null,
+              ].filter(Boolean).join(' ') || undefined}
               required
             />
             <button
@@ -288,7 +292,7 @@ export default function Register() {
               {showPassword ? t('common.hidePassword') : t('common.showPassword')}
             </button>
             {form.password && (
-              <div className="mt-1" aria-label={`${t('common.passwordStrength')}: ${passwordStrength.label}`}>
+              <div id="register-password-strength" role="status" className="mt-1">
                 <div className="flex gap-1 mb-1" aria-hidden="true">
                   {[1, 2, 3, 4].map((step) => (
                     <div

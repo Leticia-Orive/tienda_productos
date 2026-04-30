@@ -110,7 +110,7 @@ describe('Login integration', () => {
     await user.click(screen.getByRole('button', { name: 'Entrar' }));
 
     expect(mockLogin).toHaveBeenCalledWith({ email: 'admin@tienda.com', password: 'Password1' });
-    expect(mockShowToast).toHaveBeenCalledWith('Sesión iniciada como administrador', 'success');
+    expect(mockShowToast).toHaveBeenCalledWith('Sesión iniciada como Administrador', 'success');
     expect(localStorage.getItem('tienda_react_remembered_email')).toBe('admin@tienda.com');
     expect(mockNavigate).toHaveBeenCalledWith('/admin/productos', { replace: true });
   });

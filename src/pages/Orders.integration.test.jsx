@@ -48,6 +48,15 @@ vi.mock('../context/useLanguage', () => ({
       const map = {
         'orders.title': 'Mis pedidos',
         'orders.clearHistory': 'Limpiar historial',
+        'orders.clearHistoryTitle': 'Eliminar historial',
+        'orders.clearHistoryConfirm': '¿Eliminar todo el historial?',
+        'orders.clearHistoryButton': 'Eliminar todo',
+        'orders.historyRemoved': 'Historial eliminado.',
+        'orders.copyOrderIdLabel': `Copiar ID pedido ${vars?.id ?? ''}`,
+        'orders.reorderLabel': `Volver a pedir pedido ${vars?.id ?? ''}`,
+        'orders.goCartLabel': `Ir al carrito después de ${vars?.id ?? ''}`,
+        'common.confirm': 'Confirmar',
+        'common.cancel': 'Cancelar',
         'orders.summaryLabel': 'Resumen de pedidos',
         'orders.totalOrders': 'Total pedidos',
         'orders.totalSpent': 'Total gastado',
@@ -159,7 +168,7 @@ describe('Orders integration', () => {
     const user = userEvent.setup();
     render(<Orders />);
 
-    await user.click(screen.getByRole('button', { name: 'Volver a comprar' }));
+    await user.click(screen.getByRole('button', { name: /Volver a pedir pedido/ }));
 
     expect(mockDispatch).toHaveBeenCalledWith({
       type: 'ADD_ORDER_ITEMS',

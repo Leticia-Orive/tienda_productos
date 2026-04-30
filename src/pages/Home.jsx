@@ -6,8 +6,9 @@ import ProductCard from '../components/ProductCard';
 import useAuth from '../context/useAuth';
 import useLanguage from '../context/useLanguage';
 import useProducts from '../context/useProducts';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
-const ALLOWED_SORTS = ['featured', 'price-asc', 'price-desc', 'name-asc'];
+const ALLOWED_SORTS = ['featured', 'price-asc', 'price-desc', 'name-asc', 'name-desc'];
 
 /**
  * Reads and sanitizes list params from URL to keep UI shareable and stable.
@@ -38,6 +39,8 @@ export default function Home() {
   const { user } = useAuth();
   const { products, categories } = useProducts();
   const { t, translateCategory } = useLanguage();
+  // WCAG 2.4.2: descriptive page title announced by screen readers on navigation.
+  useDocumentTitle(t('home.title'));
 
   const isAdmin = user?.role === 'admin';
   const [searchParams, setSearchParams] = useSearchParams();
@@ -89,6 +92,9 @@ export default function Home() {
     if (sortBy === 'name-asc') {
       return a.name.localeCompare(b.name);
     }
+    if (sortBy === 'name-desc') {
+      return b.name.localeCompare(a.name);
+    }
     return 0;
   }), [filtered, sortBy]);
 
@@ -127,6 +133,8 @@ export default function Home() {
     setSortBy('featured');
     setCurrentPage(1);
   };
+
+  const hasActiveFilters = effectiveCategory !== 'Todos' || debouncedSearch.trim() !== '' || sortBy !== 'featured';
 
   return (
     <main className="max-w-6xl mx-auto px-4 py-8">
@@ -174,6 +182,7 @@ export default function Home() {
             <option value="price-asc">{t('home.priceLowHigh')}</option>
             <option value="price-desc">{t('home.priceHighLow')}</option>
             <option value="name-asc">{t('home.nameAsc')}</option>
+            <option value="name-desc">{t('home.nameDesc')}</option>
           </select>
         </label>
       </section>
@@ -185,13 +194,15 @@ export default function Home() {
       </p>
 
       <div className="mb-6 flex justify-end">
-        <button
-          type="button"
-          onClick={clearFilters}
-          className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >
-          {t('common.clearFilters')}
-        </button>
+        {hasActiveFilters && (
+          <button
+            type="button"
+            onClick={clearFilters}
+            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          >
+            {t('common.clearFilters')}
+          </button>
+        )}
       </div>
 
       {/* Category filter */}
@@ -243,7 +254,7 @@ export default function Home() {
           >
             {t('common.previous')}
           </button>
-          <span className="text-sm text-gray-600">{safeCurrentPage} / {totalPages}</span>
+          <span className="text-sm text-gray-600" aria-label={t('home.pageXofY', { current: safeCurrentPage, total: totalPages })}>{safeCurrentPage} / {totalPages}</span>
           <button
             type="button"
             onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}

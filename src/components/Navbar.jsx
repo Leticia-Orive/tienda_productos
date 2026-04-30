@@ -162,7 +162,7 @@ export default function Navbar() {
               </select>
             </label>
           </li>
-          <li className="hidden lg:block text-xs text-gray-500" aria-label="Usuario autenticado">
+          <li className="hidden lg:block text-xs text-gray-500" aria-label={t('navbar.authenticatedUser')}>
             {user?.email}
           </li>
           <li>
@@ -186,34 +186,34 @@ export default function Navbar() {
         >
           <ul className="space-y-3" role="list">
             <li>
-              <Link to="/" onClick={handleCloseMobileMenu} className={linkClass('/')}>
+              <Link to="/" onClick={handleCloseMobileMenu} className={linkClass('/')} aria-current={pathname === '/' ? 'page' : undefined}>
                 {t('navbar.home')}
               </Link>
             </li>
             {isAdmin && (
               <li>
-                <Link to="/admin/productos" onClick={handleCloseMobileMenu} className={linkClass('/admin/productos')}>
+                <Link to="/admin/productos" onClick={handleCloseMobileMenu} className={linkClass('/admin/productos')} aria-current={pathname === '/admin/productos' ? 'page' : undefined}>
                   {t('navbar.admin')}
                 </Link>
               </li>
             )}
             {!isAdmin && (
               <li>
-                <Link to="/pedidos" onClick={handleCloseMobileMenu} className={linkClass('/pedidos')}>
+                <Link to="/pedidos" onClick={handleCloseMobileMenu} className={linkClass('/pedidos')} aria-current={pathname === '/pedidos' ? 'page' : undefined}>
                   {t('navbar.orders')}
                 </Link>
               </li>
             )}
             {!isAdmin && (
               <li>
-                <Link to="/favoritos" onClick={handleCloseMobileMenu} className={linkClass('/favoritos')} aria-label={t('navbar.favoritesSaved', { count: favoriteCount })}>
+                <Link to="/favoritos" onClick={handleCloseMobileMenu} className={linkClass('/favoritos')} aria-current={pathname === '/favoritos' ? 'page' : undefined} aria-label={t('navbar.favoritesSaved', { count: favoriteCount })}>
                   {t('navbar.favorites')}
                 </Link>
               </li>
             )}
             {!isAdmin && (
               <li>
-                <Link to="/carrito" onClick={handleCloseMobileMenu} className={linkClass('/carrito')}>
+                <Link to="/carrito" onClick={handleCloseMobileMenu} className={linkClass('/carrito')} aria-current={pathname === '/carrito' ? 'page' : undefined}>
                   {t('navbar.cart')}
                 </Link>
               </li>

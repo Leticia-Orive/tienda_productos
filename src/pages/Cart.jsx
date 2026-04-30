@@ -163,7 +163,7 @@ export default function Cart() {
                 />
                 <div className="flex-1 min-w-0">
                   <h2 className="font-semibold text-gray-800 truncate">{translateProductText(item.name)}</h2>
-                  <p className="text-sm text-gray-500">{formatCurrency(item.price)} Ã— {item.quantity}</p>
+                  <p className="text-sm text-gray-500">{formatCurrency(item.price)} × {item.quantity}</p>
                   <p className="text-indigo-600 font-bold">{formatCurrency(item.price * item.quantity)}</p>
                 </div>
                 {/* Quantity controls */}
@@ -174,7 +174,7 @@ export default function Cart() {
                     className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold transition focus-visible:outline-2 focus-visible:outline-indigo-600"
                     aria-label={t('cart.reduceQuantity', { name: translateProductText(item.name) })}
                   >
-                    âˆ’
+                    −
                   </button>
                   <span className="w-6 text-center font-medium" aria-live="polite">{item.quantity}</span>
                   <button
@@ -194,7 +194,7 @@ export default function Cart() {
                   className="text-red-400 hover:text-red-600 transition focus-visible:outline-2 focus-visible:outline-red-400 rounded p-1"
                   aria-label={t('cart.removeFromCart', { name: translateProductText(item.name) })}
                 >
-                  ðŸ—‘ï¸
+                  🗑️
                 </button>
                 <button
                   type="button"
@@ -239,7 +239,7 @@ export default function Cart() {
                     if (couponError) setCouponError('');
                   }}
                   placeholder={t('cart.couponPlaceholder')}
-                  title="Atajo: /"
+                  title={t('cart.shortcutSlash')}
                   autoComplete="off"
                   disabled={!!coupon}
                   aria-describedby={couponError ? 'coupon-error' : undefined}
@@ -304,13 +304,13 @@ export default function Cart() {
 
             <dl className="flex flex-col gap-2 text-sm text-gray-600 mb-4">
               <div className="flex justify-between">
-                <dt>{t('common.subtotal')} ({totalItems} items)</dt>
+                <dt>{t('cart.subtotalItems', { count: totalItems })}</dt>
                 <dd className="font-medium">{formatCurrency(totalPrice)}</dd>
               </div>
               {discountAmount > 0 && (
                 <div className="flex justify-between">
                   <dt className="text-green-700">{t('common.discount')} ({coupon.code})</dt>
-                  <dd className="font-medium text-green-700">âˆ’{formatCurrency(discountAmount)}</dd>
+                  <dd className="font-medium text-green-700">−{formatCurrency(discountAmount)}</dd>
                 </div>
               )}
               <div className="flex justify-between">
@@ -331,7 +331,7 @@ export default function Cart() {
             </button>
             <Link
               to="/checkout"
-              title="Atajo: Ctrl/Cmd + Enter"
+              title={t('cart.shortcutCheckout')}
               className="block w-full text-center bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-semibold px-4 py-3 rounded-xl transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               {t('cart.proceedCheckout')}

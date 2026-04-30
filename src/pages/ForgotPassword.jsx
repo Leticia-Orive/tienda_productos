@@ -52,25 +52,25 @@ export default function ForgotPassword() {
     if (pwd.length >= 8) {
       score += 1;
     } else {
-      tips.push(`${t('common.passwordRequired') || 'Mínimo 8 caracteres'} (tienes ${pwd.length})`);
+      tips.push(t('common.tipMinChars', { min: 8, current: pwd.length }));
     }
     
     if (/[a-z]/.test(pwd)) {
       score += 1;
     } else {
-      tips.push('Añade letras minúsculas (a-z)');
+      tips.push(t('common.tipLower'));
     }
     
     if (/[A-Z]/.test(pwd)) {
       score += 1;
     } else {
-      tips.push('Añade letras MAYÚSCULAS (A-Z)');
+      tips.push(t('common.tipUpper'));
     }
     
     if (/\d/.test(pwd)) {
       score += 1;
     } else {
-      tips.push('Añade número (0-9)');
+      tips.push(t('common.tipNumber'));
     }
     
     const labels = ['', t('common.strengthWeak'), t('common.strengthRegular'), t('common.strengthGood'), t('common.strengthStrong')];
@@ -217,7 +217,10 @@ export default function ForgotPassword() {
               pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
               title={t('common.minPasswordTitle')}
               aria-invalid={Boolean(touched.password && fieldErrors.password)}
-              aria-describedby={touched.password && fieldErrors.password ? 'forgot-password-error' : undefined}
+              aria-describedby={[
+                touched.password && fieldErrors.password ? 'forgot-password-error' : null,
+                form.password ? 'forgot-password-strength' : null,
+              ].filter(Boolean).join(' ') || undefined}
               required
             />
             <button
@@ -229,7 +232,7 @@ export default function ForgotPassword() {
               {showPassword ? t('common.hidePassword') : t('common.showPassword')}
             </button>
             {form.password && (
-              <div className="mt-1" aria-label={`${t('common.passwordStrength')}: ${passwordStrength.label}`}>
+              <div id="forgot-password-strength" role="status" className="mt-1">
                 <div className="flex gap-1 mb-1" aria-hidden="true">
                   {[1, 2, 3, 4].map((step) => (
                     <div

@@ -27,13 +27,16 @@ let mockCartState = {
   showToast: mockShowToast,
 };
 
+let mockAuthUser = { role: 'user' };
+let mockParamId = '1';
+
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom');
   return {
     ...actual,
     Link: ({ children, to, ...props }) => <a href={to} {...props}>{children}</a>,
     useNavigate: () => mockNavigate,
-    useParams: () => ({ id: '1' }),
+    useParams: () => ({ id: mockParamId }),
     Navigate: ({ to }) => <div data-testid="navigate-to">{to}</div>,
   };
 });
@@ -43,7 +46,7 @@ vi.mock('../context/useCart', () => ({
 }));
 
 vi.mock('../context/useAuth', () => ({
-  default: () => ({ user: { role: 'user' } }),
+  default: () => ({ user: mockAuthUser }),
 }));
 
 vi.mock('../context/useProducts', () => ({
@@ -92,6 +95,8 @@ afterEach(() => {
   mockShowToast.mockClear();
   mockNavigate.mockClear();
   mockToggleFavorite.mockClear();
+  mockAuthUser = { role: 'user' };
+  mockParamId = '1';
   mockCartState = {
     cart: [],
     isFavorite: () => false,
@@ -162,5 +167,21 @@ describe('ProductDetail integration', () => {
 
     await user.click(favBtn);
     expect(mockToggleFavorite).toHaveBeenCalledWith(MOCK_PRODUCT);
+  });
+
+  it('admin view hides buy/cart buttons and shows product heading', () => {
+    mockAuthUser = { role: 'admin' };
+    render(<ProductDetail />);
+
+    expect(screen.queryByRole('button', { name: 'Añadir al carrito' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Comprar ahora' })).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1, name: 'Auriculares Bluetooth' })).toBeInTheDocument();
+  });
+
+  it('redirects to not-found when product id is invalid', () => {
+    mockParamId = 'abc';
+    render(<ProductDetail />);
+
+    expect(screen.getByTestId('navigate-to')).toHaveTextContent('/not-found');
   });
 });

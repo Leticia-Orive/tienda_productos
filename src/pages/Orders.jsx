@@ -5,6 +5,7 @@
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import ConfirmDialog from '../components/ConfirmDialog';
 import useCart from '../context/useCart';
 import useProducts from '../context/useProducts';
 import useLanguage from '../context/useLanguage';
@@ -158,6 +159,7 @@ export default function Orders() {
   const [dateFilter, setDateFilter] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
   const [expandedOrderIds, setExpandedOrderIds] = useState([]);
+  const [pendingClearOrders, setPendingClearOrders] = useState(false);
   const [referenceNowMs] = useState(() => Date.now());
   const searchInputRef = useRef(null);
 
@@ -190,10 +192,11 @@ export default function Orders() {
   }, []);
 
   const clearOrders = useCallback(() => {
-    const shouldClear = window.confirm(t('orders.clearHistoryConfirm'));
-    if (!shouldClear) {
-      return;
-    }
+    setPendingClearOrders(true);
+  }, []);
+
+  const confirmClearOrders = useCallback(() => {
+    setPendingClearOrders(false);
     setOrders([]);
     setExpandedOrderIds([]);
     showToast(t('orders.historyRemoved'), 'info');
@@ -478,7 +481,7 @@ export default function Orders() {
             </div>
 
             {expandedOrderIds.includes(order.id) && (
-              <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2" role="list">
+              <ul id={`order-items-${order.id}`} className="grid grid-cols-1 gap-2 sm:grid-cols-2" role="list">
                 {order.items.map((item) => (
                   <li key={`${order.id}-${item.id}`} className="rounded-lg border border-gray-200 px-3 py-2 text-sm">
                     <span className="font-medium text-gray-800">{translateProductText(item.name)}</span>
@@ -497,6 +500,7 @@ export default function Orders() {
                 onClick={() => toggleOrderExpanded(order.id)}
                 className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 aria-expanded={expandedOrderIds.includes(order.id)}
+                aria-controls={`order-items-${order.id}`}
               >
                 {expandedOrderIds.includes(order.id) ? t('orders.hideDetail') : t('orders.viewDetail')}
               </button>
@@ -504,6 +508,7 @@ export default function Orders() {
                 type="button"
                 onClick={() => handleCopyOrderId(order.orderNumber || order.id)}
                 className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                aria-label={t('orders.copyOrderIdLabel', { id: order.orderNumber || order.id })}
               >
                 {t('orders.copyOrderId')}
               </button>
@@ -511,12 +516,14 @@ export default function Orders() {
                 type="button"
                 onClick={() => handleReorder(order)}
                 className="rounded-lg border border-indigo-300 bg-indigo-50 px-3 py-2 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                aria-label={t('orders.reorderLabel', { id: order.orderNumber || order.id })}
               >
                 {t('orders.reorder')}
               </button>
               <Link
                 to="/carrito"
                 className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                aria-label={t('orders.goCartLabel', { id: order.orderNumber || order.id })}
               >
                 {t('orders.goCart')}
               </Link>
@@ -524,6 +531,16 @@ export default function Orders() {
           </article>
         ))}
       </section>
+
+      <ConfirmDialog
+        open={pendingClearOrders}
+        title={t('orders.clearHistoryTitle')}
+        message={t('orders.clearHistoryConfirm')}
+        confirmLabel={t('orders.clearHistoryButton')}
+        onConfirm={confirmClearOrders}
+        onCancel={() => setPendingClearOrders(false)}
+        destructive
+      />
     </main>
   );
 }

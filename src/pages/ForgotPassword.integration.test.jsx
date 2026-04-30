@@ -70,6 +70,10 @@ vi.mock('../context/useLanguage', () => ({
         'forgot.rememberedAccess': '¿Recordaste tu acceso?',
         'forgot.backToLogin': 'Volver al login',
         'common.minPasswordTitle': 'Mínimo 8 caracteres, incluyendo mayúscula, minúscula y número.',
+        'common.tipUpper': 'Añade letras MAYÚSCULAS (A-Z)',
+        'common.tipLower': 'Añade letras minúsculas (a-z)',
+        'common.tipNumber': 'Añade un número (0-9)',
+        'common.tipMinChars': 'Mínimo 8 caracteres',
       };
       return map[key] || key;
     },

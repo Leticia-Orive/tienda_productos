@@ -14,6 +14,7 @@ export default function ProductCard({ product, onEditProduct, onDeleteProduct })
   const { user } = useAuth();
   const { t, formatCurrency, translateCategory, translateProductText } = useLanguage();
   const translatedName = translateProductText(product.name);
+  const formattedPrice = formatCurrency(product.price);
 
   const isAdmin = user?.role === 'admin';
   const canManageCatalog = isAdmin && typeof onEditProduct === 'function' && typeof onDeleteProduct === 'function';
@@ -21,7 +22,7 @@ export default function ProductCard({ product, onEditProduct, onDeleteProduct })
 
   const handleAdd = () => {
     dispatch({ type: 'ADD_ITEM', payload: product });
-    showToast(t('productCard.addedToCart', { name: product.name }), 'success');
+    showToast(t('productCard.addedToCart', { name: translatedName }), 'success');
   };
 
   /** Muestra un resumen rapido del producto al usuario. */
@@ -32,7 +33,7 @@ export default function ProductCard({ product, onEditProduct, onDeleteProduct })
   /** Agrega el producto y envia al checkout para compra rapida. */
   const handleBuy = () => {
     dispatch({ type: 'ADD_ITEM', payload: product });
-    showToast(t('productCard.readyToBuy', { name: product.name }), 'success');
+    showToast(t('productCard.readyToBuy', { name: translatedName }), 'success');
     navigate('/checkout');
   };
 
@@ -43,7 +44,7 @@ export default function ProductCard({ product, onEditProduct, onDeleteProduct })
     >
       <img
         src={product.image}
-        alt={translatedName}
+        alt={`${translatedName} - ${formattedPrice}`}
         className="w-full h-48 object-cover"
         loading="lazy"
       />
@@ -73,7 +74,7 @@ export default function ProductCard({ product, onEditProduct, onDeleteProduct })
         <h2 className="text-gray-800 font-semibold text-base leading-tight">{translatedName}</h2>
         <p className="text-gray-500 text-sm flex-1">{translateProductText(product.description)}</p>
         <div className="flex items-center justify-between mt-2">
-          <span className="text-lg font-bold text-gray-900">{formatCurrency(product.price)}</span>
+          <span className="text-lg font-bold text-gray-900">{formattedPrice}</span>
         </div>
         <div className="mt-1 grid grid-cols-2 gap-2">
           <button
@@ -111,7 +112,7 @@ export default function ProductCard({ product, onEditProduct, onDeleteProduct })
                     type="button"
                     onClick={handleAdd}
                     className="rounded-lg bg-indigo-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    aria-label={t('productCard.addProduct', { name: product.name })}
+                    aria-label={t('productCard.addProduct', { name: translatedName })}
                   >
                     {t('productCard.addProduct', { name: translatedName })}
                   </button>
@@ -119,7 +120,7 @@ export default function ProductCard({ product, onEditProduct, onDeleteProduct })
                     type="button"
                     onClick={handleBuy}
                     className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
-                    aria-label={t('productCard.buy', { name: product.name })}
+                    aria-label={t('productCard.buy', { name: translatedName })}
                   >
                     {t('productCard.buy', { name: translatedName })}
                   </button>

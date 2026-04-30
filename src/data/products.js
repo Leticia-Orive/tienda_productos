@@ -13,7 +13,7 @@ export const DEFAULT_PRODUCTS = [
     name: 'Auriculares Bluetooth',
     price: 59.99,
     image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
-    category: 'Electronica',
+    category: 'Electrónica',
     description: 'Auriculares inalambricos con cancelación de ruido y 30h de bateria.',
   },
   {
@@ -78,23 +78,23 @@ export const DEFAULT_PRODUCTS = [
     price: 199.99,
     image: 'https://images.unsplash.com/photo-1592078615290-033ee584e267?w=400',
     category: 'Hogar',
-    description: 'Silla ergonÃ³mica con soporte lumbar ajustable y reposabrazos regulables.',
+    description: 'Silla ergonómica con soporte lumbar ajustable y reposabrazos regulables.',
   },
   {
     id: 10,
     name: 'Monitor 27"',
     price: 299.99,
     image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400',
-    category: 'Electronica',
+    category: 'Electrónica',
     description: 'Monitor Full HD IPS de 27 pulgadas con tecnologia antirreflejos.',
   },
   {
     id: 11,
-    name: 'CCamara Instantanea',
+    name: 'Cámara Instantánea',
     price: 74.99,
     image: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=400',
-    category: 'Electronica',
-    description: 'Camara de fotos instantanea compacta, perfecta para recuerdos unicos.',
+    category: 'Electrónica',
+    description: 'Cámara de fotos instantánea compacta, perfecta para recuerdos únicos.',
   },
   {
     id: 12,
@@ -106,10 +106,10 @@ export const DEFAULT_PRODUCTS = [
   },
   {
     id: 13,
-    name: 'Altavoz PortÃ¡til',
+    name: 'Altavoz Portátil',
     price: 49.99,
     image: 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400',
-    category: 'Electronica',
+    category: 'Electrónica',
     description: 'Altavoz Bluetooth resistente al agua con 12h de autonomia.',
   },
   {
@@ -126,14 +126,14 @@ export const DEFAULT_PRODUCTS = [
     price: 349.99,
     image: 'https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=400',
     category: 'Deportes',
-    description: 'Bicicleta urbana plegable de aluminio, ligera y fÃ¡cil de transportar.',
+    description: 'Bicicleta urbana plegable de aluminio, ligera y fácil de transportar.',
   },
   {
     id: 16,
     name: 'Ratón Inalámbrico',
     price: 29.99,
     image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400',
-    category: 'Electronica',
+    category: 'Electrónica',
     description: 'Ratón ergonómico inalámbrico con hasta 18 meses de batería.',
   },
   {
@@ -158,7 +158,7 @@ export const DEFAULT_PRODUCTS = [
     price: 34.99,
     image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400',
     category: 'Accesorios',
-    description: 'Gafas de sol polarizadas con protecciÃ³n UV400 y montura ligera.',
+    description: 'Gafas de sol polarizadas con protección UV400 y montura ligera.',
   },
   {
     id: 20,
@@ -192,7 +192,7 @@ export const DEFAULT_PRODUCTS = [
     price: 22.99,
     image: 'https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400',
     category: 'Libros',
-    description: 'Manual de diseÃ±o grÃ¡fico y UX para principiantes y profesionales.',
+    description: 'Manual de diseño gráfico y UX para principiantes y profesionales.',
   },
   {
     id: 24,
@@ -200,7 +200,7 @@ export const DEFAULT_PRODUCTS = [
     price: 18.99,
     image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400',
     category: 'Libros',
-    description: 'ColecciÃ³n de cuentos clÃ¡sicos ilustrados con acuarelas originales.',
+    description: 'Colección de cuentos clásicos ilustrados con acuarelas originales.',
   },
 
   // Cocina
@@ -402,7 +402,7 @@ export const DEFAULT_PRODUCTS = [
   },
   {
     id: 48,
-    name: 'CinturÃ³n de Cuero',
+    name: 'Cinturón de Cuero',
     price: 24.99,
     image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a45?w=400',
     category: 'Accesorios',
@@ -504,11 +504,11 @@ export const DEFAULT_PRODUCTS = [
     price: 14.99,
     image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400',
     category: 'Deportes',
-    description: 'Set de 5 bandas elÃ¡sticas de lÃ¡tex natural con distintos niveles de resistencia.',
+    description: 'Set de 5 bandas elásticas de látex natural con distintos niveles de resistencia.',
   },
   {
     id: 60,
-    name: 'BalÃ³n de FÃºtbol',
+    name: 'Balón de Fútbol',
     price: 29.99,
     image: 'https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=400',
     category: 'Deportes',
@@ -546,7 +546,7 @@ export const DEFAULT_PRODUCTS = [
     price: 38.99,
     image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
     category: 'Hogar',
-    description: 'Par de cortinas opacas de poliÃ©ster 140x260 cm, tÃ©rmica y aislante.',
+    description: 'Par de cortinas opacas de poliéster 140x260 cm, térmica y aislante.',
   },
 
   // Accesorios
@@ -556,7 +556,7 @@ export const DEFAULT_PRODUCTS = [
     price: 16.99,
     image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400',
     category: 'Accesorios',
-    description: 'Paraguas plegable de apertura automÃ¡tica con tela teflonada antiviento.',
+    description: 'Paraguas plegable de apertura automática con tela teflonada antiviento.',
   },
   {
     id: 66,
@@ -568,7 +568,7 @@ export const DEFAULT_PRODUCTS = [
   },
   {
     id: 67,
-    name: 'Tarjetero MetÃ¡lico',
+    name: 'Tarjetero Metálico',
     price: 13.99,
     image: 'https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400',
     category: 'Accesorios',
@@ -582,7 +582,7 @@ export const DEFAULT_PRODUCTS = [
     price: 24.99,
     image: 'https://images.unsplash.com/photo-1589998059171-988d887df646?w=400',
     category: 'Libros',
-    description: 'Manual de Robert C. Martin sobre buenas prÃ¡cticas en programaciÃ³n.',
+    description: 'Manual de Robert C. Martin sobre buenas prácticas en programación.',
   },
   {
     id: 69,
@@ -634,7 +634,7 @@ export const DEFAULT_PRODUCTS = [
     price: 44.99,
     image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400',
     category: 'Belleza',
-    description: 'Plancha de cerÃ¡mica de 230Â°C con revestimiento de turmalina y calentado en 30s.',
+    description: 'Plancha de cerámica de 230°C con revestimiento de turmalina y calentado en 30s.',
   },
   {
     id: 75,
@@ -642,7 +642,7 @@ export const DEFAULT_PRODUCTS = [
     price: 16.99,
     image: 'https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=400',
     category: 'Belleza',
-    description: 'Aceite de argÃ¡n y jojoba para piel suave y cabello brillante, 100ml.',
+    description: 'Aceite de argán y jojoba para piel suave y cabello brillante, 100ml.',
   },
 
   // Mascotas
@@ -652,7 +652,7 @@ export const DEFAULT_PRODUCTS = [
     price: 34.99,
     image: 'https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=400',
     category: 'Mascotas',
-    description: 'Cama acolchada lavable con relleno de espuma viscoelÃ¡stica para perros y gatos.',
+    description: 'Cama acolchada lavable con relleno de espuma viscoelástica para perros y gatos.',
   },
   {
     id: 77,
@@ -664,15 +664,15 @@ export const DEFAULT_PRODUCTS = [
   },
   {
     id: 78,
-    name: 'ArnÃ©s Ajustable para Perro',
+    name: 'Arnés Ajustable para Perro',
     price: 22.99,
     image: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400',
     category: 'Mascotas',
-    description: 'ArnÃ©s acolchado de nylon reflectante, sin tirones, talla S-XL.',
+    description: 'Arnés acolchado de nylon reflectante, sin tirones, talla S-XL.',
   },
   {
     id: 79,
-    name: 'Comedero AutomÃ¡tico',
+    name: 'Comedero Automático',
     price: 44.99,
     image: 'https://images.unsplash.com/photo-1601758124510-52d02ddb7cbd?w=400',
     category: 'Mascotas',
@@ -687,10 +687,10 @@ export const DEFAULT_PRODUCTS = [
     description: 'Varita con plumas y cascabel para estimular el instinto cazador de tu gato.',
   },
 
-  // JardÃ­n
+  // Jardín
   {
     id: 81,
-    name: 'Regadera MetÃ¡lica',
+    name: 'Regadera Metálica',
     price: 18.99,
     image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400',
     category: 'Jardín',
@@ -804,7 +804,7 @@ export const DEFAULT_PRODUCTS = [
     price: 49.99,
     image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=400',
     category: 'Hogar',
-    description: 'Alfombra de pelo corto 120x180 cm, lavable a mÃ¡quina y antideslizante.',
+    description: 'Alfombra de pelo corto 120x180 cm, lavable a máquina y antideslizante.',
   },
 
   // Más Libros
@@ -1014,7 +1014,7 @@ export const DEFAULT_PRODUCTS = [
     price: 13.99,
     image: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400',
     category: 'Libros',
-    description: 'GuÃ­a espiritual de Eckhart Tolle para vivir en el presente y reducir el sufrimiento.',
+    description: 'Guía espiritual de Eckhart Tolle para vivir en el presente y reducir el sufrimiento.',
   },
   {
     id: 119,
@@ -1026,11 +1026,11 @@ export const DEFAULT_PRODUCTS = [
   },
   {
     id: 120,
-    name: 'IntroducciÃ³n al DiseÃ±o UX',
+    name: 'Introducción al Diseño UX',
     price: 29.99,
     image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
     category: 'Libros',
-    description: 'Manual prÃ¡ctico de investigaciÃ³n, wireframing y pruebas de usabilidad con casos reales.',
+    description: 'Manual práctico de investigación, wireframing y pruebas de usabilidad con casos reales.',
   },
 
   // Belleza
@@ -1040,7 +1040,7 @@ export const DEFAULT_PRODUCTS = [
     price: 22.99,
     image: 'https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400',
     category: 'Belleza',
-    description: 'Contorno de ojos con retinol y pÃ©ptidos que reduce ojeras y patas de gallo.',
+    description: 'Contorno de ojos con retinol y péptidos que reduce ojeras y patas de gallo.',
   },
   {
     id: 122,
@@ -1048,17 +1048,17 @@ export const DEFAULT_PRODUCTS = [
     price: 9.99,
     image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400',
     category: 'Belleza',
-    description: 'Esponja de silicona sin lÃ¡tex para difuminar base, corrector y polvo de forma uniforme.',
+    description: 'Esponja de silicona sin látex para difuminar base, corrector y polvo de forma uniforme.',
   },
 
   // Mascotas
   {
     id: 123,
-    name: 'TransportÃ­n Plegable',
+    name: 'Transportín Plegable',
     price: 38.99,
     image: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400',
     category: 'Mascotas',
-    description: 'TransportÃ­n de tela plegable con ventilaciÃ³n y base impermeable apta para cabina de aviÃ³n.',
+    description: 'Transportín de tela plegable con ventilación y base impermeable apta para cabina de avión.',
   },
   {
     id: 124,
@@ -1066,27 +1066,27 @@ export const DEFAULT_PRODUCTS = [
     price: 59.99,
     image: 'https://images.unsplash.com/photo-1601758124510-52d02ddb7cbd?w=400',
     category: 'Mascotas',
-    description: 'Collar GPS con app en tiempo real, zona segura configurable y baterÃ­a de 7 dÃ­as.',
+    description: 'Collar GPS con app en tiempo real, zona segura configurable y batería de 7 días.',
   },
 
-  // JardÃ­n
+  // Jardín
   {
     id: 125,
     name: 'Manguera Extensible 30m',
     price: 22.99,
     image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400',
-    category: 'JardÃ­n',
-    description: 'Manguera de lÃ¡tex que se expande con el agua hasta 30m, con pistola de 9 modos.',
+    category: 'Jardín',
+    description: 'Manguera de látex que se expande con el agua hasta 30m, con pistola de 9 modos.',
   },
 
   // Juguetes
   {
     id: 126,
-    name: 'LEGO ClÃ¡sico 500 piezas',
+    name: 'LEGO Clásico 500 piezas',
     price: 34.99,
     image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400',
     category: 'Juguetes',
-    description: 'Set de ladrillos de colores para construir libremente, apto desde 4 aÃ±os.',
+    description: 'Set de ladrillos de colores para construir libremente, apto desde 4 años.',
   },
   {
     id: 127,
@@ -1114,7 +1114,7 @@ export const DEFAULT_PRODUCTS = [
   },
   {
     id: 130,
-    name: 'Kit de Ciencia para NiÃ±os',
+    name: 'Kit de Ciencia para Niños',
     price: 27.99,
     image: 'https://images.unsplash.com/photo-1564325724739-bae0bd08762c?w=400',
     category: 'Juguetes',
@@ -1128,7 +1128,7 @@ export const DEFAULT_PRODUCTS = [
     price: 14.99,
     image: 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=400',
     category: 'Oficina',
-    description: 'Sello de entintado automÃ¡tico personalizable con texto de hasta 4 lÃ­neas.',
+    description: 'Sello de entintado automático personalizable con texto de hasta 4 líneas.',
   },
   {
     id: 132,
@@ -1234,11 +1234,11 @@ export const DEFAULT_PRODUCTS = [
   },
   {
     id: 144,
-    name: 'Humidificador UltrasÃ³nico',
+    name: 'Humidificador Ultrasónico',
     price: 36.99,
     image: 'https://images.unsplash.com/photo-1585515320310-259814833e62?w=400',
     category: 'Hogar',
-    description: 'Humidificador silencioso de 4L con niebla frÃ­a y caliente, aromaterapia y temporizador.',
+    description: 'Humidificador silencioso de 4L con niebla fría y caliente, aromaterapia y temporizador.',
   },
 
   // Más Mascotas
@@ -1379,14 +1379,14 @@ export const DEFAULT_PRODUCTS = [
     description: 'Pistola encoladora de 40W con 20 barras de silicona incluidas, calentamiento en 3 minutos.',
   },
 
-  // MÃ¡s Juguetes
+  // Más Juguetes
   {
     id: 161,
     name: 'Cubo de Rubik 3x3',
     price: 9.99,
     image: 'https://images.unsplash.com/photo-1625378580526-993ced1a2b77?w=400',
     category: 'Juguetes',
-    description: 'Cubo de velocidad con mecanismo magnÃ©tico, giro suave y esquinas redondeadas.',
+    description: 'Cubo de velocidad con mecanismo magnético, giro suave y esquinas redondeadas.',
   },
   {
     id: 162,
@@ -1555,7 +1555,7 @@ export const DEFAULT_PRODUCTS = [
     description: 'Estuche compacto con 42 artículos de primeros auxilios: vendas, antiséptico, pinzas y más.',
   },
 
-  // FotografÃ­a
+  // Fotografía
   {
     id: 181,
     name: 'Mochila para Cámara Réflex',
@@ -1770,17 +1770,17 @@ export const DEFAULT_PRODUCTS = [
   },
   {
     id: 205,
-    name: 'Set de Bandas de RehabilitaciÃ³n',
+    name: 'Set de Bandas de Rehabilitación',
     price: 16.99,
     image: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400',
     category: 'Salud',
-    description: 'Pack de 5 bandas elÃ¡sticas para movilidad, fisioterapia y fortalecimiento progresivo.',
+    description: 'Pack de 5 bandas elásticas para movilidad, fisioterapia y fortalecimiento progresivo.',
   },
 
   // Oficina
   {
     id: 206,
-    name: 'EscÃ¡ner PortÃ¡til A4',
+    name: 'Escáner Portátil A4',
     price: 79.99,
     image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400',
     category: 'Oficina',
@@ -1884,7 +1884,7 @@ export const DEFAULT_PRODUCTS = [
   // Cocina
   {
     id: 218,
-    name: 'Set de Recipientes HermÃ©ticos',
+    name: 'Set de Recipientes Herméticos',
     price: 26.99,
     image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400',
     category: 'Cocina',
@@ -1896,7 +1896,7 @@ export const DEFAULT_PRODUCTS = [
     price: 23.99,
     image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=400',
     category: 'Cocina',
-    description: 'Espumador elÃ©ctrico de acero inoxidable para capuchino, latte y bebidas frÃ­as.',
+    description: 'Espumador eléctrico de acero inoxidable para capuchino, latte y bebidas frías.',
   },
 
   // Libros

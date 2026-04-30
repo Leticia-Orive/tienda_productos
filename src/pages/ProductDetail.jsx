@@ -139,7 +139,7 @@ export default function ProductDetail() {
         <span aria-hidden="true">/</span>
         <span>{translateCategory(product.category)}</span>
         <span aria-hidden="true">/</span>
-        <span className="text-gray-700 font-medium">{translateProductText(product.name)}</span>
+        <span className="text-gray-700 font-medium" aria-current="page">{translateProductText(product.name)}</span>
       </nav>
 
       <Link
@@ -275,7 +275,7 @@ export default function ProductDetail() {
               >
                 <img
                   src={p.image}
-                  alt={p.name}
+                  alt={translateProductText(p.name)}
                   className="w-full h-40 object-cover group-hover:opacity-90 transition"
                   loading="lazy"
                   decoding="async"
