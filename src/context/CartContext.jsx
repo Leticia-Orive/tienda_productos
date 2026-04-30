@@ -28,7 +28,22 @@ export const MAX_ITEM_QUANTITY = 99;
 function getInitialCart() {
   try {
     const rawCart = localStorage.getItem(CART_STORAGE_KEY);
-    return rawCart ? JSON.parse(rawCart) : [];
+    const parsed = rawCart ? JSON.parse(rawCart) : [];
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed
+      .filter((item) => item && item.id !== undefined && item.id !== null)
+      .map((item) => {
+        const quantity = Number.parseInt(item.quantity, 10);
+        return {
+          ...item,
+          quantity: Number.isNaN(quantity)
+            ? 1
+            : Math.min(Math.max(1, quantity), MAX_ITEM_QUANTITY),
+        };
+      });
   } catch {
     return [];
   }

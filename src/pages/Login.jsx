@@ -17,7 +17,7 @@ export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
 
-  const redirectTo = location.state?.from?.pathname || null;
+  const redirectTo = location.state?.from?.pathname || '/';
 
   if (isAuthenticated) {
     return <Navigate to={redirectTo} replace />;

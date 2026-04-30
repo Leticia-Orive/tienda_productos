@@ -45,7 +45,15 @@ function getInitialUser() {
     }
 
     const parsed = JSON.parse(rawUser);
-    return parsed?.email ? { email: String(parsed.email) } : null;
+    if (!parsed?.email) {
+      return null;
+    }
+
+    return {
+      email: String(parsed.email),
+      name: parsed.name ? String(parsed.name) : '',
+      role: parsed.role ? String(parsed.role) : 'cliente',
+    };
   } catch {
     return null;
   }
@@ -97,7 +105,12 @@ export function AuthProvider({ children }) {
       return;
     }
 
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(user));
+    // Persist name and role so RequireRole works after page reload.
+    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({
+      email: user.email,
+      name: user.name || '',
+      role: user.role || 'cliente',
+    }));
   }, [user]);
 
   useEffect(() => {

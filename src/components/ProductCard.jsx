@@ -113,7 +113,7 @@ export default function ProductCard({ product, onEditProduct, onDeleteProduct })
                     className="rounded-lg bg-indigo-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     aria-label={t('productCard.addProduct', { name: product.name })}
                   >
-                    {t('productCard.addProduct')}
+                    {t('productCard.addProduct', { name: translatedName })}
                   </button>
                   <button
                     type="button"
@@ -121,7 +121,7 @@ export default function ProductCard({ product, onEditProduct, onDeleteProduct })
                     className="rounded-lg bg-emerald-600 px-3 py-2 text-xs font-medium text-white transition hover:bg-emerald-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600"
                     aria-label={t('productCard.buy', { name: product.name })}
                   >
-                    {t('productCard.buy')}
+                    {t('productCard.buy', { name: translatedName })}
                   </button>
                 </>
               )}
