@@ -230,6 +230,7 @@ describe('Checkout integration', () => {
     // CHECKOUT_STORAGE_KEY should be removed after successful submit.
     expect(localStorage.getItem('tienda_react_checkout_form')).toBeNull();
 
-    expect(timeoutSpy).toHaveBeenCalledWith(expect.any(Function), 2200);
+    // No auto-redirect: the confirmation screen stays so the user can download the invoice.
+    expect(timeoutSpy).not.toHaveBeenCalled();
   });
 });

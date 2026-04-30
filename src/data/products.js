@@ -46,22 +46,22 @@ export const DEFAULT_PRODUCTS = [
     price: 24.99,
     image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400',
     category: 'Deportes',
-    description: 'Camiseta tÃ©cnica transpirable para entrenamiento de alta intensidad.',
+    description: 'Camiseta técnica transpirable para entrenamiento de alta intensidad.',
   },
   {
     id: 6,
-    name: 'LÃ¡mpara de Escritorio',
+    name: 'Lámpara de Escritorio',
     price: 34.99,
     image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=400',
     category: 'Hogar',
-    description: 'Lampara LED con temperatura de color ajustable y puerto USB.',
+    description: 'Lámpara LED con temperatura de color ajustable y puerto USB.',
   },
   {
     id: 7,
     name: 'Teclado Mecánico',
     price: 79.99,
     image: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400',
-    category: 'Electronica',
+    category: 'Electrónica',
     description: 'Teclado mecánico compacto con retroiluminación RGB y switches táctiles.',
   },
   {
@@ -466,7 +466,7 @@ export const DEFAULT_PRODUCTS = [
   // Electrónica
   {
     id: 55,
-    name: 'LÃ¡mpara LED Inteligente',
+    name: 'Lámpara LED Inteligente',
     price: 24.99,
     image: 'https://images.unsplash.com/photo-1558002038-1055907df827?w=400',
     category: 'Electrónica',
