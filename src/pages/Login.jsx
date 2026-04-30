@@ -3,6 +3,9 @@ import { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../context/useAuth';
 import useCart from '../context/useCart';
+import useLanguage from '../context/useLanguage';
+
+const REMEMBERED_EMAIL_KEY = 'tienda_react_remembered_email';
 
 /**
  * Login page for client-side authenticated access.
@@ -11,11 +14,17 @@ import useCart from '../context/useCart';
 export default function Login() {
   const { isAuthenticated, login } = useAuth();
   const { showToast } = useCart();
+  const { t } = useLanguage();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({ email: '', password: '' });
+  const [form, setForm] = useState(() => ({
+    email: localStorage.getItem(REMEMBERED_EMAIL_KEY) || '',
+    password: '',
+  }));
+  const [rememberEmail, setRememberEmail] = useState(() => !!localStorage.getItem(REMEMBERED_EMAIL_KEY));
   const [error, setError] = useState('');
+  const [validationErrors, setValidationErrors] = useState([]);
 
   const redirectTo = location.state?.from?.pathname || '/';
 
@@ -23,20 +32,60 @@ export default function Login() {
     return <Navigate to={redirectTo} replace />;
   }
 
+  /** Validates login fields and returns a list of user-friendly messages. */
+  const validateForm = () => {
+    const messages = [];
+    const email = form.email.trim();
+    const password = form.password;
+
+    if (!email) {
+      messages.push(t('common.requiredEmail'));
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      messages.push(t('common.invalidEmail'));
+    }
+
+    if (!password) {
+      messages.push(t('common.requiredPassword'));
+    } else if (password.length < 8) {
+      messages.push(t('common.passwordMin'));
+    }
+
+    return messages;
+  };
+
   /** Handles login form submission and redirects to previous route. */
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = login(form);
+    const clientErrors = validateForm();
+    if (clientErrors.length > 0) {
+      setValidationErrors(clientErrors);
+      setError('');
+      return;
+    }
+
+    setValidationErrors([]);
+
+    const result = await Promise.resolve(login({
+      email: form.email.trim(),
+      password: form.password,
+    }));
 
     if (!result.ok) {
-      const message = result.error || 'No se pudo iniciar sesión.';
+      const message = result.error || t('common.signInFailed');
       setError(message);
       showToast(message, 'error');
       return;
     }
 
+    if (rememberEmail) {
+      localStorage.setItem(REMEMBERED_EMAIL_KEY, form.email.trim());
+    } else {
+      localStorage.removeItem(REMEMBERED_EMAIL_KEY);
+    }
+
     setError('');
-    showToast('Sesión iniciada correctamente', 'success');
+    const roleLabel = result.role === 'admin' ? 'administrador' : 'cliente';
+    showToast(t('common.loginAs', { role: roleLabel }), 'success');
     const targetPath = redirectTo || (result.role === 'admin' ? '/admin/productos' : '/');
     navigate(targetPath, { replace: true });
   };
@@ -44,12 +93,12 @@ export default function Login() {
   return (
     <main className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-10 bg-gray-50">
       <section className="w-full max-w-md rounded-2xl bg-white p-6 shadow" aria-label="Formulario de inicio de sesión">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Iniciar sesión</h1>
-        <p className="text-sm text-gray-500 mb-6">Accede para ver productos y completar tus compras.</p>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">{t('common.login')}</h1>
+        <p className="text-sm text-gray-500 mb-6">{t('common.accessToProducts')}</p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
           <div className="flex flex-col gap-1">
-            <label htmlFor="email" className="text-sm font-medium text-gray-700">Correo electrónico</label>
+            <label htmlFor="email" className="text-sm font-medium text-gray-700">{t('common.email')}</label>
             <input
               id="email"
               type="email"
@@ -59,6 +108,7 @@ export default function Login() {
               onChange={(e) => {
                 setForm((prev) => ({ ...prev, email: e.target.value }));
                 if (error) setError('');
+                if (validationErrors.length > 0) setValidationErrors([]);
               }}
               className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               required
@@ -66,7 +116,7 @@ export default function Login() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label htmlFor="password" className="text-sm font-medium text-gray-700">Contraseña</label>
+            <label htmlFor="password" className="text-sm font-medium text-gray-700">{t('common.password')}</label>
             <input
               id="password"
               type="password"
@@ -76,12 +126,31 @@ export default function Login() {
               onChange={(e) => {
                 setForm((prev) => ({ ...prev, password: e.target.value }));
                 if (error) setError('');
+                if (validationErrors.length > 0) setValidationErrors([]);
               }}
               className="rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              minLength={6}
+              minLength={8}
               required
             />
           </div>
+
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <input
+              type="checkbox"
+              checked={rememberEmail}
+              onChange={(e) => setRememberEmail(e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+            />
+            {t('common.rememberEmail')}
+          </label>
+
+          {validationErrors.length > 0 && (
+            <div className="space-y-1" role="alert" aria-live="polite">
+              {validationErrors.map((message) => (
+                <p key={message} className="text-sm text-red-600">{message}</p>
+              ))}
+            </div>
+          )}
 
           {error && (
             <p className="text-sm text-red-600" role="alert">{error}</p>
@@ -91,7 +160,7 @@ export default function Login() {
             type="submit"
             className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
-            Entrar
+            {t('common.signIn')}
           </button>
         </form>
 
@@ -100,17 +169,17 @@ export default function Login() {
             to="/recuperar"
             className="font-medium text-indigo-600 underline underline-offset-2 hover:text-indigo-700"
           >
-            ¿Olvidaste tu contraseña?
+            {t('common.forgotPassword')}
           </Link>
         </p>
 
         <p className="mt-5 text-sm text-gray-600">
-          ¿No tienes cuenta?{' '}
+          {t('common.dontHaveAccount')}{' '}
           <Link
             to="/registro"
             className="font-medium text-indigo-600 underline underline-offset-2 hover:text-indigo-700"
           >
-            Regístrate
+            {t('common.register')}
           </Link>
         </p>
       </section>
