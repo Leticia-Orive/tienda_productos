@@ -208,6 +208,11 @@ export default function Orders() {
     setSortBy('newest');
   }, []);
 
+  const clearSearch = useCallback(() => {
+    setSearch('');
+    searchInputRef.current?.focus();
+  }, []);
+
   /**
    * Toggles expanded details for a single order card.
    * @param {string} orderId
@@ -379,17 +384,36 @@ export default function Orders() {
       </section>
 
       <section className="mb-6 grid grid-cols-1 gap-3 md:grid-cols-4" aria-label={t('orders.filtersLabel')}>
-        <label className="md:col-span-2">
+        <label className="md:col-span-2 relative">
           <span className="sr-only">{t('orders.searchLabel')}</span>
           <input
             ref={searchInputRef}
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(event) => {
+              if (event.key === 'Escape' && search.trim()) {
+                event.preventDefault();
+                clearSearch();
+              }
+            }}
             placeholder={t('orders.searchPlaceholder')}
-            title={t('orders.searchShortcut')}
-            className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            aria-describedby="orders-search-shortcut"
+            className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 pr-24 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           />
+          {search.trim() && (
+            <button
+              type="button"
+              onClick={clearSearch}
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-lg border border-gray-300 bg-white px-2.5 py-1 text-xs font-medium text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              aria-label={t('common.clearSearch')}
+            >
+              {t('common.clearSearch')}
+            </button>
+          )}
+          <p id="orders-search-shortcut" className="mt-1 text-xs text-gray-500">
+            {t('orders.searchShortcut')}
+          </p>
         </label>
         <label>
           <span className="sr-only">{t('orders.dateFilterLabel')}</span>

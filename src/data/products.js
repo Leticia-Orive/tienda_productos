@@ -14,7 +14,7 @@ export const DEFAULT_PRODUCTS = [
     price: 59.99,
     image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400',
     category: 'Electrónica',
-    description: 'Auriculares inalambricos con cancelación de ruido y 30h de bateria.',
+    description: 'Auriculares inalámbricos con cancelación de ruido y 30h de batería.',
   },
   {
     id: 2,
@@ -86,7 +86,7 @@ export const DEFAULT_PRODUCTS = [
     price: 299.99,
     image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=400',
     category: 'Electrónica',
-    description: 'Monitor Full HD IPS de 27 pulgadas con tecnologia antirreflejos.',
+    description: 'Monitor Full HD IPS de 27 pulgadas con tecnología antirreflejos.',
   },
   {
     id: 11,
@@ -110,7 +110,7 @@ export const DEFAULT_PRODUCTS = [
     price: 49.99,
     image: 'https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=400',
     category: 'Electrónica',
-    description: 'Altavoz Bluetooth resistente al agua con 12h de autonomia.',
+    description: 'Altavoz Bluetooth resistente al agua con 12h de autonomía.',
   },
   {
     id: 14,
@@ -118,7 +118,7 @@ export const DEFAULT_PRODUCTS = [
     price: 14.99,
     image: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400',
     category: 'Hogar',
-    description: 'Cojin de algodon con diseno moderno, disponible en varios colores.',
+    description: 'Cojín de algodón con diseño moderno, disponible en varios colores.',
   },
   {
     id: 15,

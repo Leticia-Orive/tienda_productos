@@ -61,7 +61,7 @@ vi.mock('../context/useLanguage', () => ({
   }),
 }));
 
-function renderCard(overrides = {}) {
+function renderCard(overrides = {}, props = {}) {
   const product = {
     id: 1,
     name: 'Auriculares inalámbricos',
@@ -78,6 +78,7 @@ function renderCard(overrides = {}) {
       onEditProduct={mockOnEditProduct}
       onDeleteProduct={mockOnDeleteProduct}
       onDuplicateProduct={mockOnDuplicateProduct}
+      searchQuery={props.searchQuery}
     />
   );
 }
@@ -142,5 +143,12 @@ describe('ProductCard', () => {
     expect(mockToggleFavorite).toHaveBeenCalledWith(
       expect.objectContaining({ id: 1, name: 'Auriculares inalámbricos' })
     );
+  });
+
+  it('highlights matching text with accent-insensitive search query', () => {
+    renderCard({}, { searchQuery: 'inalambricos' });
+
+    const highlighted = screen.getAllByText(/inalámbricos/i, { selector: 'mark' });
+    expect(highlighted.length).toBeGreaterThan(0);
   });
 });

@@ -64,7 +64,7 @@ vi.mock('../context/useLanguage', () => ({
         'orders.filtersLabel': 'Filtros',
         'orders.searchLabel': 'Buscar pedidos',
         'orders.searchPlaceholder': 'Buscar por ID o producto...',
-        'orders.searchShortcut': 'Pulsa / para buscar',
+        'orders.searchShortcut': 'Atajos: / para buscar y Escape para limpiar.',
         'orders.dateFilterLabel': 'Filtro de fecha',
         'orders.sortLabel': 'Ordenar',
         'orders.allHistory': 'Todo el historial',
@@ -77,6 +77,7 @@ vi.mock('../context/useLanguage', () => ({
         'orders.totalLow': 'Menor total',
         'orders.exportJson': 'Exportar JSON',
         'orders.exportCsv': 'Exportar CSV',
+        'common.clearSearch': 'Limpiar búsqueda',
         'common.clearFilters': 'Limpiar filtros',
         'orders.noResultsTitle': 'No hay resultados',
         'orders.noResultsBody': 'Ajusta tu búsqueda.',
@@ -202,5 +203,26 @@ describe('Orders integration', () => {
 
     await user.click(detailButton);
     expect(screen.getByRole('button', { name: 'Ocultar detalle' })).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  it('shows clear search button and clears the term with Escape', async () => {
+    const user = userEvent.setup();
+    render(<Orders />);
+
+    const searchInput = screen.getByPlaceholderText('Buscar por ID o producto...');
+    await user.type(searchInput, 'NO-EXISTE');
+
+    const clearButton = screen.getByRole('button', { name: 'Limpiar búsqueda' });
+    expect(clearButton).toBeInTheDocument();
+    expect(searchInput).toHaveAttribute('aria-describedby', 'orders-search-shortcut');
+    expect(screen.getByText('Atajos: / para buscar y Escape para limpiar.')).toBeInTheDocument();
+
+    await user.keyboard('{Escape}');
+
+    await waitFor(() => {
+      expect(searchInput).toHaveValue('');
+      expect(screen.queryByRole('button', { name: 'Limpiar búsqueda' })).not.toBeInTheDocument();
+      expect(screen.getByText('Pedido Ana-ABCDEF')).toBeInTheDocument();
+    });
   });
 });

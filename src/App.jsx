@@ -8,6 +8,7 @@ import { LanguageProvider } from './context/LanguageContext';
 import useAuth from './context/useAuth';
 import useLanguage from './context/useLanguage';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import Toast from './components/Toast';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProductSkeleton from './components/ProductSkeleton';
@@ -22,6 +23,7 @@ const Favorites = lazy(() => import('./pages/Favorites'));
 const AdminProducts = lazy(() => import('./pages/AdminProducts'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const ProductDetail = lazy(() => import('./pages/ProductDetail'));
+const Legal = lazy(() => import('./pages/Legal'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
@@ -65,6 +67,7 @@ function AppShell() {
               <Route path="/carrito" element={<RequireRole allowedRoles={['cliente']}><Cart /></RequireRole>} />
               <Route path="/producto/:id" element={<RequireAuth><ProductDetail /></RequireAuth>} />
               <Route path="/checkout" element={<RequireRole allowedRoles={['cliente']}><Checkout /></RequireRole>} />
+              <Route path="/legal" element={<RequireAuth><Legal /></RequireAuth>} />
               <Route path="/pedidos" element={<RequireRole allowedRoles={['cliente']}><Orders /></RequireRole>} />
               <Route path="/favoritos" element={<RequireRole allowedRoles={['cliente']}><Favorites /></RequireRole>} />
               <Route path="/not-found" element={<NotFound />} />
@@ -73,6 +76,8 @@ function AppShell() {
           </Suspense>
         </ErrorBoundary>
       </div>
+
+      {isAuthenticated && <Footer />}
 
       <Toast />
     </div>

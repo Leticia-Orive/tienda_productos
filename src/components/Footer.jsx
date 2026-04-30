@@ -62,19 +62,19 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-indigo-400 transition">
+                <Link to="/legal#terms" className="text-gray-400 hover:text-indigo-400 transition">
                   {t('footer.terms')}
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-indigo-400 transition">
+                <Link to="/legal#privacy" className="text-gray-400 hover:text-indigo-400 transition">
                   {t('footer.privacy')}
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="text-gray-400 hover:text-indigo-400 transition">
+                <Link to="/legal#returns" className="text-gray-400 hover:text-indigo-400 transition">
                   {t('footer.returns')}
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -84,17 +84,17 @@ export default function Footer() {
             <h3 className="font-semibold text-white mb-3">{t('footer.followUs')}</h3>
             <ul className="flex gap-3" role="list">
               <li>
-                <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition" aria-label="Facebook">
+                <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition" aria-label={t('footer.socialFacebook')}>
                   f
                 </a>
               </li>
               <li>
-                <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition" aria-label="Twitter">
+                <a href="https://x.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition" aria-label={t('footer.socialTwitter')}>
                   t
                 </a>
               </li>
               <li>
-                <a href="#" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition" aria-label="Instagram">
+                <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-indigo-600 transition" aria-label={t('footer.socialInstagram')}>
                   i
                 </a>
               </li>

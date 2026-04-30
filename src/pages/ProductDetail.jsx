@@ -132,7 +132,7 @@ export default function ProductDetail() {
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-8">
-      <nav className="mb-4 flex flex-wrap items-center gap-2 text-sm text-gray-500" aria-label="Breadcrumb">
+      <nav className="mb-4 flex flex-wrap items-center gap-2 text-sm text-gray-500" aria-label={t('common.breadcrumb')}>
         <Link to="/" className="hover:text-indigo-600 transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 rounded-sm">
           {t('notFound.home')}
         </Link>

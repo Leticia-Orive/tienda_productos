@@ -71,7 +71,9 @@ vi.mock('../context/useLanguage', () => ({
         'adminProducts.cancelEdit': 'Cancelar edición',
         'adminProducts.searchLabel': 'Buscar productos',
         'adminProducts.searchPlaceholder': 'Buscar...',
+        'adminProducts.searchShortcutHint': 'Atajos: / para enfocar búsqueda y Escape para limpiar.',
         'adminProducts.productCount': `${vars?.count ?? 0} productos`,
+        'common.clearSearch': 'Limpiar búsqueda',
         'adminProducts.productListLabel': 'Lista de productos',
         'adminProducts.saveSuccess': 'Producto actualizado.',
         'adminProducts.createSuccess': 'Producto creado.',
@@ -148,6 +150,56 @@ describe('AdminProducts integration', () => {
     // Only card-1 should remain in filtered list
     expect(screen.getByTestId('product-card-1')).toBeInTheDocument();
     expect(screen.queryByTestId('product-card-2')).not.toBeInTheDocument();
+  });
+
+  it('search is accent-insensitive and can be cleared with Escape', async () => {
+    const user = userEvent.setup();
+    render(<AdminProducts />);
+
+    const searchInput = screen.getByRole('searchbox');
+    await user.type(searchInput, 'inalambricos');
+
+    expect(screen.getByTestId('product-card-1')).toBeInTheDocument();
+    expect(screen.queryByTestId('product-card-2')).not.toBeInTheDocument();
+
+    await user.keyboard('{Escape}');
+
+    expect(searchInput).toHaveValue('');
+    expect(screen.getByTestId('product-card-1')).toBeInTheDocument();
+    expect(screen.getByTestId('product-card-2')).toBeInTheDocument();
+    expect(searchInput).toHaveAttribute('aria-describedby', 'admin-products-search-shortcut');
+    expect(screen.getByText('Atajos: / para enfocar búsqueda y Escape para limpiar.')).toBeInTheDocument();
+  });
+
+  it('pressing slash focuses product search when not typing in another field', async () => {
+    const user = userEvent.setup();
+    render(<AdminProducts />);
+
+    const pageTitle = screen.getByRole('heading', { level: 1, name: 'Panel de productos' });
+    const searchInput = screen.getByRole('searchbox');
+
+    pageTitle.focus();
+    expect(searchInput).not.toHaveFocus();
+
+    await user.keyboard('/');
+
+    expect(searchInput).toHaveFocus();
+  });
+
+  it('clear search button appears and restores full list when clicked', async () => {
+    const user = userEvent.setup();
+    render(<AdminProducts />);
+
+    await user.type(screen.getByRole('searchbox'), 'auriculares');
+
+    const clearButton = screen.getByRole('button', { name: 'Limpiar búsqueda' });
+    expect(clearButton).toBeInTheDocument();
+
+    await user.click(clearButton);
+
+    expect(screen.queryByRole('button', { name: 'Limpiar búsqueda' })).not.toBeInTheDocument();
+    expect(screen.getByTestId('product-card-1')).toBeInTheDocument();
+    expect(screen.getByTestId('product-card-2')).toBeInTheDocument();
   });
 
   it('clicking Edit fills the form with product data', async () => {

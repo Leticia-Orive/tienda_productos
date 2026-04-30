@@ -63,6 +63,7 @@ vi.mock('../context/useLanguage', () => ({
         'home.searchAndSortControls': 'Controles de búsqueda',
         'home.searchProducts': 'Buscar productos',
         'home.searchPlaceholder': 'Buscar...',
+        'home.searchShortcutHint': 'Atajos: / para enfocar búsqueda y Escape para limpiar.',
         'home.sortProducts': 'Ordenar productos',
         'home.featured': 'Destacados',
         'home.priceLowHigh': 'Precio: menor a mayor',
@@ -76,6 +77,7 @@ vi.mock('../context/useLanguage', () => ({
         'common.resultsCount': `${vars?.count ?? 0} resultado${vars?.suffix ?? ''}`,
         'common.page': 'Página',
         'common.of': 'de',
+        'common.clearSearch': 'Limpiar búsqueda',
         'common.clearFilters': 'Limpiar filtros',
         'common.previous': 'Anterior',
         'common.next': 'Siguiente',
@@ -165,6 +167,80 @@ describe('Home integration', () => {
       expect(screen.getByTestId('product-2')).toBeInTheDocument();
       expect(screen.queryByTestId('product-1')).not.toBeInTheDocument();
     });
+  });
+
+  it('search is accent-insensitive for product text', async () => {
+    const user = userEvent.setup();
+    render(<Home />);
+
+    await user.type(screen.getByRole('searchbox'), 'inalambricos');
+
+    await waitFor(() => {
+      expect(screen.getByTestId('product-1')).toBeInTheDocument();
+      expect(screen.queryByTestId('product-2')).not.toBeInTheDocument();
+    });
+  });
+
+  it('clear search button appears with text and clears results when clicked', async () => {
+    const user = userEvent.setup();
+    render(<Home />);
+
+    await user.type(screen.getByRole('searchbox'), 'Zapatillas');
+
+    const clearSearchButton = await screen.findByRole('button', { name: 'Limpiar búsqueda' });
+    expect(clearSearchButton).toBeInTheDocument();
+
+    await user.click(clearSearchButton);
+
+    await waitFor(() => {
+      expect(screen.queryByRole('button', { name: 'Limpiar búsqueda' })).not.toBeInTheDocument();
+      expect(screen.getByTestId('product-1')).toBeInTheDocument();
+      expect(screen.getByTestId('product-2')).toBeInTheDocument();
+      expect(screen.getByTestId('product-3')).toBeInTheDocument();
+      expect(screen.getByTestId('product-4')).toBeInTheDocument();
+    });
+  });
+
+  it('pressing Escape in searchbox clears current search', async () => {
+    const user = userEvent.setup();
+    render(<Home />);
+
+    const searchbox = screen.getByRole('searchbox');
+    await user.type(searchbox, 'Zapatillas');
+
+    await waitFor(() => {
+      expect(screen.getByTestId('product-2')).toBeInTheDocument();
+      expect(screen.queryByTestId('product-1')).not.toBeInTheDocument();
+    });
+
+    await user.click(searchbox);
+    await user.keyboard('{Escape}');
+
+    await waitFor(() => {
+      expect(searchbox).toHaveValue('');
+      expect(screen.getByTestId('product-1')).toBeInTheDocument();
+      expect(screen.getByTestId('product-2')).toBeInTheDocument();
+      expect(screen.getByTestId('product-3')).toBeInTheDocument();
+      expect(screen.getByTestId('product-4')).toBeInTheDocument();
+    });
+
+    expect(searchbox).toHaveAttribute('aria-describedby', 'home-search-shortcut');
+    expect(screen.getByText('Atajos: / para enfocar búsqueda y Escape para limpiar.')).toBeInTheDocument();
+  });
+
+  it('pressing slash focuses searchbox when focus is outside input fields', async () => {
+    const user = userEvent.setup();
+    render(<Home />);
+
+    const heading = screen.getByRole('heading', { level: 1, name: 'Nuestros Productos' });
+    const searchbox = screen.getByRole('searchbox');
+
+    heading.focus();
+    expect(searchbox).not.toHaveFocus();
+
+    await user.keyboard('/');
+
+    expect(searchbox).toHaveFocus();
   });
 
   it('clear filters button appears when filters are active and clears them', async () => {

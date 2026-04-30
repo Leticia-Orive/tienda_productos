@@ -80,6 +80,7 @@ vi.mock('../context/useLanguage', () => ({
         'productCard.addFavorite': `Añadir a favoritos: ${vars?.name}`,
         'productCard.removeFavorite': `Quitar de favoritos: ${vars?.name}`,
         'notFound.home': 'Inicio',
+        'common.breadcrumb': 'Ruta de navegación',
       };
       return map[key] ?? key;
     },
@@ -111,7 +112,7 @@ describe('ProductDetail integration', () => {
     render(<ProductDetail />);
 
     expect(screen.getByRole('heading', { level: 1, name: 'Auriculares Bluetooth' })).toBeInTheDocument();
-    expect(screen.getByRole('navigation', { name: 'Breadcrumb' })).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'Ruta de navegación' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Volver a productos' })).toBeInTheDocument();
   });
 
