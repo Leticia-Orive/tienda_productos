@@ -201,7 +201,9 @@ export default function Cart() {
                 <img
                   src={item.image}
                   alt={item.name}
-                    className="w-20 h-20 object-cover rounded-xl shrink-0"
+                  className="w-20 h-20 object-cover rounded-xl shrink-0"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div className="flex-1 min-w-0">
                   <h2 className="font-semibold text-gray-800 truncate">{translateProductText(item.name)}</h2>

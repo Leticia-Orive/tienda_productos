@@ -1228,6 +1228,8 @@ export default function Checkout() {
                     src={item.image}
                     alt={item.name}
                     className="w-12 h-12 rounded-lg object-cover shrink-0"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-800 truncate">{item.name}</p>

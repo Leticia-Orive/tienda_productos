@@ -7,6 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ProductContext } from './ProductStateContext';
 import { DEFAULT_PRODUCTS, buildCategories } from '../data/products';
 import { cleanOrphanFavorites } from './productUtils';
+import { normalizeSearchText } from '../utils/textUtils';
 
 const PRODUCTS_STORAGE_KEY = 'tienda_react_products';
 const FAVORITES_STORAGE_KEY = 'tienda_react_favorites';
@@ -102,11 +103,7 @@ function normalizeProductPayload(payload) {
  * @returns {string}
  */
 function toComparableKey(value) {
-  return String(value || '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .trim()
-    .toLowerCase();
+  return normalizeSearchText(value).trim();
 }
 
 /**

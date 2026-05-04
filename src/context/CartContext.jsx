@@ -6,6 +6,7 @@
 import { useMemo, useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { CartContext } from './CartStateContext';
 import { MAX_ITEM_QUANTITY } from './cartConstants';
+import { cartReducer } from './cartReducer';
 import { findCoupon, calcDiscount } from '../data/coupons';
 
 /**
@@ -74,74 +75,6 @@ function safeWriteStorage(key, value) {
     localStorage.setItem(key, JSON.stringify(value));
   } catch {
     // Best-effort persistence only.
-  }
-}
-
-/**
- * Reducer that handles all cart actions.
- * @param {Array} state - Current cart items array.
- * @param {{ type: string, payload: object }} action - Dispatched action.
- * @returns {Array} New cart state.
- */
-function cartReducer(state, action) {
-  switch (action.type) {
-    case 'ADD_ITEM': {
-      const existing = state.find((item) => item.id === action.payload.id);
-      if (existing) {
-        // Cap at MAX_ITEM_QUANTITY to prevent quantity overflow from rapid clicks.
-        return state.map((item) =>
-          item.id === action.payload.id
-            ? { ...item, quantity: Math.min(item.quantity + 1, MAX_ITEM_QUANTITY) }
-            : item
-        );
-      }
-      return [...state, { ...action.payload, quantity: 1 }];
-    }
-    case 'REMOVE_ITEM':
-      return state.filter((item) => item.id !== action.payload.id);
-    case 'UPDATE_QUANTITY': {
-      if (action.payload.quantity <= 0) {
-        return state.filter((item) => item.id !== action.payload.id);
-      }
-      // Clamp between 1 and MAX_ITEM_QUANTITY so external dispatches can't exceed the cap.
-      const clampedQty = Math.min(Math.max(1, action.payload.quantity), MAX_ITEM_QUANTITY);
-      return state.map((item) =>
-        item.id === action.payload.id
-          ? { ...item, quantity: clampedQty }
-          : item
-      );
-    }
-    case 'CLEAR_CART':
-      return [];
-    case 'ADD_ORDER_ITEMS': {
-      const incomingItems = Array.isArray(action.payload?.items) ? action.payload.items : [];
-      if (incomingItems.length === 0) {
-        return state;
-      }
-
-      const byId = new Map(state.map((item) => [item.id, { ...item }]));
-
-      incomingItems.forEach((item) => {
-        if (!item || item.id === undefined || item.id === null) {
-          return;
-        }
-
-        const quantity = Math.max(1, Number.parseInt(item.quantity, 10) || 1);
-        const existing = byId.get(item.id);
-
-        if (existing) {
-          // Also cap re-ordered quantities to prevent overflow.
-          byId.set(item.id, { ...existing, quantity: Math.min(existing.quantity + quantity, MAX_ITEM_QUANTITY) });
-          return;
-        }
-
-        byId.set(item.id, { ...item, quantity });
-      });
-
-      return Array.from(byId.values());
-    }
-    default:
-      return state;
   }
 }
 

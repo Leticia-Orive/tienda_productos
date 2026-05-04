@@ -6,7 +6,7 @@ import useCart from '../context/useCart';
 import useProducts from '../context/useProducts';
 import useLanguage from '../context/useLanguage';
 import useDocumentTitle from '../hooks/useDocumentTitle';
-import { isTypingTarget, normalizeSearchText } from './adminProductsHelpers';
+import { isTypingTarget, normalizeSearchText } from './searchHelpers';
 
 /**
  * Product administration page for admin users.
@@ -232,6 +232,8 @@ export default function AdminProducts() {
                 src={formData.image}
                 alt={t('adminProducts.imagePreview')}
                 className="h-20 w-20 rounded-xl object-cover border border-gray-200"
+                loading="lazy"
+                decoding="async"
                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
               />
               <span className="text-xs text-gray-400">{t('adminProducts.imagePreview')}</span>

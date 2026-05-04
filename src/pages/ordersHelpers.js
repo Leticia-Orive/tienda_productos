@@ -52,10 +52,3 @@ export function buildOrdersCsv(orders) {
   return [headers.join(','), ...rows].join('\n');
 }
 
-/** Normalizes text for accent-insensitive and case-insensitive search. */
-export function normalizeSearchText(value) {
-  return String(value || '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase();
-}

@@ -51,6 +51,7 @@ vi.mock('../context/useLanguage', () => ({
         'common.requiredPassword': 'La contraseña es obligatoria.',
         'common.passwordMin': 'Debe tener al menos 8 caracteres.',
         'common.signIn': 'Entrar',
+        'common.lockedRetryIn': `Cuenta temporalmente bloqueada. Reintenta en ${vars?.seconds ?? 0}s.`,
         'common.signingIn': 'Entrando...',
         'common.showPassword': 'Mostrar contraseña',
         'common.hidePassword': 'Ocultar contraseña',
@@ -115,5 +116,23 @@ describe('Login integration', () => {
     expect(mockShowToast).toHaveBeenCalledWith('Sesión iniciada como Administrador', 'success');
     expect(localStorage.getItem('tienda_react_remembered_email')).toBe('admin@tienda.com');
     expect(mockNavigate).toHaveBeenCalledWith('/admin/productos', { replace: true });
+  });
+
+  it('shows lockout countdown and disables submit when auth is temporarily blocked', async () => {
+    const user = userEvent.setup();
+    mockLogin.mockResolvedValue({
+      ok: false,
+      error: 'Demasiados intentos. Espera un minuto e inténtalo de nuevo.',
+      lockedUntil: Date.now() + 30_000,
+    });
+
+    render(<Login />);
+
+    await user.type(screen.getByLabelText('Correo electrónico'), 'admin@tienda.com');
+    await user.type(screen.getByLabelText('Contraseña'), 'Password1');
+    await user.click(screen.getByRole('button', { name: 'Entrar' }));
+
+    expect(screen.getByText(/Cuenta temporalmente bloqueada\. Reintenta en \d+s\./i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Entrar' })).toBeDisabled();
   });
 });

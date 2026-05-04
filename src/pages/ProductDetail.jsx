@@ -233,6 +233,7 @@ export default function ProductDetail() {
           alt={translatedProductName}
           className="w-full h-80 lg:h-105 rounded-xl object-cover"
           loading="eager"
+          decoding="async"
         />
 
         <div className="flex flex-col gap-4">

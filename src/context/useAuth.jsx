@@ -8,7 +8,14 @@ import { AuthContext } from './AuthStateContext';
 
 /**
  * Custom hook to consume AuthContext safely.
- * @returns {{ user: { email: string, name?: string, role?: string } | null, isAuthenticated: boolean, login: Function, register: Function, resetPassword: Function, logout: Function }}
+ * @returns {{
+ *   user: { email: string, name?: string, role?: string } | null,
+ *   isAuthenticated: boolean,
+ *   login: (credentials: { email: string, password: string }) => Promise<{ ok: boolean, role?: string, error?: string, lockedUntil?: number, retryAfterMs?: number }>,
+ *   register: Function,
+ *   resetPassword: Function,
+ *   logout: Function
+ * }}
  */
 export default function useAuth() {
   const context = useContext(AuthContext);

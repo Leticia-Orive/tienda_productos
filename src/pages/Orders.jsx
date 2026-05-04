@@ -10,7 +10,8 @@ import useCart from '../context/useCart';
 import useProducts from '../context/useProducts';
 import useLanguage from '../context/useLanguage';
 import useDocumentTitle from '../hooks/useDocumentTitle';
-import { buildOrdersCsv, normalizeSearchText } from './ordersHelpers';
+import { buildOrdersCsv } from './ordersHelpers';
+import { isTypingTarget, normalizeSearchText } from './searchHelpers';
 
 /* Maintenance guide:
  * - filteredOrders centralizes date/search/sort behavior for the whole page.
@@ -127,12 +128,15 @@ export default function Orders() {
   useEffect(() => {
     /** Shortcut: press / to focus orders search when not typing in a field. */
     const handleKeydown = (event) => {
-      const targetTag = event.target?.tagName?.toLowerCase();
-      const isTypingField = targetTag === 'input' || targetTag === 'textarea' || event.target?.isContentEditable;
-      if (!isTypingField && event.key === '/') {
-        event.preventDefault();
-        searchInputRef.current?.focus();
+      if (event.key !== '/' || event.altKey || event.ctrlKey || event.metaKey) {
+        return;
       }
+      if (isTypingTarget(event.target)) {
+        return;
+      }
+
+      event.preventDefault();
+      searchInputRef.current?.focus();
     };
 
     window.addEventListener('keydown', handleKeydown);

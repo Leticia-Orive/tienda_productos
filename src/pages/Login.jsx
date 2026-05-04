@@ -25,11 +25,15 @@ export default function Login() {
   const [rememberEmail, setRememberEmail] = useState(() => !!localStorage.getItem(REMEMBERED_EMAIL_KEY));
   const [error, setError] = useState('');
   const [validationErrors, setValidationErrors] = useState([]);
+  const [lockedUntil, setLockedUntil] = useState(0);
+  const [nowMs, setNowMs] = useState(() => Date.now());
   const emailInputRef = useRef(null);
   const passwordInputRef = useRef(null);
   const errorRegionRef = useRef(null);
 
   const redirectTo = location.state?.from?.pathname || '/';
+  const isLocked = lockedUntil > nowMs;
+  const remainingLockSeconds = isLocked ? Math.max(0, Math.ceil((lockedUntil - nowMs) / 1000)) : 0;
 
   /** Validates login fields and returns a list of user-friendly messages. */
   const validateForm = () => {
@@ -53,6 +57,26 @@ export default function Login() {
   };
 
   useEffect(() => {
+    if (!isLocked) {
+      return undefined;
+    }
+
+    const intervalId = window.setInterval(() => {
+      setNowMs(Date.now());
+    }, 1000);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [isLocked]);
+
+  useEffect(() => {
+    if (!isLocked && lockedUntil !== 0) {
+      setLockedUntil(0);
+    }
+  }, [isLocked, lockedUntil]);
+
+  useEffect(() => {
     if (validationErrors.length > 0) {
       const safeEmail = form.email.trim();
       if (!safeEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(safeEmail)) {
@@ -74,6 +98,10 @@ export default function Login() {
   /** Handles login form submission and redirects to previous route. */
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isLocked) {
+      return;
+    }
+
     const clientErrors = validateForm();
     if (clientErrors.length > 0) {
       setValidationErrors(clientErrors);
@@ -90,6 +118,11 @@ export default function Login() {
 
     if (!result.ok) {
       const message = result.error || t('common.signInFailed');
+      if (result.lockedUntil || result.retryAfterMs) {
+        const nextLockedUntil = result.lockedUntil || (Date.now() + Number(result.retryAfterMs || 0));
+        setLockedUntil(nextLockedUntil);
+        setNowMs(Date.now());
+      }
       setError(message);
       showToast(message, 'error');
       return;
@@ -188,9 +221,17 @@ export default function Login() {
             </div>
           )}
 
+          {isLocked && (
+            <p id="login-lockout" className="text-sm text-amber-700" role="status" aria-live="polite" aria-atomic="true">
+              {t('common.lockedRetryIn', { seconds: remainingLockSeconds })}
+            </p>
+          )}
+
           <button
             type="submit"
-            className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            disabled={isLocked}
+            aria-describedby={isLocked ? 'login-lockout' : undefined}
+            className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:bg-indigo-400"
           >
             {t('common.signIn')}
           </button>

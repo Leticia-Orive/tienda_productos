@@ -162,6 +162,7 @@ const TRANSLATIONS = {
       hidePassword: 'Ocultar contraseña',
       signIn: 'Entrar',
       signingIn: 'Entrando...',
+      lockedRetryIn: 'Cuenta temporalmente bloqueada. Reintenta en {seconds}s.',
       register: 'Registrarme',
       registering: 'Creando cuenta...',
       login: 'Iniciar sesión',
