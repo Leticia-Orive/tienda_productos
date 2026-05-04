@@ -43,10 +43,6 @@ export default function Register() {
   const confirmPasswordInputRef = useRef(null);
   const serverErrorRef = useRef(null);
 
-  if (isAuthenticated) {
-    return <Navigate to="/" replace />;
-  }
-
   /**
    * Calculates password strength on a 0-4 scale with specific feedback tips.
    * @param {string} pwd
@@ -226,6 +222,10 @@ export default function Register() {
     showToast(t('common.accountCreated'), 'success');
     navigate('/', { replace: true });
   };
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <main className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-10 bg-gray-50">

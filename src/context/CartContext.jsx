@@ -5,6 +5,7 @@
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
 import { useMemo, useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { CartContext } from './CartStateContext';
+import { MAX_ITEM_QUANTITY } from './cartConstants';
 import { findCoupon, calcDiscount } from '../data/coupons';
 
 /**
@@ -13,13 +14,6 @@ import { findCoupon, calcDiscount } from '../data/coupons';
  */
 const CART_STORAGE_KEY = 'tienda_react_cart';
 const FAVORITES_STORAGE_KEY = 'tienda_react_favorites';
-
-/**
- * Maximum quantity allowed per cart line item.
- * Prevents runaway quantities caused by rapid clicks or re-order abuse.
- * Exported so UI components can reflect the same limit (e.g., disable the + button).
- */
-export const MAX_ITEM_QUANTITY = 99;
 
 /**
  * Reads persisted cart from localStorage safely.
@@ -162,8 +156,14 @@ export function CartProvider({ children }) {
   const [favorites, setFavorites] = useState(getInitialFavorites);
   const couponRef = useRef(coupon);
   const favoritesRef = useRef(favorites);
-  couponRef.current = coupon;
-  favoritesRef.current = favorites;
+
+  useEffect(() => {
+    couponRef.current = coupon;
+  }, [coupon]);
+
+  useEffect(() => {
+    favoritesRef.current = favorites;
+  }, [favorites]);
 
   useEffect(() => {
     safeWriteStorage(CART_STORAGE_KEY, cart);

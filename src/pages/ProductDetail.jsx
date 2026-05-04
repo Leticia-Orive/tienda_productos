@@ -72,25 +72,36 @@ export default function ProductDetail() {
   // WCAG 2.4.2: title updates reactively as soon as the product is resolved.
   useDocumentTitle(product ? translateProductText(product.name) : t('productDetail.title'));
 
-  if (!productId) {
-    return <Navigate to="/not-found" replace />;
-  }
-
-  if (!product) {
-    return <Navigate to="/not-found" replace />;
-  }
-
-  const translatedProductName = useMemo(() => translateProductText(product.name), [product.name, translateProductText]);
-  const translatedProductDescription = useMemo(() => translateProductText(product.description), [product.description, translateProductText]);
-  const translatedProductCategory = useMemo(() => translateCategory(product.category), [product.category, translateCategory]);
+  const translatedProductName = useMemo(
+    () => (product ? translateProductText(product.name) : ''),
+    [product, translateProductText]
+  );
+  const translatedProductDescription = useMemo(
+    () => (product ? translateProductText(product.description) : ''),
+    [product, translateProductText]
+  );
+  const translatedProductCategory = useMemo(
+    () => (product ? translateCategory(product.category) : ''),
+    [product, translateCategory]
+  );
 
   const relatedProducts = useMemo(() => products
-    .filter((p) => p.category === product.category && p.id !== product.id)
-    .slice(0, 3), [product.category, product.id, products]);
+    .filter((p) => product && p.category === product.category && p.id !== product.id)
+    .slice(0, 3), [product, products]);
 
-  const cartItem = useMemo(() => cart.find((item) => item.id === product.id), [cart, product.id]);
-  const favorite = isFavorite(product.id);
-  const itemForCart = useMemo(() => ({ ...product, quantity }), [product, quantity]);
+  const relatedProductCards = useMemo(() => relatedProducts.map((item) => ({
+    ...item,
+    translatedName: translateProductText(item.name),
+    translatedCategory: translateCategory(item.category),
+    formattedPrice: formatCurrency(item.price),
+  })), [formatCurrency, relatedProducts, translateCategory, translateProductText]);
+
+  const cartItem = useMemo(
+    () => (product ? cart.find((item) => item.id === product.id) : null),
+    [cart, product]
+  );
+  const favorite = useMemo(() => (product ? isFavorite(product.id) : false), [isFavorite, product]);
+  const itemForCart = useMemo(() => (product ? { ...product, quantity } : null), [product, quantity]);
 
   useEffect(() => () => {
     if (shareResetTimeoutRef.current != null) {
@@ -100,6 +111,10 @@ export default function ProductDetail() {
 
   /** Shares the product page or copies URL to clipboard as fallback. */
   const handleShare = useCallback(async () => {
+    if (!product) {
+      return;
+    }
+
     const url = window.location.href;
     const shareData = { title: product.name, text: product.description, url };
     try {
@@ -119,7 +134,7 @@ export default function ProductDetail() {
     } catch {
       // User cancelled share or API unavailable: no extra feedback needed.
     }
-  }, [product.description, product.name]);
+  }, [product]);
 
   /**
    * Updates quantity from number input with safe boundaries.
@@ -152,6 +167,10 @@ export default function ProductDetail() {
 
   /** Adds the current product to cart and notifies user. */
   const handleAdd = useCallback(() => {
+    if (!itemForCart) {
+      return;
+    }
+
     dispatch({ type: 'ADD_ORDER_ITEMS', payload: { items: [itemForCart] } });
     setQuantityNotice('');
     showToast(t('productDetail.addedQuantity', { quantity, name: translatedProductName }), 'success');
@@ -159,11 +178,23 @@ export default function ProductDetail() {
 
   /** Adds product to cart and navigates to checkout for quick purchase. */
   const handleBuy = useCallback(() => {
+    if (!itemForCart) {
+      return;
+    }
+
     dispatch({ type: 'ADD_ORDER_ITEMS', payload: { items: [itemForCart] } });
     setQuantityNotice('');
     showToast(t('productDetail.readyToBuyQuantity', { quantity, name: translatedProductName }), 'success');
     navigate('/checkout');
   }, [dispatch, itemForCart, navigate, quantity, showToast, t, translatedProductName]);
+
+  const handleToggleFavorite = useCallback(() => {
+    if (!product) {
+      return;
+    }
+
+    toggleFavorite(product);
+  }, [product, toggleFavorite]);
 
   const decreaseQuantity = useCallback(() => {
     setQuantity((prev) => clampQuantity(prev - 1));
@@ -172,6 +203,10 @@ export default function ProductDetail() {
   const increaseQuantity = useCallback(() => {
     setQuantity((prev) => clampQuantity(prev + 1));
   }, []);
+
+  if (!productId || !product) {
+    return <Navigate to="/not-found" replace />;
+  }
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-8">
@@ -219,7 +254,7 @@ export default function ProductDetail() {
           {!isAdmin && (
             <button
               type="button"
-              onClick={() => toggleFavorite(product)}
+              onClick={handleToggleFavorite}
               className={`w-fit rounded-full px-3 py-1.5 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${
                 favorite
                   ? 'bg-rose-100 text-rose-700 hover:bg-rose-200'
@@ -316,24 +351,24 @@ export default function ProductDetail() {
         <section className="mt-12 bg-gray-50 rounded-2xl p-8" aria-label={t('productDetail.relatedTitle')}>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('productDetail.relatedTitle')}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {relatedProducts.map((p) => (
+            {relatedProductCards.map((p) => (
               <Link
                 key={p.id}
                 to={`/producto/${p.id}`}
                 className="group bg-white rounded-lg shadow hover:shadow-md transition overflow-hidden"
-                aria-label={t('productCard.viewLabel', { name: translateProductText(p.name) })}
+                aria-label={t('productCard.viewLabel', { name: p.translatedName })}
               >
                 <img
                   src={p.image}
-                  alt={translateProductText(p.name)}
+                  alt={p.translatedName}
                   className="w-full h-40 object-cover group-hover:opacity-90 transition"
                   loading="lazy"
                   decoding="async"
                 />
                 <div className="p-3">
-                  <p className="text-xs text-indigo-600 font-semibold uppercase">{translateCategory(p.category)}</p>
-                  <p className="text-sm font-medium text-gray-800 truncate group-hover:text-indigo-600 transition">{translateProductText(p.name)}</p>
-                  <p className="text-sm font-bold text-gray-900 mt-1">{formatCurrency(p.price)}</p>
+                  <p className="text-xs text-indigo-600 font-semibold uppercase">{p.translatedCategory}</p>
+                  <p className="text-sm font-medium text-gray-800 truncate group-hover:text-indigo-600 transition">{p.translatedName}</p>
+                  <p className="text-sm font-bold text-gray-900 mt-1">{p.formattedPrice}</p>
                 </div>
               </Link>
             ))}

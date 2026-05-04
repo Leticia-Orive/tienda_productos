@@ -16,20 +16,21 @@ export default class ErrorBoundary extends Component {
 
   constructor(props) {
     super(props);
-    /** @type {{ hasError: boolean, errorId: string | null }} */
-    this.state = { hasError: false, errorId: null };
+    /** @type {{ hasError: boolean, errorId: string | null, errorMessage: string | null }} */
+    this.state = { hasError: false, errorId: null, errorMessage: null };
     this.handleRetry = this.handleRetry.bind(this);
   }
 
   /**
    * Derives error state from a thrown error.
-   * @returns {{ hasError: boolean, errorId: string }}
+   * @param {Error} error
+   * @returns {{ hasError: boolean, errorId: string, errorMessage: string | null }}
    */
-  static getDerivedStateFromError() {
+  static getDerivedStateFromError(error) {
     const errorId = typeof crypto !== 'undefined' && crypto.randomUUID
       ? crypto.randomUUID()
       : String(Date.now());
-    return { hasError: true, errorId };
+    return { hasError: true, errorId, errorMessage: error?.message || null };
   }
 
   /**
@@ -45,7 +46,7 @@ export default class ErrorBoundary extends Component {
 
   /** Resets error state so the user can retry. */
   handleRetry() {
-    this.setState({ hasError: false, errorId: null });
+    this.setState({ hasError: false, errorId: null, errorMessage: null });
   }
 
   render() {
@@ -69,6 +70,11 @@ export default class ErrorBoundary extends Component {
             {this.state.errorId && (
               <p className="text-xs text-gray-400 mb-6 font-mono">
                 ID: {this.state.errorId}
+              </p>
+            )}
+            {import.meta.env.MODE === 'test' && this.state.errorMessage && (
+              <p data-testid="error-boundary-debug" className="mb-4 rounded bg-amber-50 px-3 py-2 text-left font-mono text-xs text-amber-800">
+                {this.state.errorMessage}
               </p>
             )}
             <div className="flex flex-col sm:flex-row gap-3 justify-center">

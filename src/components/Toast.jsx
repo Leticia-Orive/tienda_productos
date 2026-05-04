@@ -59,8 +59,8 @@ export default function Toast() {
       role={isErrorToast ? 'alert' : 'status'}
       aria-live={isErrorToast ? 'assertive' : 'polite'}
       aria-atomic="true"
-      // z-[9000] keeps the toast above all overlays including the sticky Navbar (z-50) and dialogs.
-      className={`fixed bottom-4 right-4 z-[9000] ${animationClass}`}
+      // z-9000 keeps the toast above all overlays including the sticky Navbar (z-50) and dialogs.
+      className={`fixed bottom-4 right-4 z-9000 ${animationClass}`}
     >
       <div className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm shadow-lg ${toneClass}`}>
         <span>{toast.message}</span>

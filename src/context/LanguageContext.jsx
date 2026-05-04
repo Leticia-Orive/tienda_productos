@@ -4,7 +4,7 @@ import { LanguageContext } from './LanguageStateContext';
 
 const LANGUAGE_STORAGE_KEY = 'tienda_react_language';
 
-export const SUPPORTED_LANGUAGES = [
+const SUPPORTED_LANGUAGES = [
   { code: 'es', label: 'Español', locale: 'es-ES' },
   { code: 'en', label: 'English', locale: 'en-US' },
   { code: 'ca', label: 'Català', locale: 'ca-ES' },
@@ -389,9 +389,6 @@ const TRANSLATIONS = {
       phone: 'Teléfono',
       phonePlaceholder: '+34 612 345 678',
       phoneInvalid: 'Teléfono inválido (mínimo 9 dígitos o caracteres).',
-      phone: 'Teléfono',
-      phonePlaceholder: '+34 612 345 678',
-      phoneInvalid: 'Teléfono inválido (mínimo 9 dígitos o caracteres).',
       streetAndNumber: 'Calle y número',
       addressPlaceholder: 'Av. Libertad 1234',
       cityPlaceholder: 'Madrid',
@@ -676,7 +673,6 @@ function roughTranslateSpanishTextToEnglish(value) {
     ' impermeable': ' waterproof',
     ' suplemento': ' supplement',
     ' omega': ' omega',
-    ' cuaderno': ' notebook',
     ' bocetos': ' sketches',
     ' soporte': ' stand',
     ' portátil': ' laptop',
@@ -700,8 +696,6 @@ function roughTranslateSpanishTextToEnglish(value) {
     ' hogar': ' home',
     ' libros': ' books',
     ' belleza': ' beauty',
-    ' jardín': ' garden',
-    ' jardin': ' garden',
   };
 
   let next = ` ${String(value || '').toLowerCase()} `;

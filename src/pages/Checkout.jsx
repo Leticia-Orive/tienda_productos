@@ -6,10 +6,11 @@
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getCouponExpiryInfo } from '../data/coupons';
-import { MAX_ITEM_QUANTITY } from '../context/CartContext';
+import { MAX_ITEM_QUANTITY } from '../context/cartConstants';
 import useCart from '../context/useCart';
 import useLanguage from '../context/useLanguage';
 import useDocumentTitle from '../hooks/useDocumentTitle';
+import { buildOrderNumber, shouldBlockCheckoutSubmit } from './checkoutHelpers';
 
 /* Maintenance guide:
  * - Field validation lives in validateField; update rules there first.
@@ -172,18 +173,6 @@ function buildOrderId() {
 
   const randomSuffix = Math.random().toString(36).slice(2, 8);
   return `${Date.now()}-${randomSuffix}`;
-}
-
-/** Generates a user-facing order number from customer name. */
-export function buildOrderNumber(customerName) {
-  const safePrefix = String(customerName || '').trim().split(' ')[0] || 'PEDIDO';
-  const randomSuffix = Math.random().toString(36).slice(2, 8).toUpperCase();
-  return `${safePrefix}-${randomSuffix}`;
-}
-
-/** Returns whether checkout submit must be blocked due to empty cart. */
-export function shouldBlockCheckoutSubmit(cartLength) {
-  return Number(cartLength) <= 0;
 }
 
 /**

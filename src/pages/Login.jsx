@@ -31,10 +31,6 @@ export default function Login() {
 
   const redirectTo = location.state?.from?.pathname || '/';
 
-  if (isAuthenticated) {
-    return <Navigate to={redirectTo} replace />;
-  }
-
   /** Validates login fields and returns a list of user-friendly messages. */
   const validateForm = () => {
     const messages = [];
@@ -111,6 +107,10 @@ export default function Login() {
     const targetPath = redirectTo || (result.role === 'admin' ? '/admin/productos' : '/');
     navigate(targetPath, { replace: true });
   };
+
+  if (isAuthenticated) {
+    return <Navigate to={redirectTo} replace />;
+  }
 
   return (
     <main className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-10 bg-gray-50">

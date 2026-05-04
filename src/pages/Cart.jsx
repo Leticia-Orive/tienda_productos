@@ -6,7 +6,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import ConfirmDialog from '../components/ConfirmDialog';
-import { MAX_ITEM_QUANTITY } from '../context/CartContext';
+import { MAX_ITEM_QUANTITY } from '../context/cartConstants';
 import { COUPONS, getCouponExpiryInfo } from '../data/coupons';
 import useCart from '../context/useCart';
 import useLanguage from '../context/useLanguage';
@@ -165,6 +165,21 @@ export default function Cart() {
   }, [dispatch, showToast, t]);
 
   if (cart.length === 0) {
+    return (
+      <main className="max-w-2xl mx-auto px-4 py-16 text-center">
+        <h1 ref={cartHeadingRef} className="text-2xl font-bold text-gray-800 mb-2" tabIndex={-1}>{t('cart.emptyTitle')}</h1>
+        <p className="text-gray-500 mb-6">{t('cart.emptyBody')}</p>
+        <Link
+          to="/"
+          className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-6 py-2 rounded-lg transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        >
+          {t('cart.viewProducts')}
+        </Link>
+      </main>
+    );
+  }
+
+  return (
     <main className="max-w-4xl mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-gray-900 mb-6">
         {t('cart.title')} ({t('cart.itemCount', { count: totalItems, suffix: totalItems === 1 ? '' : 's' })})

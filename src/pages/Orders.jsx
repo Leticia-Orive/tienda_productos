@@ -10,6 +10,7 @@ import useCart from '../context/useCart';
 import useProducts from '../context/useProducts';
 import useLanguage from '../context/useLanguage';
 import useDocumentTitle from '../hooks/useDocumentTitle';
+import { buildOrdersCsv, normalizeSearchText } from './ordersHelpers';
 
 /* Maintenance guide:
  * - filteredOrders centralizes date/search/sort behavior for the whole page.
@@ -20,58 +21,6 @@ import useDocumentTitle from '../hooks/useDocumentTitle';
 
 const ORDERS_STORAGE_KEY = 'tienda_react_orders';
 const MAX_ORDERS = 50;
-
-/**
- * Escapes CSV field values and wraps them in quotes when needed.
- * @param {string | number | null | undefined} value
- * @returns {string}
- */
-function escapeCsvField(value) {
-  const text = String(value ?? '');
-  const escaped = text.replace(/"/g, '""');
-  return /[",\n;]/.test(escaped) ? `"${escaped}"` : escaped;
-}
-
-/**
- * Builds a CSV string from the currently visible orders.
- * @param {Array} orders
- * @returns {string}
- */
-export function buildOrdersCsv(orders) {
-  const headers = [
-    'order_id',
-    'order_number',
-    'date_iso',
-    'customer',
-    'items_total',
-    'subtotal',
-    'discount',
-    'coupon',
-    'final_total',
-    'products',
-  ];
-
-  const rows = orders.map((order) => {
-    const products = order.items
-      .map((item) => `${item.name} x${item.quantity}`)
-      .join(' | ');
-
-    return [
-      order.id,
-      order.orderNumber || order.id,
-      order.createdAt,
-      order.customerName,
-      Number(order.totalItems || 0).toFixed(0),
-      Number(order.subtotalPrice ?? order.totalPrice ?? 0).toFixed(2),
-      Number(order.discountAmount || 0).toFixed(2),
-      order.couponCode || '',
-      Number(order.totalPrice || 0).toFixed(2),
-      products,
-    ].map(escapeCsvField).join(',');
-  });
-
-  return [headers.join(','), ...rows].join('\n');
-}
 
 /**
  * Downloads text content as a file and releases temporary resources.
@@ -134,14 +83,6 @@ function formatDate(dateIso, formatDateTime, fallbackText) {
     return fallbackText;
   }
   return formatDateTime(dateIso);
-}
-
-/** Normalizes text for accent-insensitive and case-insensitive search. */
-export function normalizeSearchText(value) {
-  return String(value || '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase();
 }
 
 /**
@@ -220,6 +161,25 @@ export default function Orders() {
     setSearch('');
     searchInputRef.current?.focus();
   }, []);
+
+  const handleSearchChange = useCallback((event) => {
+    setSearch(event.target.value);
+  }, []);
+
+  const handleDateFilterChange = useCallback((event) => {
+    setDateFilter(event.target.value);
+  }, []);
+
+  const handleSortByChange = useCallback((event) => {
+    setSortBy(event.target.value);
+  }, []);
+
+  const handleSearchKeyDown = useCallback((event) => {
+    if (event.key === 'Escape' && search.trim()) {
+      event.preventDefault();
+      clearSearch();
+    }
+  }, [clearSearch, search]);
 
   /**
    * Toggles expanded details for a single order card.
@@ -356,7 +316,7 @@ export default function Orders() {
   if (orders.length === 0) {
     return (
       <main className="max-w-2xl mx-auto px-4 py-16 text-center">
-        <p className="text-5xl mb-4" aria-hidden="true">ðŸ“¦</p>
+        <p className="text-5xl mb-4" aria-hidden="true">[ ]</p>
         <h1 ref={emptyStateHeadingRef} className="text-2xl font-bold text-gray-800 mb-2" tabIndex={-1}>{t('orders.emptyTitle')}</h1>
         <p className="text-gray-500 mb-6">{t('orders.emptyBody')}</p>
         <Link
@@ -404,13 +364,8 @@ export default function Orders() {
             ref={searchInputRef}
             type="search"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={(event) => {
-              if (event.key === 'Escape' && search.trim()) {
-                event.preventDefault();
-                clearSearch();
-              }
-            }}
+            onChange={handleSearchChange}
+            onKeyDown={handleSearchKeyDown}
             placeholder={t('orders.searchPlaceholder')}
             aria-describedby="orders-search-shortcut"
             className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 pr-24 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
@@ -433,7 +388,7 @@ export default function Orders() {
           <span className="sr-only">{t('orders.dateFilterLabel')}</span>
           <select
             value={dateFilter}
-            onChange={(e) => setDateFilter(e.target.value)}
+            onChange={handleDateFilterChange}
             className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="all">{t('orders.allHistory')}</option>
@@ -446,7 +401,7 @@ export default function Orders() {
           <span className="sr-only">{t('orders.sortLabel')}</span>
           <select
             value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
+            onChange={handleSortByChange}
             className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
             <option value="newest">{t('orders.newest')}</option>

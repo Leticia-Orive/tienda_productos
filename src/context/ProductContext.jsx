@@ -3,28 +3,13 @@
 // Entradas: Props, hooks de contexto y/o estado local segun el archivo.
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ProductContext } from './ProductStateContext';
 import { DEFAULT_PRODUCTS, buildCategories } from '../data/products';
+import { cleanOrphanFavorites } from './productUtils';
 
 const PRODUCTS_STORAGE_KEY = 'tienda_react_products';
 const FAVORITES_STORAGE_KEY = 'tienda_react_favorites';
-
-/**
- * Removes favorite IDs that no longer exist in the product catalog.
- * Prevents orphaned favorites when products are deleted by admin.
- * @param {Array<number|string>} favorites - Current favorite IDs
- * @param {Array<{ id: number }>} products - Current products catalog
- * @returns {Array<number|string>} Cleaned favorites array (only IDs that exist in catalog)
- */
-export function cleanOrphanFavorites(favorites, products) {
-  // Both must be valid arrays; if not, return empty for safety (prevents orphaned favorites)
-  if (!Array.isArray(favorites) || !Array.isArray(products)) {
-    return [];
-  }
-  const productIds = new Set(products.map((p) => p?.id).filter((id) => id !== undefined));
-  return favorites.filter((favId) => productIds.has(favId));
-}
 
 /**
  * Reads persisted products from localStorage in a safe way.
@@ -131,7 +116,10 @@ function toComparableKey(value) {
 export function ProductProvider({ children }) {
   const [products, setProducts] = useState(getInitialProducts);
   const productsRef = useRef(products);
-  productsRef.current = products;
+
+  useEffect(() => {
+    productsRef.current = products;
+  }, [products]);
 
   /**
    * Creates a new product in catalog.

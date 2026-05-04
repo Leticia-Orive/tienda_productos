@@ -59,10 +59,6 @@ export default function Navbar() {
   };
 
   useEffect(() => {
-    setIsMobileMenuOpen(false);
-  }, [pathname]);
-
-  useEffect(() => {
     if (!isMobileMenuOpen) {
       return undefined;
     }

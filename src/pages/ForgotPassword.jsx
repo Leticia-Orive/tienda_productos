@@ -40,10 +40,6 @@ export default function ForgotPassword() {
   const errorMessageRef = useRef(null);
   const successMessageRef = useRef(null);
 
-  if (isAuthenticated) {
-    return <Navigate to="/" replace />;
-  }
-
   /**
    * Calculates password strength on a 0-4 scale with specific feedback tips.
    * @param {string} pwd
@@ -209,6 +205,10 @@ export default function ForgotPassword() {
     showToast(t('forgot.resetSuccess'), 'success');
     setTimeout(() => navigate('/login', { replace: true }), 1200);
   };
+
+  if (isAuthenticated) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <main className="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-10 bg-gray-50">
