@@ -73,6 +73,7 @@ vi.mock('../context/useLanguage', () => ({
         'productDetail.relatedTitle': 'Productos relacionados',
         'productDetail.addedQuantity': `Añadiste ${vars?.quantity ?? 1} × "${vars?.name}" al carrito`,
         'productDetail.readyToBuyQuantity': `${vars?.quantity ?? 1} × "${vars?.name}" listo para comprar`,
+        'productDetail.quantityAdjusted': `Cantidad ajustada a ${vars?.quantity ?? 1}`,
         'productCard.addProduct': 'Añadir al carrito',
         'productCard.buy': 'Comprar ahora',
         'productCard.favoriteOn': 'Quitar de favoritos',
@@ -130,6 +131,19 @@ describe('ProductDetail integration', () => {
     await user.click(increaseBtn);
     // Now qty=2, decrease should be enabled
     expect(decreaseBtn).not.toBeDisabled();
+  });
+
+  it('clamps quantity outside limits and announces the adjusted value', async () => {
+    const user = userEvent.setup();
+    render(<ProductDetail />);
+
+    const quantityInput = screen.getByLabelText('Cantidad');
+    await user.clear(quantityInput);
+    await user.type(quantityInput, '999');
+
+    expect(quantityInput).toHaveValue(99);
+    expect(screen.getByRole('status')).toHaveTextContent('Cantidad ajustada a 99');
+    expect(quantityInput).toHaveAttribute('aria-describedby', 'product-quantity-notice');
   });
 
   it('add to cart dispatches ADD_ORDER_ITEMS and shows toast', async () => {

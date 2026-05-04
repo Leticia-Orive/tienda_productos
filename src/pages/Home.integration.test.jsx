@@ -270,7 +270,24 @@ describe('Home integration', () => {
     await user.type(screen.getByRole('searchbox'), 'xyznonexistentproduct');
 
     await screen.findByText('No hay resultados');
-    expect(screen.getByText('No hay resultados')).toBeInTheDocument();
+    const noResultsHeading = screen.getByText('No hay resultados');
+    expect(noResultsHeading).toBeInTheDocument();
+    expect(noResultsHeading).toHaveFocus();
+  });
+
+  it('announces results and current page in a polite live region', async () => {
+    const user = userEvent.setup();
+    render(<Home />);
+
+    expect(screen.getByRole('status')).toHaveTextContent('4 resultados');
+    expect(screen.getByRole('status')).toHaveTextContent('Página 1 de 1');
+
+    await user.type(screen.getByRole('searchbox'), 'Zapatillas');
+
+    await waitFor(() => {
+      expect(screen.getByRole('status')).toHaveTextContent('1 resultado');
+      expect(screen.getByRole('status')).toHaveTextContent('Página 1 de 1');
+    });
   });
 
   it('sort select changes product order (price ascending)', async () => {

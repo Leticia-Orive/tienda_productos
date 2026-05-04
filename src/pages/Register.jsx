@@ -3,7 +3,7 @@
 // Entradas: Props, hooks de contexto y/o estado local segun el archivo.
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import useAuth from '../context/useAuth';
 import useCart from '../context/useCart';
@@ -35,6 +35,13 @@ export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+  const nameInputRef = useRef(null);
+  const emailInputRef = useRef(null);
+  const roleSelectRef = useRef(null);
+  const passwordInputRef = useRef(null);
+  const confirmPasswordInputRef = useRef(null);
+  const serverErrorRef = useRef(null);
 
   if (isAuthenticated) {
     return <Navigate to="/" replace />;
@@ -143,12 +150,50 @@ export default function Register() {
     setFieldErrors((prev) => ({ ...prev, [name]: validateField(name, form[name], form) }));
   };
 
+  useEffect(() => {
+    if (!submitAttempted) {
+      return;
+    }
+
+    if (fieldErrors.name) {
+      nameInputRef.current?.focus();
+      return;
+    }
+
+    if (fieldErrors.email) {
+      emailInputRef.current?.focus();
+      return;
+    }
+
+    if (fieldErrors.role) {
+      roleSelectRef.current?.focus();
+      return;
+    }
+
+    if (fieldErrors.password) {
+      passwordInputRef.current?.focus();
+      return;
+    }
+
+    if (fieldErrors.confirmPassword) {
+      confirmPasswordInputRef.current?.focus();
+    }
+  }, [fieldErrors, submitAttempted]);
+
+  useEffect(() => {
+    if (submitAttempted && error) {
+      serverErrorRef.current?.focus();
+    }
+  }, [error, submitAttempted]);
+
   /** Handles user registration and redirects to home on success. */
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSubmitting) {
       return;
     }
+
+    setSubmitAttempted(true);
 
     const nextErrors = {
       name: validateField('name', form.name, form),
@@ -176,6 +221,7 @@ export default function Register() {
       return;
     }
 
+    setSubmitAttempted(false);
     setError('');
     showToast(t('common.accountCreated'), 'success');
     navigate('/', { replace: true });
@@ -191,6 +237,7 @@ export default function Register() {
           <div className="flex flex-col gap-1">
             <label htmlFor="name" className="text-sm font-medium text-gray-700">{t('common.name')}</label>
             <input
+              ref={nameInputRef}
               id="name"
               type="text"
               name="name"
@@ -215,6 +262,7 @@ export default function Register() {
           <div className="flex flex-col gap-1">
             <label htmlFor="email" className="text-sm font-medium text-gray-700">{t('common.email')}</label>
             <input
+              ref={emailInputRef}
               id="email"
               type="email"
               name="email"
@@ -238,6 +286,7 @@ export default function Register() {
           <div className="flex flex-col gap-1">
             <label htmlFor="role" className="text-sm font-medium text-gray-700">{t('common.role')}</label>
             <select
+              ref={roleSelectRef}
               id="role"
               name="role"
               value={form.role}
@@ -262,6 +311,7 @@ export default function Register() {
           <div className="flex flex-col gap-1">
             <label htmlFor="password" className="text-sm font-medium text-gray-700">{t('common.password')}</label>
             <input
+              ref={passwordInputRef}
               id="password"
               type={showPassword ? 'text' : 'password'}
               name="password"
@@ -325,6 +375,7 @@ export default function Register() {
           <div className="flex flex-col gap-1">
             <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">{t('common.confirmPassword')}</label>
             <input
+              ref={confirmPasswordInputRef}
               id="confirmPassword"
               type={showConfirmPassword ? 'text' : 'password'}
               name="confirmPassword"
@@ -355,7 +406,7 @@ export default function Register() {
           </div>
 
           {error && (
-            <p className="text-sm text-red-600" role="alert">{error}</p>
+            <p ref={serverErrorRef} className="text-sm text-red-600" role="alert" tabIndex={-1}>{error}</p>
           )}
 
           <button

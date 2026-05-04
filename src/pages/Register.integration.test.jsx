@@ -100,7 +100,8 @@ describe('Register integration', () => {
     const user = userEvent.setup();
     render(<Register />);
 
-    await user.type(screen.getByLabelText('Nombre'), 'A');
+    const nameInput = screen.getByLabelText('Nombre');
+    await user.type(nameInput, 'A');
     await user.type(screen.getByLabelText('Correo electrónico'), 'correo-invalido');
     await user.type(screen.getByLabelText('Contraseña'), 'abc');
     await user.type(screen.getByLabelText('Confirmar contraseña'), 'xyz');
@@ -111,6 +112,7 @@ describe('Register integration', () => {
     expect(screen.getByText('Ingresa un correo válido.')).toBeInTheDocument();
     expect(screen.getByText('Las contraseñas no coinciden.')).toBeInTheDocument();
     expect(screen.getByText(/Añade letras MAYÚSCULAS/i)).toBeInTheDocument();
+    expect(nameInput).toHaveFocus();
   });
 
   it('submits valid form and redirects to home', async () => {

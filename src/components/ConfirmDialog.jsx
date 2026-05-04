@@ -3,7 +3,7 @@
 // Entradas: Props, hooks de contexto y/o estado local segun el archivo.
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
-import { useEffect, useRef } from 'react';
+import { useEffect, useId, useRef } from 'react';
 import useLanguage from '../context/useLanguage';
 
 /**
@@ -34,8 +34,20 @@ export default function ConfirmDialog({
   const { t } = useLanguage();
   const cancelRef = useRef(null);
   const dialogRef = useRef(null);
+  const previousActiveElementRef = useRef(null);
+  const titleId = useId();
+  const messageId = useId();
   const safeConfirmLabel = confirmLabel || t('common.confirm');
   const safeCancelLabel = cancelLabel || t('common.cancel');
+
+  useEffect(() => {
+    if (open) {
+      previousActiveElementRef.current = document.activeElement;
+      return;
+    }
+
+    previousActiveElementRef.current?.focus?.();
+  }, [open]);
 
   useEffect(() => {
     if (!open) {
@@ -103,16 +115,16 @@ export default function ConfirmDialog({
     >
       <section
         ref={dialogRef}
-        role="dialog"
+        role={destructive ? 'alertdialog' : 'dialog'}
         aria-modal="true"
-        aria-labelledby="confirm-dialog-title"
-        aria-describedby="confirm-dialog-message"
+        aria-labelledby={titleId}
+        aria-describedby={messageId}
         className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl"
       >
-        <h2 id="confirm-dialog-title" className="text-lg font-bold text-gray-900">
+        <h2 id={titleId} className="text-lg font-bold text-gray-900">
           {title}
         </h2>
-        <p id="confirm-dialog-message" className="mt-2 text-sm text-gray-600">
+        <p id={messageId} className="mt-2 text-sm text-gray-600">
           {message}
         </p>
 

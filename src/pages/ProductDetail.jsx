@@ -3,7 +3,7 @@
 // Entradas: Props, hooks de contexto y/o estado local segun el archivo.
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import useCart from '../context/useCart';
 import useAuth from '../context/useAuth';
@@ -62,7 +62,9 @@ export default function ProductDetail() {
   const { t, formatCurrency, translateCategory, translateProductText } = useLanguage();
   const isAdmin = user?.role === 'admin';
   const [quantity, setQuantity] = useState(1);
+  const [quantityNotice, setQuantityNotice] = useState('');
   const [shareState, setShareState] = useState('idle');
+  const shareResetTimeoutRef = useRef(null);
 
   const productId = parseProductId(id);
   // Resolve product early so the dynamic title can be set before any early returns.
@@ -78,15 +80,26 @@ export default function ProductDetail() {
     return <Navigate to="/not-found" replace />;
   }
 
-  const relatedProducts = products
-    .filter((p) => p.category === product.category && p.id !== product.id)
-    .slice(0, 3);
+  const translatedProductName = useMemo(() => translateProductText(product.name), [product.name, translateProductText]);
+  const translatedProductDescription = useMemo(() => translateProductText(product.description), [product.description, translateProductText]);
+  const translatedProductCategory = useMemo(() => translateCategory(product.category), [product.category, translateCategory]);
 
-  const cartItem = cart.find((item) => item.id === product.id);
+  const relatedProducts = useMemo(() => products
+    .filter((p) => p.category === product.category && p.id !== product.id)
+    .slice(0, 3), [product.category, product.id, products]);
+
+  const cartItem = useMemo(() => cart.find((item) => item.id === product.id), [cart, product.id]);
   const favorite = isFavorite(product.id);
+  const itemForCart = useMemo(() => ({ ...product, quantity }), [product, quantity]);
+
+  useEffect(() => () => {
+    if (shareResetTimeoutRef.current != null) {
+      window.clearTimeout(shareResetTimeoutRef.current);
+    }
+  }, []);
 
   /** Shares the product page or copies URL to clipboard as fallback. */
-  const handleShare = async () => {
+  const handleShare = useCallback(async () => {
     const url = window.location.href;
     const shareData = { title: product.name, text: product.description, url };
     try {
@@ -95,40 +108,70 @@ export default function ProductDetail() {
       } else {
         await copyToClipboard(url);
         setShareState('copied');
-        window.setTimeout(() => setShareState('idle'), 1800);
+        if (shareResetTimeoutRef.current != null) {
+          window.clearTimeout(shareResetTimeoutRef.current);
+        }
+        shareResetTimeoutRef.current = window.setTimeout(() => {
+          setShareState('idle');
+          shareResetTimeoutRef.current = null;
+        }, 1800);
       }
     } catch {
-      // User cancelled share or API unavailable â€” no feedback needed
+      // User cancelled share or API unavailable: no extra feedback needed.
     }
-  };
-
-  const itemForCart = { ...product, quantity };
+  }, [product.description, product.name]);
 
   /**
    * Updates quantity from number input with safe boundaries.
    * @param {React.ChangeEvent<HTMLInputElement>} event
    */
-  const handleQuantityChange = (event) => {
-    const rawValue = Number.parseInt(event.target.value, 10);
+  const handleQuantityChange = useCallback((event) => {
+    const rawInput = event.target.value;
+    const rawValue = Number.parseInt(rawInput, 10);
     if (Number.isNaN(rawValue)) {
       setQuantity(1);
+      setQuantityNotice(t('productDetail.quantityAdjusted', { quantity: 1 }));
       return;
     }
-    setQuantity(clampQuantity(rawValue));
-  };
+
+    const clampedValue = clampQuantity(rawValue);
+    setQuantity(clampedValue);
+
+    if (clampedValue !== rawValue) {
+      setQuantityNotice(t('productDetail.quantityAdjusted', { quantity: clampedValue }));
+      return;
+    }
+
+    if (!rawInput.trim()) {
+      setQuantityNotice(t('productDetail.quantityAdjusted', { quantity: 1 }));
+      return;
+    }
+
+    setQuantityNotice('');
+  }, [t]);
 
   /** Adds the current product to cart and notifies user. */
-  const handleAdd = () => {
+  const handleAdd = useCallback(() => {
     dispatch({ type: 'ADD_ORDER_ITEMS', payload: { items: [itemForCart] } });
-    showToast(t('productDetail.addedQuantity', { quantity, name: translateProductText(product.name) }), 'success');
-  };
+    setQuantityNotice('');
+    showToast(t('productDetail.addedQuantity', { quantity, name: translatedProductName }), 'success');
+  }, [dispatch, itemForCart, quantity, showToast, t, translatedProductName]);
 
   /** Adds product to cart and navigates to checkout for quick purchase. */
-  const handleBuy = () => {
+  const handleBuy = useCallback(() => {
     dispatch({ type: 'ADD_ORDER_ITEMS', payload: { items: [itemForCart] } });
-    showToast(t('productDetail.readyToBuyQuantity', { quantity, name: translateProductText(product.name) }), 'success');
+    setQuantityNotice('');
+    showToast(t('productDetail.readyToBuyQuantity', { quantity, name: translatedProductName }), 'success');
     navigate('/checkout');
-  };
+  }, [dispatch, itemForCart, navigate, quantity, showToast, t, translatedProductName]);
+
+  const decreaseQuantity = useCallback(() => {
+    setQuantity((prev) => clampQuantity(prev - 1));
+  }, []);
+
+  const increaseQuantity = useCallback(() => {
+    setQuantity((prev) => clampQuantity(prev + 1));
+  }, []);
 
   return (
     <main className="max-w-5xl mx-auto px-4 py-8">
@@ -137,9 +180,9 @@ export default function ProductDetail() {
           {t('notFound.home')}
         </Link>
         <span aria-hidden="true">/</span>
-        <span>{translateCategory(product.category)}</span>
+        <span>{translatedProductCategory}</span>
         <span aria-hidden="true">/</span>
-        <span className="text-gray-700 font-medium" aria-current="page">{translateProductText(product.name)}</span>
+        <span className="text-gray-700 font-medium" aria-current="page">{translatedProductName}</span>
       </nav>
 
       <Link
@@ -152,15 +195,15 @@ export default function ProductDetail() {
       <section className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-8 bg-white rounded-2xl shadow p-6" aria-label={t('productDetail.sectionLabel')}>
         <img
           src={product.image}
-          alt={translateProductText(product.name)}
+          alt={translatedProductName}
           className="w-full h-80 lg:h-105 rounded-xl object-cover"
           loading="eager"
         />
 
         <div className="flex flex-col gap-4">
-          <p className="text-xs font-semibold tracking-wide uppercase text-indigo-600">{translateCategory(product.category)}</p>
+          <p className="text-xs font-semibold tracking-wide uppercase text-indigo-600">{translatedProductCategory}</p>
           <div className="flex items-start justify-between gap-3">
-            <h1 className="text-3xl font-bold text-gray-900">{translateProductText(product.name)}</h1>
+            <h1 className="text-3xl font-bold text-gray-900">{translatedProductName}</h1>
             <button
               type="button"
               onClick={handleShare}
@@ -170,7 +213,7 @@ export default function ProductDetail() {
               {shareState === 'copied' ? t('common.copiedLink') : t('productDetail.share')}
             </button>
           </div>
-          <p className="text-gray-600 leading-relaxed">{translateProductText(product.description)}</p>
+          <p className="text-gray-600 leading-relaxed">{translatedProductDescription}</p>
           <p className="text-3xl font-extrabold text-gray-900">{formatCurrency(product.price)}</p>
 
           {!isAdmin && (
@@ -184,8 +227,8 @@ export default function ProductDetail() {
               }`}
               aria-pressed={favorite}
               aria-label={favorite
-                ? t('productCard.removeFavorite', { name: translateProductText(product.name) })
-                : t('productCard.addFavorite', { name: translateProductText(product.name) })}
+                ? t('productCard.removeFavorite', { name: translatedProductName })
+                : t('productCard.addFavorite', { name: translatedProductName })}
             >
               {favorite ? t('productCard.favoriteOn') : t('productCard.favoriteOff')}
             </button>
@@ -204,11 +247,12 @@ export default function ProductDetail() {
                   value={quantity}
                   onChange={handleQuantityChange}
                   className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  aria-describedby={quantityNotice ? 'product-quantity-notice' : undefined}
                 />
               </label>
               <button
                 type="button"
-                onClick={() => setQuantity((prev) => clampQuantity(prev - 1))}
+                onClick={decreaseQuantity}
                 className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 aria-label={t('productDetail.decreaseQuantity')}
                 disabled={quantity <= 1}
@@ -217,7 +261,7 @@ export default function ProductDetail() {
               </button>
               <button
                 type="button"
-                onClick={() => setQuantity((prev) => clampQuantity(prev + 1))}
+                onClick={increaseQuantity}
                 className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 aria-label={t('productDetail.increaseQuantity')}
                 disabled={quantity >= 99}
@@ -225,6 +269,12 @@ export default function ProductDetail() {
                 +
               </button>
             </div>
+          )}
+
+          {!isAdmin && quantityNotice && (
+            <p id="product-quantity-notice" className="text-xs text-amber-700" role="status" aria-live="polite" aria-atomic="true">
+              {quantityNotice}
+            </p>
           )}
 
           {!isAdmin && (

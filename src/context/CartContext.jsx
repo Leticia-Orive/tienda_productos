@@ -3,7 +3,7 @@
 // Entradas: Props, hooks de contexto y/o estado local segun el archivo.
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
-import { useMemo, useCallback, useEffect, useReducer, useState } from 'react';
+import { useMemo, useCallback, useEffect, useReducer, useRef, useState } from 'react';
 import { CartContext } from './CartStateContext';
 import { findCoupon, calcDiscount } from '../data/coupons';
 
@@ -160,6 +160,10 @@ export function CartProvider({ children }) {
   const [toast, setToast] = useState({ message: '', type: 'info' });
   const [coupon, setCoupon] = useState(null);
   const [favorites, setFavorites] = useState(getInitialFavorites);
+  const couponRef = useRef(coupon);
+  const favoritesRef = useRef(favorites);
+  couponRef.current = coupon;
+  favoritesRef.current = favorites;
 
   useEffect(() => {
     safeWriteStorage(CART_STORAGE_KEY, cart);
@@ -214,21 +218,21 @@ export function CartProvider({ children }) {
    * @param {string} rawCode
    * @returns {boolean} Whether the code was valid.
    */
-  // useCallback: only changes when coupon or showToast changes, preventing spurious re-renders.
+  // useCallback: stable reference while still reading latest coupon from ref.
   const applyCoupon = useCallback((rawCode) => {
     const found = findCoupon(rawCode);
     if (!found) {
       showToast('Cupón inválido o no existe', 'error');
       return false;
     }
-    if (coupon?.code === found.code) {
+    if (couponRef.current?.code === found.code) {
       showToast(`El cupón "${found.code}" ya está aplicado`, 'info');
       return false;
     }
     setCoupon(found);
     showToast(`Cupón "${found.code}" aplicado — ${found.label}`, 'success');
     return true;
-  }, [coupon, showToast]);
+  }, [showToast]);
 
   /** Removes the active coupon. */
   const removeCoupon = useCallback(() => {
@@ -241,8 +245,8 @@ export function CartProvider({ children }) {
    * @param {number | string} productId
    * @returns {boolean}
    */
-  // useCallback: stable as long as the favorites array reference doesn't change.
-  const isFavorite = useCallback((productId) => favorites.includes(productId), [favorites]);
+  // useCallback: stable reference while reading latest favorites from ref.
+  const isFavorite = useCallback((productId) => favoritesRef.current.includes(productId), []);
 
   /**
    * Toggles a product id in favorites and notifies the user.
@@ -251,7 +255,7 @@ export function CartProvider({ children }) {
    * @param {{ id: number | string, name: string }} product
    */
   const toggleFavorite = useCallback((product) => {
-    const exists = favorites.includes(product.id);
+    const exists = favoritesRef.current.includes(product.id);
 
     if (exists) {
       setFavorites((prev) => prev.filter((id) => id !== product.id));
@@ -261,19 +265,20 @@ export function CartProvider({ children }) {
 
     setFavorites((prev) => [...prev, product.id]);
     showToast(`Agregaste "${product.name}" a favoritos`, 'success');
-  }, [favorites, showToast]);
+  }, [showToast]);
 
   /** Clears all favorites in one action with a single feedback toast. */
   const clearFavorites = useCallback(() => {
-    if (favorites.length === 0) {
+    const currentFavorites = favoritesRef.current;
+    if (currentFavorites.length === 0) {
       showToast('No hay favoritos para quitar', 'info');
       return;
     }
 
-    const removedCount = favorites.length;
+    const removedCount = currentFavorites.length;
     setFavorites([]);
     showToast(`Quitaste ${removedCount} favorito${removedCount !== 1 ? 's' : ''}`, 'info');
-  }, [favorites, showToast]);
+  }, [showToast]);
 
   /** Restores favorites from a previous snapshot for undo operations. */
   const restoreFavorites = useCallback((snapshotIds) => {

@@ -3,7 +3,7 @@
 // Entradas: Props, hooks de contexto y/o estado local segun el archivo.
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { ProductContext } from './ProductStateContext';
 import { DEFAULT_PRODUCTS, buildCategories } from '../data/products';
 
@@ -130,6 +130,8 @@ function toComparableKey(value) {
  */
 export function ProductProvider({ children }) {
   const [products, setProducts] = useState(getInitialProducts);
+  const productsRef = useRef(products);
+  productsRef.current = products;
 
   /**
    * Creates a new product in catalog.
@@ -144,7 +146,7 @@ export function ProductProvider({ children }) {
 
     const normalizedName = toComparableKey(result.data.name);
     const normalizedCategory = toComparableKey(result.data.category);
-    const duplicateExists = products.some((item) => (
+    const duplicateExists = productsRef.current.some((item) => (
       toComparableKey(item.name) === normalizedName
       && toComparableKey(item.category) === normalizedCategory
     ));
@@ -163,7 +165,7 @@ export function ProductProvider({ children }) {
     });
 
     return { ok: true };
-  }, [products]);
+  }, []);
 
   /**
    * Updates an existing product.
@@ -184,7 +186,7 @@ export function ProductProvider({ children }) {
 
     const normalizedName = toComparableKey(result.data.name);
     const normalizedCategory = toComparableKey(result.data.category);
-    const duplicateExists = products.some((item) => (
+    const duplicateExists = productsRef.current.some((item) => (
       item.id !== productId
       && toComparableKey(item.name) === normalizedName
       && toComparableKey(item.category) === normalizedCategory
@@ -214,7 +216,7 @@ export function ProductProvider({ children }) {
     }
 
     return { ok: true };
-  }, [products]);
+  }, []);
 
   /**
    * Deletes a product from catalog by id.

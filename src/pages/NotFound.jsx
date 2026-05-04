@@ -3,6 +3,7 @@
 // Entradas: Props, hooks de contexto y/o estado local segun el archivo.
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
+import { useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useLanguage from '../context/useLanguage';
 import useDocumentTitle from '../hooks/useDocumentTitle';
@@ -24,6 +25,11 @@ export default function NotFound() {
   // WCAG 2.4.2: descriptive page title announced by screen readers on navigation.
   useDocumentTitle(t('notFound.title'));
   const navigate = useNavigate();
+  const headingRef = useRef(null);
+
+  useEffect(() => {
+    headingRef.current?.focus();
+  }, []);
 
   return (
     <main className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center px-4 py-20 text-center bg-gray-50">
@@ -31,7 +37,7 @@ export default function NotFound() {
         <p className="text-[8rem] font-extrabold text-indigo-100 leading-none">404</p>
         <p className="absolute inset-0 flex items-center justify-center text-5xl">😵‍💫</p>
       </div>
-      <h1 className="text-3xl font-bold text-gray-900 mb-3">{t('notFound.title')}</h1>
+      <h1 ref={headingRef} className="text-3xl font-bold text-gray-900 mb-3" tabIndex={-1}>{t('notFound.title')}</h1>
       <p className="text-gray-500 mb-8 max-w-sm">
         {t('notFound.subtitle')}
       </p>

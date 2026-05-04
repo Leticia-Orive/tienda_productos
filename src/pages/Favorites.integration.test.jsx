@@ -18,6 +18,15 @@ const MOCK_PRODUCT = {
   description: 'Auriculares inalámbricos.',
 };
 
+const MOCK_PRODUCT_2 = {
+  id: 2,
+  name: 'Smartwatch Deportivo',
+  price: 129.99,
+  image: 'https://images.unsplash.com/photo-test-2?w=400',
+  category: 'Electronica',
+  description: 'Reloj inteligente con GPS.',
+};
+
 let mockFavorites = [];
 
 vi.mock('react-router-dom', async () => {
@@ -38,7 +47,7 @@ vi.mock('../context/useCart', () => ({
 }));
 
 vi.mock('../context/useProducts', () => ({
-  default: () => ({ products: [MOCK_PRODUCT] }),
+  default: () => ({ products: [MOCK_PRODUCT, MOCK_PRODUCT_2] }),
 }));
 
 vi.mock('../hooks/useDocumentTitle', () => ({
@@ -114,7 +123,9 @@ describe('Favorites integration', () => {
 
     expect(mockClearFavorites).toHaveBeenCalledOnce();
     // After clearing, undo snapshot is non-empty so undo should be enabled
-    expect(screen.getByRole('button', { name: 'Deshacer' })).not.toBeDisabled();
+    const undoButton = screen.getByRole('button', { name: 'Deshacer' });
+    expect(undoButton).not.toBeDisabled();
+    expect(undoButton).toHaveFocus();
   });
 
   it('undo button calls restoreFavorites with snapshot after clear', async () => {
@@ -126,5 +137,32 @@ describe('Favorites integration', () => {
     await user.click(screen.getByRole('button', { name: 'Deshacer' }));
 
     expect(mockRestoreFavorites).toHaveBeenCalledWith([1]);
+  });
+
+  it('moves focus to next remove button after removing one favorite', async () => {
+    mockFavorites = [1, 2];
+    const user = userEvent.setup();
+    const { rerender } = render(<Favorites />);
+
+    const firstRemoveButton = screen.getByRole('button', { name: 'Quitar de favoritos: Auriculares Bluetooth' });
+    await user.click(firstRemoveButton);
+
+    mockFavorites = [2];
+    rerender(<Favorites />);
+
+    expect(screen.getByRole('button', { name: 'Quitar de favoritos: Smartwatch Deportivo' })).toHaveFocus();
+  });
+
+  it('moves focus to empty-state heading when last favorite is removed', async () => {
+    mockFavorites = [1];
+    const user = userEvent.setup();
+    const { rerender } = render(<Favorites />);
+
+    await user.click(screen.getByRole('button', { name: 'Quitar de favoritos: Auriculares Bluetooth' }));
+
+    mockFavorites = [];
+    rerender(<Favorites />);
+
+    expect(screen.getByRole('heading', { name: 'Tu lista está vacía' })).toHaveFocus();
   });
 });

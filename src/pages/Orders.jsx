@@ -162,6 +162,7 @@ export default function Orders() {
   const [pendingClearOrders, setPendingClearOrders] = useState(false);
   const [referenceNowMs] = useState(() => Date.now());
   const searchInputRef = useRef(null);
+  const emptyStateHeadingRef = useRef(null);
 
   useEffect(() => {
     safeWriteStorage(ORDERS_STORAGE_KEY, orders.slice(0, MAX_ORDERS));
@@ -175,6 +176,12 @@ export default function Orders() {
 
     return () => clearTimeout(timeoutId);
   }, [search]);
+
+  useEffect(() => {
+    if (orders.length === 0) {
+      emptyStateHeadingRef.current?.focus();
+    }
+  }, [orders.length]);
 
   useEffect(() => {
     /** Shortcut: press / to focus orders search when not typing in a field. */
@@ -206,6 +213,7 @@ export default function Orders() {
     setSearch('');
     setDateFilter('all');
     setSortBy('newest');
+    searchInputRef.current?.focus();
   }, []);
 
   const clearSearch = useCallback(() => {
@@ -227,13 +235,25 @@ export default function Orders() {
 
   const productById = useMemo(() => new Map(products.map((product) => [product.id, product])), [products]);
 
+  // Build a lightweight search/sort index once per orders update.
+  const indexedOrders = useMemo(() => orders.map((order) => ({
+    order,
+    createdAtMs: new Date(order.createdAt).getTime(),
+    searchableText: normalizeSearchText([
+      String(order.id),
+      String(order.orderNumber || ''),
+      String(order.customerName || ''),
+      String(order.couponCode || ''),
+      ...order.items.map((item) => String(item.name || '')),
+    ].join(' ')),
+  })), [orders]);
+
   const filteredOrders = useMemo(() => {
     const searchValue = normalizeSearchText(debouncedSearch.trim());
 
-    const filtered = orders.filter((order) => {
+    const filtered = indexedOrders.filter(({ createdAtMs, searchableText }) => {
       if (dateFilter !== 'all') {
         const days = Number.parseInt(dateFilter, 10);
-        const createdAtMs = new Date(order.createdAt).getTime();
         if (Number.isNaN(createdAtMs) || referenceNowMs - createdAtMs > days * 24 * 60 * 60 * 1000) {
           return false;
         }
@@ -243,30 +263,24 @@ export default function Orders() {
         return true;
       }
 
-      const haystack = [
-        String(order.id),
-        String(order.orderNumber || ''),
-        String(order.customerName || ''),
-        String(order.couponCode || ''),
-        ...order.items.map((item) => String(item.name || '')),
-      ].join(' ');
-
-      return normalizeSearchText(haystack).includes(searchValue);
+      return searchableText.includes(searchValue);
     });
 
-    return [...filtered].sort((a, b) => {
+    const sorted = [...filtered].sort((a, b) => {
       if (sortBy === 'oldest') {
-        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        return a.createdAtMs - b.createdAtMs;
       }
       if (sortBy === 'total-high') {
-        return Number(b.totalPrice || 0) - Number(a.totalPrice || 0);
+        return Number(b.order.totalPrice || 0) - Number(a.order.totalPrice || 0);
       }
       if (sortBy === 'total-low') {
-        return Number(a.totalPrice || 0) - Number(b.totalPrice || 0);
+        return Number(a.order.totalPrice || 0) - Number(b.order.totalPrice || 0);
       }
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      return b.createdAtMs - a.createdAtMs;
     });
-  }, [dateFilter, debouncedSearch, orders, referenceNowMs, sortBy]);
+
+    return sorted.map(({ order }) => order);
+  }, [dateFilter, debouncedSearch, indexedOrders, referenceNowMs, sortBy]);
 
   const stats = useMemo(() => {
     const totalOrders = filteredOrders.length;
@@ -343,7 +357,7 @@ export default function Orders() {
     return (
       <main className="max-w-2xl mx-auto px-4 py-16 text-center">
         <p className="text-5xl mb-4" aria-hidden="true">ðŸ“¦</p>
-        <h1 className="text-2xl font-bold text-gray-800 mb-2">{t('orders.emptyTitle')}</h1>
+        <h1 ref={emptyStateHeadingRef} className="text-2xl font-bold text-gray-800 mb-2" tabIndex={-1}>{t('orders.emptyTitle')}</h1>
         <p className="text-gray-500 mb-6">{t('orders.emptyBody')}</p>
         <Link
           to="/"
@@ -442,6 +456,13 @@ export default function Orders() {
           </select>
         </label>
       </section>
+
+      <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {t('common.resultsCount', {
+          count: filteredOrders.length,
+          suffix: filteredOrders.length !== 1 ? 's' : '',
+        })}
+      </p>
 
       <div className="mb-6 flex flex-wrap items-center justify-end gap-2">
         <button

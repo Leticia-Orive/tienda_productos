@@ -199,7 +199,30 @@ describe('Checkout integration', () => {
     expect(mockShowToast).toHaveBeenCalledWith('Revisa los campos', 'error');
     expect(mockDispatch).not.toHaveBeenCalledWith({ type: 'CLEAR_CART' });
     expect(screen.getByText('Teléfono inválido')).toBeInTheDocument();
-    expect(screen.getByLabelText('Teléfono')).toHaveAttribute('aria-invalid', 'true');
+    const phoneInput = screen.getByLabelText('Teléfono');
+    expect(phoneInput).toHaveAttribute('aria-invalid', 'true');
+    expect(phoneInput).toHaveFocus();
+  });
+
+  it('focuses terms checkbox when terms are not accepted', async () => {
+    const user = userEvent.setup();
+    setCartWithOneItem();
+    render(<Checkout />);
+
+    await user.type(screen.getByLabelText('Nombre completo'), 'Ana García');
+    await user.type(screen.getByLabelText('Correo electrónico'), 'ana@email.com');
+    await user.type(screen.getByLabelText('Teléfono'), '+34 600 123 456');
+    await user.type(screen.getByLabelText('Calle y número'), 'Calle 10');
+    await user.type(screen.getByLabelText('Ciudad'), 'Madrid');
+    await user.type(screen.getByLabelText('Código postal'), '28001');
+    await user.type(screen.getByPlaceholderText('1234 5678 9012 3456'), '4242424242424242');
+
+    await user.click(screen.getByRole('button', { name: /Pagar ahora/i }));
+
+    expect(screen.getByText('Debes aceptar los términos')).toBeInTheDocument();
+    const termsCheckbox = screen.getByRole('checkbox', { name: /Acepto términos y condiciones/i });
+    expect(termsCheckbox).toHaveFocus();
+    expect(termsCheckbox).toHaveAttribute('aria-invalid', 'true');
   });
 
   it('submits successfully and persists order snapshot', async () => {

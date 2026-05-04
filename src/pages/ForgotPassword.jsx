@@ -3,7 +3,7 @@
 // Entradas: Props, hooks de contexto y/o estado local segun el archivo.
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import useAuth from '../context/useAuth';
 import useCart from '../context/useCart';
@@ -33,6 +33,12 @@ export default function ForgotPassword() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+  const emailInputRef = useRef(null);
+  const passwordInputRef = useRef(null);
+  const confirmPasswordInputRef = useRef(null);
+  const errorMessageRef = useRef(null);
+  const successMessageRef = useRef(null);
 
   if (isAuthenticated) {
     return <Navigate to="/" replace />;
@@ -131,12 +137,46 @@ export default function ForgotPassword() {
     setFieldErrors((prev) => ({ ...prev, [name]: validateField(name, form[name], form) }));
   };
 
+  useEffect(() => {
+    if (!submitAttempted) {
+      return;
+    }
+
+    if (fieldErrors.email) {
+      emailInputRef.current?.focus();
+      return;
+    }
+
+    if (fieldErrors.password) {
+      passwordInputRef.current?.focus();
+      return;
+    }
+
+    if (fieldErrors.confirmPassword) {
+      confirmPasswordInputRef.current?.focus();
+    }
+  }, [fieldErrors, submitAttempted]);
+
+  useEffect(() => {
+    if (submitAttempted && error) {
+      errorMessageRef.current?.focus();
+    }
+  }, [error, submitAttempted]);
+
+  useEffect(() => {
+    if (success) {
+      successMessageRef.current?.focus();
+    }
+  }, [success]);
+
   /** Handles password reset and returns user to login on success. */
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSubmitting) {
       return;
     }
+
+    setSubmitAttempted(true);
 
     const nextErrors = {
       email: validateField('email', form.email, form),
@@ -163,6 +203,7 @@ export default function ForgotPassword() {
       return;
     }
 
+    setSubmitAttempted(false);
     setError('');
     setSuccess(t('forgot.resetSuccessRedirect'));
     showToast(t('forgot.resetSuccess'), 'success');
@@ -179,6 +220,7 @@ export default function ForgotPassword() {
           <div className="flex flex-col gap-1">
             <label htmlFor="email" className="text-sm font-medium text-gray-700">{t('common.email')}</label>
             <input
+              ref={emailInputRef}
               id="email"
               type="email"
               name="email"
@@ -202,6 +244,7 @@ export default function ForgotPassword() {
           <div className="flex flex-col gap-1">
             <label htmlFor="password" className="text-sm font-medium text-gray-700">{t('forgot.newPassword')}</label>
             <input
+              ref={passwordInputRef}
               id="password"
               type={showPassword ? 'text' : 'password'}
               name="password"
@@ -265,6 +308,7 @@ export default function ForgotPassword() {
           <div className="flex flex-col gap-1">
             <label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">{t('common.confirmPassword')}</label>
             <input
+              ref={confirmPasswordInputRef}
               id="confirmPassword"
               type={showConfirmPassword ? 'text' : 'password'}
               name="confirmPassword"
@@ -294,8 +338,8 @@ export default function ForgotPassword() {
             )}
           </div>
 
-          {error && <p className="text-sm text-red-600" role="alert">{error}</p>}
-          {success && <p className="text-sm text-emerald-700" role="status">{success}</p>}
+          {error && <p ref={errorMessageRef} className="text-sm text-red-600" role="alert" tabIndex={-1}>{error}</p>}
+          {success && <p ref={successMessageRef} className="text-sm text-emerald-700" role="status" tabIndex={-1}>{success}</p>}
 
           <button
             type="submit"

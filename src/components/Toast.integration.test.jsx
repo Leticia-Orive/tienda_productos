@@ -57,6 +57,7 @@ describe('Toast integration', () => {
 
     const alert = screen.getByRole('alert');
     expect(alert).toHaveAttribute('aria-live', 'assertive');
+  expect(alert).toHaveAttribute('aria-atomic', 'true');
     expect(alert).toHaveTextContent('Error de prueba');
     expect(alert).toHaveClass('animate-shake');
 
@@ -84,6 +85,21 @@ describe('Toast integration', () => {
     expect(container.querySelector('.bg-emerald-600')).toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Cerrar notificación' }));
+    expect(mockDismissToast).toHaveBeenCalledTimes(1);
+  });
+
+  it('dismisses toast when Escape key is pressed', async () => {
+    const user = userEvent.setup();
+    mockCartState = {
+      toast: { message: 'Aviso temporal', type: 'info' },
+      dismissToast: mockDismissToast,
+    };
+
+    render(<Toast />);
+    expect(screen.getByRole('status')).toBeInTheDocument();
+
+    await user.keyboard('{Escape}');
+
     expect(mockDismissToast).toHaveBeenCalledTimes(1);
   });
 });

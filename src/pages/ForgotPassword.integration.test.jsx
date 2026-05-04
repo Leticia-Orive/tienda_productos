@@ -98,7 +98,8 @@ describe('ForgotPassword integration', () => {
     const user = userEvent.setup();
     render(<ForgotPassword />);
 
-    await user.type(screen.getByLabelText('Correo electrónico'), 'correo-invalido');
+    const emailInput = screen.getByLabelText('Correo electrónico');
+    await user.type(emailInput, 'correo-invalido');
     await user.type(screen.getByLabelText('Nueva contraseña'), 'abc');
     await user.type(screen.getByLabelText('Confirmar contraseña'), 'xyz');
     await user.click(screen.getByRole('button', { name: 'Actualizar contraseña' }));
@@ -107,6 +108,7 @@ describe('ForgotPassword integration', () => {
     expect(screen.getByText('Ingresa un correo válido.')).toBeInTheDocument();
     expect(screen.getByText('Las contraseñas no coinciden.')).toBeInTheDocument();
     expect(screen.getByText(/Añade letras MAYÚSCULAS/i)).toBeInTheDocument();
+    expect(emailInput).toHaveFocus();
   });
 
   it('submits valid form, shows success and schedules redirect to login', async () => {
@@ -127,7 +129,9 @@ describe('ForgotPassword integration', () => {
       confirmPassword: 'Password1',
     });
     expect(mockShowToast).toHaveBeenCalledWith('Contraseña actualizada correctamente', 'success');
-    expect(screen.getByText('Tu contraseña fue actualizada. Serás redirigido al login.')).toBeInTheDocument();
+    const successMessage = screen.getByText('Tu contraseña fue actualizada. Serás redirigido al login.');
+    expect(successMessage).toBeInTheDocument();
+    expect(successMessage).toHaveFocus();
     expect(timeoutSpy).toHaveBeenCalledWith(expect.any(Function), 1200);
   });
 });

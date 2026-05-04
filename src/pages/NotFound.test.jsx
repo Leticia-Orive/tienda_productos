@@ -45,7 +45,9 @@ describe('NotFound', () => {
   it('renders the 404 heading and subtitle', () => {
     render(<NotFound />);
 
-    expect(screen.getByRole('heading', { level: 1, name: 'Página no encontrada' })).toBeInTheDocument();
+    const heading = screen.getByRole('heading', { level: 1, name: 'Página no encontrada' });
+    expect(heading).toBeInTheDocument();
+    expect(heading).toHaveFocus();
     expect(screen.getByText('La dirección no existe.')).toBeInTheDocument();
   });
 

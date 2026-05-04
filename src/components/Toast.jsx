@@ -3,6 +3,7 @@
 // Entradas: Props, hooks de contexto y/o estado local segun el archivo.
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
+import { useEffect } from 'react';
 import useCart from '../context/useCart';
 import useLanguage from '../context/useLanguage';
 
@@ -13,6 +14,24 @@ import useLanguage from '../context/useLanguage';
 export default function Toast() {
   const { toast, dismissToast } = useCart();
   const { t } = useLanguage();
+
+  useEffect(() => {
+    if (!toast.message) {
+      return undefined;
+    }
+
+    /** Allows quick keyboard dismissal of active toast notifications. */
+    const handleEscapeKey = (event) => {
+      if (event.key === 'Escape') {
+        dismissToast();
+      }
+    };
+
+    window.addEventListener('keydown', handleEscapeKey);
+    return () => {
+      window.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [dismissToast, toast.message]);
 
   if (!toast.message) {
     return null;
@@ -39,8 +58,9 @@ export default function Toast() {
     <div
       role={isErrorToast ? 'alert' : 'status'}
       aria-live={isErrorToast ? 'assertive' : 'polite'}
+      aria-atomic="true"
       // z-[9000] keeps the toast above all overlays including the sticky Navbar (z-50) and dialogs.
-      className={`fixed bottom-4 right-4 z-9000 ${animationClass}`}
+      className={`fixed bottom-4 right-4 z-[9000] ${animationClass}`}
     >
       <div className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm shadow-lg ${toneClass}`}>
         <span>{toast.message}</span>

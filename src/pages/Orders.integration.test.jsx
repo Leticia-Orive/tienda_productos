@@ -94,6 +94,10 @@ vi.mock('../context/useLanguage', () => ({
         'orders.reorderSuccess': `Se añadieron productos del pedido ${vars?.id ?? ''}`,
         'orders.productFallback': 'Producto',
         'orders.generalCategory': 'General',
+        'orders.emptyTitle': 'Aún no tienes pedidos',
+        'orders.emptyBody': 'Cuando compres, aparecerán aquí.',
+        'orders.goProducts': 'Ir a productos',
+        'common.resultsCount': `${vars?.count ?? 0} resultado${vars?.suffix ?? ''}`,
       };
       return map[key] || key;
     },
@@ -224,5 +228,33 @@ describe('Orders integration', () => {
       expect(screen.queryByRole('button', { name: 'Limpiar búsqueda' })).not.toBeInTheDocument();
       expect(screen.getByText('Pedido Ana-ABCDEF')).toBeInTheDocument();
     });
+  });
+
+  it('announces filtered results in a polite live region', async () => {
+    const user = userEvent.setup();
+    render(<Orders />);
+
+    expect(screen.getByRole('status')).toHaveTextContent('1 resultado');
+
+    await user.type(screen.getByPlaceholderText('Buscar por ID o producto...'), 'NO-EXISTE');
+
+    await waitFor(() => {
+      expect(screen.getByRole('status')).toHaveTextContent('0 resultados');
+    });
+  });
+
+  it('clears history from confirmation dialog and focuses empty state heading', async () => {
+    const user = userEvent.setup();
+    render(<Orders />);
+
+    await user.click(screen.getByRole('button', { name: 'Limpiar historial' }));
+    await user.click(screen.getByRole('button', { name: 'Eliminar todo' }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: 'Aún no tienes pedidos' })).toBeInTheDocument();
+    });
+
+    expect(screen.getByRole('heading', { name: 'Aún no tienes pedidos' })).toHaveFocus();
+    expect(mockShowToast).toHaveBeenCalledWith('Historial eliminado.', 'info');
   });
 });

@@ -42,7 +42,9 @@ describe('Legal integration', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByRole('heading', { level: 1, name: 'Información legal' })).toBeInTheDocument();
+    const pageHeading = screen.getByRole('heading', { level: 1, name: 'Información legal' });
+    expect(pageHeading).toBeInTheDocument();
+    expect(pageHeading).toHaveFocus();
     expect(screen.getByRole('heading', { level: 2, name: 'Términos y condiciones' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: 'Política de privacidad' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { level: 2, name: 'Cambios y devoluciones' })).toBeInTheDocument();

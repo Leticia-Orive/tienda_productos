@@ -22,6 +22,16 @@ const MOCK_ITEM = {
   quantity: 2,
 };
 
+const MOCK_ITEM_2 = {
+  id: 2,
+  name: 'Smartwatch Deportivo',
+  price: 129.99,
+  image: 'https://images.unsplash.com/photo-test-2?w=400',
+  category: 'Electronica',
+  description: 'Reloj inteligente.',
+  quantity: 1,
+};
+
 let mockCartState = {
   cart: [],
   totalItems: 0,
@@ -96,6 +106,7 @@ vi.mock('../context/useLanguage', () => ({
         'cart.discount': 'Descuento',
         'cart.couponLabel': 'Código de cupón',
         'cart.couponPlaceholder': 'CUPÓN10',
+        'common.total': 'Total',
         'cart.updatedAt': 'Actualizado',
         'cart.couponExpiresOn': 'Caduca el',
         'cart.couponExpiringSoonToday': 'Este cupón caduca hoy.',
@@ -179,5 +190,40 @@ describe('Cart integration', () => {
       expect.stringContaining('Auriculares Bluetooth'),
       'info',
     );
+  });
+
+  it('announces cart totals in a polite live region', () => {
+    mockCartState = { ...mockCartState, cart: [MOCK_ITEM], totalItems: 2, totalPrice: 119.98, finalPrice: 119.98 };
+
+    render(<Cart />);
+
+    expect(screen.getByRole('status')).toHaveTextContent('2 productos. Total: $119.98');
+  });
+
+  it('moves focus to next remove button after deleting one item', async () => {
+    mockCartState = {
+      ...mockCartState,
+      cart: [MOCK_ITEM, MOCK_ITEM_2],
+      totalItems: 3,
+      totalPrice: 249.97,
+      finalPrice: 249.97,
+    };
+    const user = userEvent.setup();
+    const { rerender } = render(<Cart />);
+
+    const removeButtonsBefore = screen.getAllByRole('button', { name: 'cart.removeFromCart' });
+    await user.click(removeButtonsBefore[0]);
+
+    mockCartState = {
+      ...mockCartState,
+      cart: [MOCK_ITEM_2],
+      totalItems: 1,
+      totalPrice: 129.99,
+      finalPrice: 129.99,
+    };
+    rerender(<Cart />);
+
+    const [remainingRemoveButton] = screen.getAllByRole('button', { name: 'cart.removeFromCart' });
+    expect(remainingRemoveButton).toHaveFocus();
   });
 });

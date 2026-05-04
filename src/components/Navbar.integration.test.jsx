@@ -113,6 +113,70 @@ describe('Navbar integration', () => {
     expect(screen.getByRole('navigation', { name: 'Menú móvil' })).toBeInTheDocument();
   });
 
+  it('closes mobile menu when Escape key is pressed', async () => {
+    const user = userEvent.setup();
+    render(<Navbar />);
+
+    await user.click(screen.getByRole('button', { name: 'Abrir menú' }));
+    expect(screen.getByRole('navigation', { name: 'Menú móvil' })).toBeInTheDocument();
+
+    await user.keyboard('{Escape}');
+
+    expect(screen.queryByRole('navigation', { name: 'Menú móvil' })).not.toBeInTheDocument();
+    const toggleButton = screen.getByRole('button', { name: 'Abrir menú' });
+    expect(toggleButton).toHaveAttribute('aria-expanded', 'false');
+    expect(toggleButton).toHaveFocus();
+  });
+
+  it('closes mobile menu when clicking outside', async () => {
+    const user = userEvent.setup();
+    render(<Navbar />);
+
+    await user.click(screen.getByRole('button', { name: 'Abrir menú' }));
+    expect(screen.getByRole('navigation', { name: 'Menú móvil' })).toBeInTheDocument();
+
+    await user.click(document.body);
+
+    expect(screen.queryByRole('navigation', { name: 'Menú móvil' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Abrir menú' })).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('locks body scroll while mobile menu is open and restores it on close', async () => {
+    const user = userEvent.setup();
+    render(<Navbar />);
+
+    expect(document.body.style.overflow).toBe('');
+
+    await user.click(screen.getByRole('button', { name: 'Abrir menú' }));
+    expect(document.body.style.overflow).toBe('hidden');
+
+    await user.keyboard('{Escape}');
+    expect(document.body.style.overflow).toBe('');
+  });
+
+  it('keeps keyboard focus within mobile menu when tabbing', async () => {
+    const user = userEvent.setup();
+    render(<Navbar />);
+
+    await user.click(screen.getByRole('button', { name: 'Abrir menú' }));
+
+    const mobileMenu = screen.getByRole('navigation', { name: 'Menú móvil' });
+    const focusableElements = mobileMenu.querySelectorAll(
+      'a[href], button:not([disabled]), select:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+
+    expect(firstElement).toHaveFocus();
+
+    await user.keyboard('{Shift>}{Tab}{/Shift}');
+    expect(lastElement).toHaveFocus();
+
+    await user.keyboard('{Tab}');
+    expect(firstElement).toHaveFocus();
+  });
+
   it('logs out with broadcast notice and redirects to login', async () => {
     const user = userEvent.setup();
     render(<Navbar />);

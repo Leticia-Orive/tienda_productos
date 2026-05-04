@@ -88,13 +88,15 @@ describe('Login integration', () => {
     const user = userEvent.setup();
     render(<Login />);
 
-    await user.type(screen.getByLabelText('Correo electrónico'), 'correo-invalido');
+    const emailInput = screen.getByLabelText('Correo electrónico');
+    await user.type(emailInput, 'correo-invalido');
     await user.type(screen.getByLabelText('Contraseña'), '12345');
     await user.click(screen.getByRole('button', { name: 'Entrar' }));
 
     expect(mockLogin).not.toHaveBeenCalled();
     expect(screen.getByText('Ingresa un correo válido.')).toBeInTheDocument();
     expect(screen.getByText('Debe tener al menos 8 caracteres.')).toBeInTheDocument();
+    expect(emailInput).toHaveFocus();
   });
 
   it('submits valid form, remembers email and navigates to redirect path', async () => {
