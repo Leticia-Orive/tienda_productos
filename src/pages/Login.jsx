@@ -71,12 +71,6 @@ export default function Login() {
   }, [isLocked]);
 
   useEffect(() => {
-    if (!isLocked && lockedUntil !== 0) {
-      setLockedUntil(0);
-    }
-  }, [isLocked, lockedUntil]);
-
-  useEffect(() => {
     if (validationErrors.length > 0) {
       const safeEmail = form.email.trim();
       if (!safeEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(safeEmail)) {

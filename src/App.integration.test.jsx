@@ -20,6 +20,13 @@ async function loginAs(user, email, password) {
   await user.click(submitBtn);
 }
 
+/** Waits for the Home route to finish lazy rendering. */
+async function waitForHomeLoaded() {
+  await waitFor(() => {
+    expect(screen.getByRole('heading', { name: /Nuestros Productos|Products/i })).toBeInTheDocument();
+  }, { timeout: 5000 });
+}
+
 describe('App integration', () => {
   beforeEach(() => {
     localStorage.clear();
@@ -35,10 +42,7 @@ describe('App integration', () => {
     render(<App />);
 
     await loginAs(user, 'cliente@tienda.com', 'Cliente123');
-
-    await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /Nuestros Productos|Products/i })).toBeInTheDocument();
-    });
+    await waitForHomeLoaded();
 
     const addButtons = await screen.findAllByRole('button', { name: /Añadir producto|Agregar producto|Add product/i });
     expect(addButtons.length).toBeGreaterThan(0);
@@ -60,10 +64,7 @@ describe('App integration', () => {
     render(<App />);
 
     await loginAs(user, 'admin@tienda.com', 'Admin123');
-
-    await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /Nuestros Productos|Products/i })).toBeInTheDocument();
-    });
+    await waitForHomeLoaded();
 
     // Admin should NOT see add-to-cart or buy buttons.
     expect(screen.queryAllByRole('button', { name: /Añadir producto|Add product/i })).toHaveLength(0);
@@ -77,10 +78,7 @@ describe('App integration', () => {
     const { unmount } = render(<App />);
 
     await loginAs(user, 'cliente@tienda.com', 'Cliente123');
-
-    await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /Nuestros Productos|Products/i })).toBeInTheDocument();
-    });
+    await waitForHomeLoaded();
 
     const addButtons = await screen.findAllByRole('button', { name: /Añadir producto|Agregar producto|Add product/i });
     await user.click(addButtons[0]);
@@ -91,9 +89,7 @@ describe('App integration', () => {
     render(<App />);
 
     // After reload user is still authenticated (role in localStorage) and reaches home.
-    await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /Nuestros Productos|Products/i })).toBeInTheDocument();
-    });
+    await waitForHomeLoaded();
 
     // Navigate to cart and confirm the item is still there.
     const primaryNav = screen.getByRole('navigation', { name: /Navegación principal|Primary navigation/i });
@@ -104,5 +100,62 @@ describe('App integration', () => {
     });
 
     expect(screen.getAllByRole('group').length).toBeGreaterThan(0);
+  });
+
+  it('authenticated: unknown route renders quick category link with canonical href', async () => {
+    localStorage.setItem('tienda_react_auth_user', JSON.stringify({
+      email: 'cliente@tienda.com',
+      name: 'Cliente Demo',
+      role: 'cliente',
+    }));
+    window.history.pushState({}, '', '/ruta-desconocida');
+
+    render(<App />);
+
+    await screen.findByRole('heading', { name: /Página no encontrada|Page not found/i });
+
+    const electronicsQuickLink = screen
+      .getAllByRole('link')
+      .find((link) => link.getAttribute('href') === '/?categoria=electronics');
+
+    expect(electronicsQuickLink).toBeTruthy();
+    expect(window.location.pathname).toBe('/ruta-desconocida');
+  });
+
+  it('authenticated: canonical filtered home → product detail → breadcrumb category link returns to canonical filter', async () => {
+    const user = userEvent.setup();
+    localStorage.setItem('tienda_react_auth_user', JSON.stringify({
+      email: 'cliente@tienda.com',
+      name: 'Cliente Demo',
+      role: 'cliente',
+    }));
+    window.history.pushState({}, '', '/?categoria=electronics');
+
+    render(<App />);
+
+    await waitForHomeLoaded();
+    const homeHeading = screen.getByRole('heading', { name: /Nuestros Productos|Products/i });
+    expect(homeHeading).toBeInTheDocument();
+
+    const productName = await screen.findByText(/Auriculares Bluetooth/i);
+    const productCard = productName.closest('article');
+    expect(productCard).not.toBeNull();
+
+    await user.click(within(productCard).getByRole('button', { name: /Ver|View/i }));
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { level: 1, name: /Auriculares Bluetooth/i })).toBeInTheDocument();
+    });
+
+    const breadcrumb = screen.getByRole('navigation', { name: /Ruta de navegación|Breadcrumb/i });
+    const breadcrumbLinks = within(breadcrumb).getAllByRole('link');
+    await user.click(breadcrumbLinks[1]);
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Nuestros Productos|Products/i })).toBeInTheDocument();
+    });
+
+    expect(window.location.pathname).toBe('/');
+    expect(window.location.search).toContain('categoria=electronics');
   });
 });

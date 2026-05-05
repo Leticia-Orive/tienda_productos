@@ -373,8 +373,8 @@ export function AuthProvider({ children }) {
     return { ok: true };
   }, [users]);
 
-  /** Ends the active user session. Accepts optional metadata for compatibility with callers. */
-  const logout = useCallback((_options) => {
+  /** Ends the active user session. */
+  const logout = useCallback(() => {
     setUser(null);
   }, []);
 

@@ -10,6 +10,7 @@ import useAuth from '../context/useAuth';
 import useProducts from '../context/useProducts';
 import useLanguage from '../context/useLanguage';
 import useDocumentTitle from '../hooks/useDocumentTitle';
+import { areSameCategory, buildCategoryFilterHref } from '../utils/categoryUtils';
 
 /**
  * Copies text to clipboard with a fallback for browsers without clipboard API.
@@ -86,7 +87,7 @@ export default function ProductDetail() {
   );
 
   const relatedProducts = useMemo(() => products
-    .filter((p) => product && p.category === product.category && p.id !== product.id)
+    .filter((p) => product && areSameCategory(p.category, product.category) && p.id !== product.id)
     .slice(0, 3), [product, products]);
 
   const relatedProductCards = useMemo(() => relatedProducts.map((item) => ({
@@ -215,7 +216,12 @@ export default function ProductDetail() {
           {t('notFound.home')}
         </Link>
         <span aria-hidden="true">/</span>
-        <span>{translatedProductCategory}</span>
+        <Link
+          to={buildCategoryFilterHref(product.category)}
+          className="hover:text-indigo-600 transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 rounded-sm"
+        >
+          {translatedProductCategory}
+        </Link>
         <span aria-hidden="true">/</span>
         <span className="text-gray-700 font-medium" aria-current="page">{translatedProductName}</span>
       </nav>
@@ -350,7 +356,15 @@ export default function ProductDetail() {
 
       {relatedProducts.length > 0 && (
         <section className="mt-12 bg-gray-50 rounded-2xl p-8" aria-label={t('productDetail.relatedTitle')}>
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('productDetail.relatedTitle')}</h2>
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-2xl font-bold text-gray-900">{t('productDetail.relatedTitle')}</h2>
+            <Link
+              to={buildCategoryFilterHref(product.category)}
+              className="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 transition hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              {`${t('home.filterByCategory')}: ${translatedProductCategory}`}
+            </Link>
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {relatedProductCards.map((p) => (
               <Link

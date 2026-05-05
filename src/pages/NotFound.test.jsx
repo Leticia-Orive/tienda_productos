@@ -74,5 +74,7 @@ describe('NotFound', () => {
       l.getAttribute('href')?.includes('categoria=')
     );
     expect(categoryLinks.length).toBeGreaterThan(0);
+    expect(screen.getByRole('link', { name: 'Electrónica' })).toHaveAttribute('href', '/?categoria=electronics');
+    expect(screen.getByRole('link', { name: 'Deportes' })).toHaveAttribute('href', '/?categoria=sports');
   });
 });

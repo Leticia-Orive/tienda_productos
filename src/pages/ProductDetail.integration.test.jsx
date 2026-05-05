@@ -19,6 +19,15 @@ const MOCK_PRODUCT = {
   description: 'Auriculares inalámbricos con cancelación de ruido.',
 };
 
+const RELATED_PRODUCT = {
+  id: 2,
+  name: 'Altavoz Inteligente',
+  price: 79.99,
+  image: 'https://example.com/related.jpg',
+  category: 'Electrónica',
+  description: 'Altavoz compatible con asistentes de voz.',
+};
+
 let mockCartState = {
   cart: [],
   isFavorite: () => false,
@@ -50,7 +59,7 @@ vi.mock('../context/useAuth', () => ({
 }));
 
 vi.mock('../context/useProducts', () => ({
-  default: () => ({ products: [MOCK_PRODUCT] }),
+  default: () => ({ products: [MOCK_PRODUCT, RELATED_PRODUCT] }),
 }));
 
 vi.mock('../hooks/useDocumentTitle', () => ({
@@ -71,6 +80,7 @@ vi.mock('../context/useLanguage', () => ({
         'productDetail.alreadyInCart': 'Ya tienes {count} en el carrito',
         'productDetail.notInCartYet': 'Aún no has añadido este producto',
         'productDetail.relatedTitle': 'Productos relacionados',
+        'home.filterByCategory': 'Filtrar por categoría',
         'productDetail.addedQuantity': `Añadiste ${vars?.quantity ?? 1} × "${vars?.name}" al carrito`,
         'productDetail.readyToBuyQuantity': `${vars?.quantity ?? 1} × "${vars?.name}" listo para comprar`,
         'productDetail.quantityAdjusted': `Cantidad ajustada a ${vars?.quantity ?? 1}`,
@@ -115,6 +125,16 @@ describe('ProductDetail integration', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'Auriculares Bluetooth' })).toBeInTheDocument();
     expect(screen.getByRole('navigation', { name: 'Ruta de navegación' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Volver a productos' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Electronica' })).toHaveAttribute('href', '/?categoria=electronics');
+  });
+
+  it('shows related products even when category aliases differ only by accents', () => {
+    render(<ProductDetail />);
+
+    expect(screen.getByRole('heading', { level: 2, name: 'Productos relacionados' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Filtrar por categoría: Electronica' })).toHaveAttribute('href', '/?categoria=electronics');
+    expect(screen.getByRole('link', { name: 'productCard.viewLabel' })).toHaveAttribute('href', '/producto/2');
+    expect(screen.getByText('Altavoz Inteligente')).toBeInTheDocument();
   });
 
   it('decrease button is disabled at quantity 1 and enabled after increase', async () => {

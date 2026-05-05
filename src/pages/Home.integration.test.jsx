@@ -7,12 +7,17 @@ import Home from './Home';
 
 // --- Mocks ---
 
+const { mockSearchParamsState, mockSetSearchParams } = vi.hoisted(() => ({
+  mockSearchParamsState: { value: new URLSearchParams() },
+  mockSetSearchParams: vi.fn(),
+}));
+
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom');
   return {
     ...actual,
     Link: ({ children, to, ...props }) => <a href={to} {...props}>{children}</a>,
-    useSearchParams: () => [new URLSearchParams(), vi.fn()],
+    useSearchParams: () => [mockSearchParamsState.value, mockSetSearchParams],
   };
 });
 
@@ -96,6 +101,8 @@ vi.mock('../context/useLanguage', () => ({
 afterEach(() => {
   cleanup();
   mockAuthUser = { role: 'cliente' };
+  mockSearchParamsState.value = new URLSearchParams();
+  mockSetSearchParams.mockReset();
 });
 
 describe('Home integration', () => {
@@ -107,6 +114,42 @@ describe('Home integration', () => {
     expect(screen.getByTestId('product-2')).toBeInTheDocument();
     expect(screen.getByTestId('product-3')).toBeInTheDocument();
     expect(screen.getByTestId('product-4')).toBeInTheDocument();
+  });
+
+  it('accepts normalized category values from URL params', () => {
+    mockSearchParamsState.value = new URLSearchParams('categoria=electronica');
+
+    render(<Home />);
+
+    expect(screen.getByTestId('product-1')).toBeInTheDocument();
+    expect(screen.getByTestId('product-4')).toBeInTheDocument();
+    expect(screen.queryByTestId('product-2')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('product-3')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Electrónica' })).toHaveAttribute('aria-pressed', 'true');
+    expect(mockSetSearchParams).toHaveBeenCalledWith(new URLSearchParams('categoria=electronics'), { replace: true });
+  });
+
+  it('accepts translated category values from URL params', () => {
+    mockSearchParamsState.value = new URLSearchParams('categoria=electronics');
+
+    render(<Home />);
+
+    expect(screen.getByTestId('product-1')).toBeInTheDocument();
+    expect(screen.getByTestId('product-4')).toBeInTheDocument();
+    expect(screen.queryByTestId('product-2')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('product-3')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Electrónica' })).toHaveAttribute('aria-pressed', 'true');
+    expect(mockSetSearchParams).not.toHaveBeenCalled();
+  });
+
+  it('writes canonical category values to the URL after selecting a filter', async () => {
+    const user = userEvent.setup();
+    render(<Home />);
+
+    mockSetSearchParams.mockClear();
+    await user.click(screen.getByRole('button', { name: 'Electrónica', pressed: false }));
+
+    expect(mockSetSearchParams).toHaveBeenCalledWith(new URLSearchParams('categoria=electronics'), { replace: true });
   });
 
   it('admin section is visible for admin role', () => {

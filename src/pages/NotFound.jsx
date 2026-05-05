@@ -7,14 +7,15 @@ import { useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useLanguage from '../context/useLanguage';
 import useDocumentTitle from '../hooks/useDocumentTitle';
+import { buildCategoryFilterHref } from '../utils/categoryUtils';
 
 const QUICK_CATEGORIES = [
-  { label: 'Electrónica', query: 'Electrónica' },
-  { label: 'Deportes', query: 'Deportes' },
-  { label: 'Hogar', query: 'Hogar' },
-  { label: 'Moda', query: 'Moda' },
-  { label: 'Libros', query: 'Libros' },
-  { label: 'Cocina', query: 'Cocina' },
+  { label: 'Electrónica' },
+  { label: 'Deportes' },
+  { label: 'Hogar' },
+  { label: 'Moda' },
+  { label: 'Libros' },
+  { label: 'Cocina' },
 ];
 
 /**
@@ -61,9 +62,9 @@ export default function NotFound() {
         <p className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">{t('notFound.exploreCategories')}</p>
         <ul className="flex flex-wrap justify-center gap-2" role="list">
           {QUICK_CATEGORIES.map((cat) => (
-            <li key={cat.query}>
+            <li key={cat.label}>
               <Link
-                to={`/?categoria=${encodeURIComponent(cat.query)}`}
+                to={buildCategoryFilterHref(cat.label)}
                 className="rounded-full border border-gray-300 bg-white px-4 py-1.5 text-sm font-medium text-gray-700 transition hover:bg-indigo-50 hover:border-indigo-300 hover:text-indigo-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 {translateCategory(cat.label)}

@@ -13,9 +13,16 @@ export default function Legal() {
   const [liveAnnouncement, setLiveAnnouncement] = useState('');
   const pageHeadingRef = useRef(null);
 
+  /** Schedules live region updates outside render-critical effect execution. */
+  const announce = (message) => {
+    queueMicrotask(() => {
+      setLiveAnnouncement(message);
+    });
+  };
+
   useEffect(() => {
     if (!hash) {
-      setLiveAnnouncement('');
+      announce('');
       pageHeadingRef.current?.focus();
       return;
     }
@@ -25,14 +32,14 @@ export default function Legal() {
     const heading = section?.querySelector('h2');
 
     if (!section || !heading) {
-      setLiveAnnouncement(t('legal.title'));
+      announce(t('legal.title'));
       pageHeadingRef.current?.focus();
       return;
     }
 
     section.scrollIntoView({ behavior: 'smooth', block: 'start' });
     heading.focus({ preventScroll: true });
-    setLiveAnnouncement(heading.textContent || '');
+    announce(heading.textContent || '');
   }, [hash, t]);
 
   useDocumentTitle(t('legal.title'));
