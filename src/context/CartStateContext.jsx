@@ -6,6 +6,33 @@
 import { createContext } from 'react';
 
 /**
- * Dedicated context object kept separate for fast refresh compatibility.
+ * CartItemsContext: Provides cart items array and dispatch function.
+ * Minimal dependencies allow consumers to avoid unnecessary re-renders
+ * when other cart aspects change (UI feedback, favorites, totals).
+ */
+export const CartItemsContext = createContext(null);
+
+/**
+ * CartSummaryContext: Provides derived cart metrics (totals, pricing, coupon).
+ * Consumed only by Cart and Checkout pages where totals are critical.
+ */
+export const CartSummaryContext = createContext(null);
+
+/**
+ * CartUIContext: Provides toast/UI feedback for cart operations.
+ * Consumed by Toast component and callbacks that need to notify users.
+ */
+export const CartUIContext = createContext(null);
+
+/**
+ * FavoritesContext: Provides favorites management (list, toggles, operations).
+ * Consumed by ProductCard, Cart, and Favorites page.
+ */
+export const FavoritesContext = createContext(null);
+
+/**
+ * Backward compatibility: CartContext still exported but now combines all split contexts.
+ * New code should use specific context imports. This will be removed in a future version.
+ * @deprecated Use CartItemsContext, CartSummaryContext, CartUIContext, or FavoritesContext instead.
  */
 export const CartContext = createContext(null);

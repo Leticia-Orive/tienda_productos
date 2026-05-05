@@ -4,7 +4,7 @@
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
 import { useMemo, useCallback, useEffect, useReducer, useRef, useState } from 'react';
-import { CartContext } from './CartStateContext';
+import { CartItemsContext, CartSummaryContext, CartUIContext, FavoritesContext, CartContext } from './CartStateContext';
 import { MAX_ITEM_QUANTITY } from './cartConstants';
 import { cartReducer } from './cartReducer';
 import { findCoupon, calcDiscount } from '../data/coupons';
@@ -79,38 +79,24 @@ function safeWriteStorage(key, value) {
 }
 
 /**
- * CartProvider wraps the app and provides cart state via Context API.
+ * CartProvider wraps the app and provides cart state via 4 split contexts.
+ * Separation prevents unnecessary re-renders when unrelated state changes.
  * @param {{ children: React.ReactNode }} props
  */
 export function CartProvider({ children }) {
+  // ============================================================
+  // CART ITEMS STATE (minimal, frequently read)
+  // ============================================================
   const [cart, dispatch] = useReducer(cartReducer, [], getInitialCart);
-  const [toast, setToast] = useState({ message: '', type: 'info' });
-  const [coupon, setCoupon] = useState(null);
-  const [favorites, setFavorites] = useState(getInitialFavorites);
-  const couponRef = useRef(coupon);
-  const favoritesRef = useRef(favorites);
-
-  useEffect(() => {
-    couponRef.current = coupon;
-  }, [coupon]);
-
-  useEffect(() => {
-    favoritesRef.current = favorites;
-  }, [favorites]);
 
   useEffect(() => {
     safeWriteStorage(CART_STORAGE_KEY, cart);
   }, [cart]);
 
-  useEffect(() => {
-    safeWriteStorage(FAVORITES_STORAGE_KEY, favorites);
-  }, [favorites]);
-
-  // Derive effective coupon: auto-invalidate when cart empties.
-  const effectiveCoupon = useMemo(
-    () => (cart.length === 0 ? null : coupon),
-    [cart.length, coupon]
-  );
+  // ============================================================
+  // UI STATE (toast feedback)
+  // ============================================================
+  const [toast, setToast] = useState({ message: '', type: 'info' });
 
   useEffect(() => {
     if (!toast.message) {
@@ -126,8 +112,8 @@ export function CartProvider({ children }) {
 
   /**
    * Shows a toast message for user feedback.
-   * Wrapped in useCallback so memo'd children (e.g. ProductCard) never re-render
-   * just because CartProvider re-rendered for an unrelated state change.
+   * Wrapped in useCallback so consumers never re-render just because
+   * CartProvider re-rendered for an unrelated state change.
    * @param {string} message
    * @param {'info' | 'success' | 'error'} type
    */
@@ -140,51 +126,29 @@ export function CartProvider({ children }) {
     setToast({ message: '', type: 'info' });
   }, []);
 
-  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const favoriteCount = favorites.length;
-  const discountAmount = calcDiscount(effectiveCoupon, totalPrice);
-  const finalPrice = Math.max(0, totalPrice - discountAmount);
+  // ============================================================
+  // FAVORITES STATE
+  // ============================================================
+  const [favorites, setFavorites] = useState(getInitialFavorites);
+  const favoritesRef = useRef(favorites);
 
-  /**
-   * Tries to apply a coupon code. Shows toast feedback.
-   * @param {string} rawCode
-   * @returns {boolean} Whether the code was valid.
-   */
-  // useCallback: stable reference while still reading latest coupon from ref.
-  const applyCoupon = useCallback((rawCode) => {
-    const found = findCoupon(rawCode);
-    if (!found) {
-      showToast('Cupón inválido o no existe', 'error');
-      return false;
-    }
-    if (couponRef.current?.code === found.code) {
-      showToast(`El cupón "${found.code}" ya está aplicado`, 'info');
-      return false;
-    }
-    setCoupon(found);
-    showToast(`Cupón "${found.code}" aplicado — ${found.label}`, 'success');
-    return true;
-  }, [showToast]);
+  useEffect(() => {
+    favoritesRef.current = favorites;
+  }, [favorites]);
 
-  /** Removes the active coupon. */
-  const removeCoupon = useCallback(() => {
-    setCoupon(null);
-    showToast('Cupón eliminado', 'info');
-  }, [showToast]);
+  useEffect(() => {
+    safeWriteStorage(FAVORITES_STORAGE_KEY, favorites);
+  }, [favorites]);
 
   /**
    * Returns whether a product id is currently in favorites.
    * @param {number | string} productId
    * @returns {boolean}
    */
-  // useCallback: stable reference while reading latest favorites from ref.
   const isFavorite = useCallback((productId) => favoritesRef.current.includes(productId), []);
 
   /**
    * Toggles a product id in favorites and notifies the user.
-   * Depends on favorites (to detect whether the product already exists) and
-   * showToast (stable — useCallback with empty deps).
    * @param {{ id: number | string, name: string }} product
    */
   const toggleFavorite = useCallback((product) => {
@@ -220,27 +184,90 @@ export function CartProvider({ children }) {
       return;
     }
 
-    // De-duplicate snapshot values to avoid inconsistent favorite counters.
     const restored = Array.from(new Set(snapshotIds));
     setFavorites(restored);
     showToast(`Favoritos restaurados (${restored.length})`, 'success');
   }, [showToast]);
 
+  const favoriteCount = favorites.length;
+
+  // ============================================================
+  // COUPON STATE
+  // ============================================================
+  const [coupon, setCoupon] = useState(null);
+  const couponRef = useRef(coupon);
+
+  useEffect(() => {
+    couponRef.current = coupon;
+  }, [coupon]);
+
+  /**
+   * Tries to apply a coupon code. Shows toast feedback.
+   * @param {string} rawCode
+   * @returns {boolean} Whether the code was valid.
+   */
+  const applyCoupon = useCallback((rawCode) => {
+    const found = findCoupon(rawCode);
+    if (!found) {
+      showToast('Cupón inválido o no existe', 'error');
+      return false;
+    }
+    if (couponRef.current?.code === found.code) {
+      showToast(`El cupón "${found.code}" ya está aplicado`, 'info');
+      return false;
+    }
+    setCoupon(found);
+    showToast(`Cupón "${found.code}" aplicado — ${found.label}`, 'success');
+    return true;
+  }, [showToast]);
+
+  /** Removes the active coupon. */
+  const removeCoupon = useCallback(() => {
+    setCoupon(null);
+    showToast('Cupón eliminado', 'info');
+  }, [showToast]);
+
+  // Derive effective coupon: auto-invalidate when cart empties.
+  const effectiveCoupon = useMemo(
+    () => (cart.length === 0 ? null : coupon),
+    [cart.length, coupon]
+  );
+
+  // ============================================================
+  // CART SUMMARY (totals derived from cart + coupon)
+  // ============================================================
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const totalPrice = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const discountAmount = calcDiscount(effectiveCoupon, totalPrice);
+  const finalPrice = Math.max(0, totalPrice - discountAmount);
+
   /**
    * Removes all references to a product from cart and favorites.
    * @param {number | string} productId
    */
-  // useCallback with empty deps: dispatch is stable (from useReducer), setFavorites too.
   const removeProductReferences = useCallback((productId) => {
     dispatch({ type: 'REMOVE_ITEM', payload: { id: productId } });
     setFavorites((prev) => prev.filter((id) => id !== productId));
   }, []);
 
-  // Generated by GitHub Copilot
-  // Memoize provider value so consumers only re-render when relevant data changes.
-  const contextValue = useMemo(() => ({
+  // ============================================================
+  // MEMOIZED CONTEXT VALUES (split by concern)
+  // ============================================================
+
+  /**
+   * CartItemsContext: Cart array + dispatch. Minimal deps.
+   * Consumers: Home, ProductDetail, Cart (for item list display)
+   */
+  const cartItemsValue = useMemo(() => ({
     cart,
     dispatch,
+  }), [cart]);
+
+  /**
+   * CartSummaryContext: Derived totals and pricing.
+   * Consumers: Cart, Checkout (price display and validation)
+   */
+  const cartSummaryValue = useMemo(() => ({
     totalItems,
     totalPrice,
     discountAmount,
@@ -248,41 +275,69 @@ export function CartProvider({ children }) {
     coupon: effectiveCoupon,
     applyCoupon,
     removeCoupon,
-    favorites,
-    favoriteCount,
-    isFavorite,
-    toggleFavorite,
-    clearFavorites,
-    restoreFavorites,
-    removeProductReferences,
-    toast,
-    showToast,
-    dismissToast,
   }), [
-    applyCoupon,
-    cart,
-    clearFavorites,
-    discountAmount,
-    dismissToast,
-    dispatch,
-    effectiveCoupon,
-    favoriteCount,
-    favorites,
-    finalPrice,
-    isFavorite,
-    removeCoupon,
-    removeProductReferences,
-    restoreFavorites,
-    showToast,
-    toast,
-    toggleFavorite,
     totalItems,
     totalPrice,
+    discountAmount,
+    finalPrice,
+    effectiveCoupon,
+    applyCoupon,
+    removeCoupon,
   ]);
 
+  /**
+   * CartUIContext: Toast and feedback.
+   * Consumers: Toast component, any callback that needs to notify
+   */
+  const cartUIValue = useMemo(() => ({
+    toast,
+    showToast,
+    dismissToast,
+  }), [toast, showToast, dismissToast]);
+
+  /**
+   * FavoritesContext: Favorites list and operations.
+   * Consumers: ProductCard (isFavorite, toggleFavorite), Cart, Favorites page
+   */
+  const favoritesValue = useMemo(() => ({
+    favorites,
+    favoriteCount,
+    isFavorite,
+    toggleFavorite,
+    clearFavorites,
+    restoreFavorites,
+  }), [
+    favorites,
+    favoriteCount,
+    isFavorite,
+    toggleFavorite,
+    clearFavorites,
+    restoreFavorites,
+  ]);
+
+  /**
+   * CartContext (legacy): Combines all split contexts for backward compatibility.
+   * @deprecated Use specific context imports instead.
+   */
+  const legacyCartValue = useMemo(() => ({
+    ...cartItemsValue,
+    ...cartSummaryValue,
+    ...cartUIValue,
+    ...favoritesValue,
+    removeProductReferences,
+  }), [cartItemsValue, cartSummaryValue, cartUIValue, favoritesValue, removeProductReferences]);
+
   return (
-    <CartContext.Provider value={contextValue}>
-      {children}
-    </CartContext.Provider>
+    <CartItemsContext.Provider value={cartItemsValue}>
+      <CartSummaryContext.Provider value={cartSummaryValue}>
+        <CartUIContext.Provider value={cartUIValue}>
+          <FavoritesContext.Provider value={favoritesValue}>
+            <CartContext.Provider value={legacyCartValue}>
+              {children}
+            </CartContext.Provider>
+          </FavoritesContext.Provider>
+        </CartUIContext.Provider>
+      </CartSummaryContext.Provider>
+    </CartItemsContext.Provider>
   );
 }

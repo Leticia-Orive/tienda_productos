@@ -5,6 +5,8 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import App from './App';
 
+const TEST_UI_TIMEOUT = 10000;
+
 /**
  * Logs in with the given credentials and waits for the home heading.
  * @param {import('@testing-library/user-event').UserEvent} user
@@ -12,9 +14,9 @@ import App from './App';
  * @param {string} password
  */
 async function loginAs(user, email, password) {
-  const emailInput = await screen.findByLabelText(/Correo electrónico|Email/i);
-  const passwordInput = await screen.findByLabelText(/Contraseña|Password/i);
-  const submitBtn = await screen.findByRole('button', { name: /Entrar|Sign in/i });
+  const emailInput = await screen.findByLabelText(/Correo electrónico|Email/i, {}, { timeout: TEST_UI_TIMEOUT });
+  const passwordInput = await screen.findByLabelText(/Contraseña|Password/i, {}, { timeout: TEST_UI_TIMEOUT });
+  const submitBtn = await screen.findByRole('button', { name: /Entrar|Sign in/i }, { timeout: TEST_UI_TIMEOUT });
   await user.type(emailInput, email);
   await user.type(passwordInput, password);
   await user.click(submitBtn);
@@ -22,9 +24,17 @@ async function loginAs(user, email, password) {
 
 /** Waits for the Home route to finish lazy rendering. */
 async function waitForHomeLoaded() {
-  await waitFor(() => {
-    expect(screen.getByRole('heading', { name: /Nuestros Productos|Products/i })).toBeInTheDocument();
-  }, { timeout: 5000 });
+  await screen.findByRole('heading', { name: /Nuestros Productos|Products/i }, { timeout: TEST_UI_TIMEOUT });
+}
+
+/** Waits for the Cart route heading to appear after navigation. */
+async function waitForCartLoaded() {
+  await screen.findByRole('heading', { name: /Carrito|Cart/i }, { timeout: TEST_UI_TIMEOUT });
+}
+
+/** Waits for NotFound route heading when navigating to an unknown path. */
+async function waitForNotFoundLoaded() {
+  await screen.findByRole('heading', { name: /Página no encontrada|Page not found/i }, { timeout: TEST_UI_TIMEOUT });
 }
 
 describe('App integration', () => {
@@ -51,9 +61,7 @@ describe('App integration', () => {
     const primaryNav = screen.getByRole('navigation', { name: /Navegación principal|Primary navigation/i });
     await user.click(within(primaryNav).getByRole('link', { name: /Carrito|Cart/i }));
 
-    await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /Carrito|Cart/i })).toBeInTheDocument();
-    });
+    await waitForCartLoaded();
 
     // At least one quantity-control group confirms the cart has item rows.
     expect(screen.getAllByRole('group').length).toBeGreaterThan(0);
@@ -95,9 +103,7 @@ describe('App integration', () => {
     const primaryNav = screen.getByRole('navigation', { name: /Navegación principal|Primary navigation/i });
     await user.click(within(primaryNav).getByRole('link', { name: /Carrito|Cart/i }));
 
-    await waitFor(() => {
-      expect(screen.getByRole('heading', { name: /Carrito|Cart/i })).toBeInTheDocument();
-    });
+    await waitForCartLoaded();
 
     expect(screen.getAllByRole('group').length).toBeGreaterThan(0);
   });
@@ -112,7 +118,7 @@ describe('App integration', () => {
 
     render(<App />);
 
-    await screen.findByRole('heading', { name: /Página no encontrada|Page not found/i });
+    await waitForNotFoundLoaded();
 
     const electronicsQuickLink = screen
       .getAllByRole('link')

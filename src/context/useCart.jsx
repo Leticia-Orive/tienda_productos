@@ -4,10 +4,13 @@
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
 import { useContext } from 'react';
-import { CartContext } from './CartStateContext';
+import { CartContext, CartItemsContext, CartSummaryContext, CartUIContext, FavoritesContext } from './CartStateContext';
 
 /**
- * Custom hook to consume CartContext safely.
+ * @deprecated Use specialized hooks instead: useCartItems(), useCartSummary(), useCartUI(), useFavorites()
+ * 
+ * Custom hook to consume CartContext safely (legacy, combined context).
+ * Kept for backward compatibility. New code should use split context hooks.
  * @returns {{ cart: Array, dispatch: Function, totalItems: number, totalPrice: number, discountAmount: number, finalPrice: number, coupon: object|null, applyCoupon: Function, removeCoupon: Function, favorites: Array<number|string>, favoriteCount: number, isFavorite: Function, toggleFavorite: Function, removeProductReferences: Function, toast: { message: string, type: string }, showToast: Function }}
  */
 export default function useCart() {
@@ -16,4 +19,80 @@ export default function useCart() {
     throw new Error('useCart debe usarse dentro de un CartProvider');
   }
   return context;
+}
+
+/**
+ * Hook to consume CartItemsContext (cart array and dispatch).
+ * Preferred by: Home, ProductDetail, Cart (for item display and mutation)
+ * Benefit: Avoids re-renders when totals, UI, or favorites change
+ * @returns {{ cart: Array, dispatch: Function }}
+ */
+export function useCartItems() {
+  const context = useContext(CartItemsContext);
+  if (!context) {
+    throw new Error('useCartItems debe usarse dentro de un CartProvider');
+  }
+  return context;
+}
+
+/**
+ * Hook to consume CartSummaryContext (totals, pricing, coupon operations).
+ * Preferred by: Cart, Checkout (for price calculations and coupon UI)
+ * Benefit: Avoids re-renders when favorites or UI toasts change
+ * @returns {{ totalItems: number, totalPrice: number, discountAmount: number, finalPrice: number, coupon: object|null, applyCoupon: Function, removeCoupon: Function }}
+ */
+export function useCartSummary() {
+  const context = useContext(CartSummaryContext);
+  if (!context) {
+    throw new Error('useCartSummary debe usarse dentro de un CartProvider');
+  }
+  return context;
+}
+
+/**
+ * Hook to consume CartUIContext (toast notifications).
+ * Preferred by: Toast component, callbacks that need to notify users
+ * Benefit: Avoids re-renders when cart items or favorites change
+ * @returns {{ toast: { message: string, type: string }, showToast: Function, dismissToast: Function }}
+ */
+export function useCartUI() {
+  const context = useContext(CartUIContext);
+  if (!context) {
+    throw new Error('useCartUI debe usarse dentro de un CartProvider');
+  }
+  return context;
+}
+
+/**
+ * Hook to consume FavoritesContext (favorites management).
+ * Preferred by: ProductCard, Cart, Favorites page
+ * Benefit: Avoids re-renders when cart items or totals change; independent scaling
+ * @returns {{ favorites: Array<number|string>, favoriteCount: number, isFavorite: Function, toggleFavorite: Function, clearFavorites: Function, restoreFavorites: Function }}
+ */
+export function useFavorites() {
+  const context = useContext(FavoritesContext);
+  if (!context) {
+    throw new Error('useFavorites debe usarse dentro de un CartProvider');
+  }
+  return context;
+}
+
+/**
+ * Hook to remove a product from both cart and favorites (admin deletion).
+ * Combines cart and favorites contexts for cleanup after product deletion.
+ * Preferred by: AdminProducts (when deleting a product)
+ * @returns {(productId: number | string) => void}
+ */
+export function useRemoveProductReferences() {
+  const context = useContext(CartContext);
+  if (!context) {
+    throw new Error('useRemoveProductReferences debe usarse dentro de un CartProvider');
+  }
+
+  const { removeProductReferences } = context;
+  if (typeof removeProductReferences !== 'function') {
+    throw new Error('removeProductReferences no está disponible en CartContext');
+  }
+
+  return removeProductReferences;
 }

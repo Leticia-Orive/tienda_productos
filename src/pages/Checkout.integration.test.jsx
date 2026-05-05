@@ -30,6 +30,33 @@ vi.mock('react-router-dom', async () => {
 
 vi.mock('../context/useCart', () => ({
   default: () => mockCartState,
+  useCartItems: () => ({
+    cart: mockCartState.cart,
+    dispatch: mockCartState.dispatch,
+  }),
+  useCartSummary: () => ({
+    totalItems: mockCartState.cart.reduce((sum, item) => sum + item.quantity, 0),
+    totalPrice: mockCartState.totalPrice,
+    discountAmount: mockCartState.discountAmount,
+    finalPrice: mockCartState.finalPrice,
+    coupon: mockCartState.coupon,
+    applyCoupon: vi.fn(),
+    removeCoupon: vi.fn(),
+  }),
+  useCartUI: () => ({
+    toast: { message: '', type: 'info' },
+    showToast: mockCartState.showToast,
+    dismissToast: vi.fn(),
+  }),
+  useFavorites: () => ({
+    favorites: [],
+    favoriteCount: 0,
+    isFavorite: vi.fn(),
+    toggleFavorite: vi.fn(),
+    clearFavorites: vi.fn(),
+    restoreFavorites: vi.fn(),
+  }),
+  useRemoveProductReferences: () => vi.fn(),
 }));
 
 vi.mock('../hooks/useDocumentTitle', () => ({

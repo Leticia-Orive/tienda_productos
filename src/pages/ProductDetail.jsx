@@ -5,7 +5,9 @@
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
-import useCart from '../context/useCart';
+import { useCartItems } from '../context/useCart';
+import { useFavorites } from '../context/useCart';
+import { useCartUI } from '../context/useCart';
 import useAuth from '../context/useAuth';
 import useProducts from '../context/useProducts';
 import useLanguage from '../context/useLanguage';
@@ -57,7 +59,9 @@ function clampQuantity(value) {
 export default function ProductDetail() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { dispatch, cart, isFavorite, toggleFavorite, showToast } = useCart();
+  const { dispatch, cart } = useCartItems();
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const { showToast } = useCartUI();
   const { user } = useAuth();
   const { products } = useProducts();
   const { t, formatCurrency, translateCategory, translateProductText } = useLanguage();

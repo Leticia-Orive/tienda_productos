@@ -8,7 +8,10 @@ import { Link, useNavigate } from 'react-router-dom';
 import ConfirmDialog from '../components/ConfirmDialog';
 import { MAX_ITEM_QUANTITY } from '../context/cartConstants';
 import { COUPONS, getCouponExpiryInfo } from '../data/coupons';
-import useCart from '../context/useCart';
+import { useCartItems } from '../context/useCart';
+import { useCartSummary } from '../context/useCart';
+import { useCartUI } from '../context/useCart';
+import { useFavorites } from '../context/useCart';
 import useLanguage from '../context/useLanguage';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 
@@ -31,6 +34,8 @@ export default function Cart() {
   const {
     cart,
     dispatch,
+  } = useCartItems();
+  const {
     totalItems,
     totalPrice,
     discountAmount,
@@ -38,10 +43,14 @@ export default function Cart() {
     coupon,
     applyCoupon,
     removeCoupon,
+  } = useCartSummary();
+  const {
     showToast,
+  } = useCartUI();
+  const {
     isFavorite,
     toggleFavorite,
-  } = useCart();
+  } = useFavorites();
 
   const [couponInput, setCouponInput] = useState('');
   const [couponError, setCouponError] = useState('');

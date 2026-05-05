@@ -7,7 +7,9 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getCouponExpiryInfo } from '../data/coupons';
 import { MAX_ITEM_QUANTITY } from '../context/cartConstants';
-import useCart from '../context/useCart';
+import { useCartItems } from '../context/useCart';
+import { useCartSummary } from '../context/useCart';
+import { useCartUI } from '../context/useCart';
 import useLanguage from '../context/useLanguage';
 import useDocumentTitle from '../hooks/useDocumentTitle';
 import { buildOrderNumber, shouldBlockCheckoutSubmit } from './checkoutHelpers';
@@ -274,7 +276,9 @@ export default function Checkout() {
   const { t, formatCurrency, formatDateTime, formatDateRange } = useLanguage();
   // WCAG 2.4.2: descriptive page title announced by screen readers on navigation.
   useDocumentTitle(t('checkout.title'));
-  const { cart, totalPrice, discountAmount, finalPrice, coupon, dispatch, showToast } = useCart();
+  const { cart, dispatch } = useCartItems();
+  const { totalPrice, discountAmount, finalPrice, coupon } = useCartSummary();
+  const { showToast } = useCartUI();
   const navigate = useNavigate();
 
   const [form, setForm] = useState(getInitialCheckoutForm);

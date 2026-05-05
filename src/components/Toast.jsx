@@ -4,7 +4,7 @@
 // Flujo principal: Lee estado, aplica reglas de UI/negocio y renderiza la vista.
 // Donde tocar cambios: Ajusta este archivo para modificar su comportamiento principal.
 import { useEffect } from 'react';
-import useCart from '../context/useCart';
+import { useCartUI } from '../context/useCart';
 import useLanguage from '../context/useLanguage';
 
 /**
@@ -12,7 +12,7 @@ import useLanguage from '../context/useLanguage';
  * Announces changes with aria-live for accessibility.
  */
 export default function Toast() {
-  const { toast, dismissToast } = useCart();
+  const { toast, dismissToast } = useCartUI();
   const { t } = useLanguage();
 
   useEffect(() => {

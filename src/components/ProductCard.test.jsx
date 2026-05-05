@@ -29,6 +29,33 @@ vi.mock('../context/useCart', () => ({
     toggleFavorite: mockToggleFavorite,
     showToast: mockShowToast,
   }),
+  useCartItems: () => ({
+    cart: [],
+    dispatch: mockDispatch,
+  }),
+  useFavorites: () => ({
+    favorites: [],
+    favoriteCount: 0,
+    isFavorite: () => false,
+    toggleFavorite: mockToggleFavorite,
+    clearFavorites: vi.fn(),
+    restoreFavorites: vi.fn(),
+  }),
+  useCartUI: () => ({
+    toast: { message: '', type: 'info' },
+    showToast: mockShowToast,
+    dismissToast: vi.fn(),
+  }),
+  useCartSummary: () => ({
+    totalItems: 0,
+    totalPrice: 0,
+    discountAmount: 0,
+    finalPrice: 0,
+    coupon: null,
+    applyCoupon: vi.fn(),
+    removeCoupon: vi.fn(),
+  }),
+  useRemoveProductReferences: () => vi.fn(),
 }));
 
 vi.mock('../context/useAuth', () => ({

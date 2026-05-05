@@ -14,6 +14,11 @@ let mockCartState = {
 
 vi.mock('../context/useCart', () => ({
   default: () => mockCartState,
+  useCartUI: () => mockCartState,
+  useCartItems: () => ({ cart: [], dispatch: vi.fn() }),
+  useCartSummary: () => ({ totalItems: 0, totalPrice: 0, discountAmount: 0, finalPrice: 0, coupon: null, applyCoupon: vi.fn(), removeCoupon: vi.fn() }),
+  useFavorites: () => ({ favorites: [], favoriteCount: 0, isFavorite: vi.fn(), toggleFavorite: vi.fn(), clearFavorites: vi.fn(), restoreFavorites: vi.fn() }),
+  useRemoveProductReferences: () => vi.fn(),
 }));
 
 vi.mock('../context/useLanguage', () => ({

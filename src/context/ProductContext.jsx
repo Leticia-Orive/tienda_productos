@@ -8,6 +8,7 @@ import { ProductContext } from './ProductStateContext';
 import { DEFAULT_PRODUCTS, buildCategories } from '../data/products';
 import { cleanOrphanFavorites } from './productUtils';
 import { normalizeSearchText } from '../utils/textUtils';
+import { isSafeHttpImageUrl } from '../utils/urlUtils';
 
 const PRODUCTS_STORAGE_KEY = 'tienda_react_products';
 const FAVORITES_STORAGE_KEY = 'tienda_react_favorites';
@@ -41,7 +42,9 @@ function getInitialProducts() {
       .filter((item) => Number.isInteger(item.id) && item.id > 0 && item.name.length > 1 && Number.isFinite(item.price) && item.price >= 0)
       .map((item) => ({
         ...item,
-        image: item.image || 'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=400',
+        image: isSafeHttpImageUrl(item.image)
+          ? item.image
+          : 'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=400',
         category: item.category || 'General',
         description: item.description || 'Producto sin descripción.',
       }));
@@ -81,7 +84,7 @@ function normalizeProductPayload(payload) {
     return { ok: false, error: 'La descripción debe tener entre 5 y 300 caracteres.' };
   }
 
-  if (image.length > 0 && !/^https?:\/\/[^\s]+$/i.test(image)) {
+  if (image.length > 0 && !isSafeHttpImageUrl(image)) {
     return { ok: false, error: 'La imagen debe ser una URL válida (http o https).' };
   }
 
